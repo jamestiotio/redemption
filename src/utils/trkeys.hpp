@@ -29,19 +29,16 @@ namespace trkeys
     TR_KV(optional_target, "Target (optional)");
     TR_KV(login, "Login");
     TR_KV(password, "Password");
-    TR_KV(diagnostic, "Diagnostic");
     TR_KV(connection_closed, "Connection closed");
     TR_KV(OK, "OK");
     TR_KV(close, "Close");
     TR_KV(refused, "Refused");
-    TR_KV(username, "Username");
     TR_KV(protocol, "Protocol");
     TR_KV(authorization, "Authorization");
     TR_KV(target, "Target");
     TR_KV(logout, "Logout");
     TR_KV(filter, "Filter");
     TR_KV(connect, "Connect");
-    TR_KV(timeleft, "Time left");
     TR_KV(second, "second");
     TR_KV(minute, "minute");
     TR_KV(hour, "hour");
@@ -94,6 +91,13 @@ namespace trkeys
     TR_KV(information, "Information");
     TR_KV(target_info_required, "Target Information Required");
     TR_KV(device, "Device");
+
+
+    // WidgetWabClose
+    TR_KV(wab_close_username, "Username:");
+    TR_KV(wab_close_target, "Target:");
+    TR_KV(wab_close_diagnostic, "Diagnostic:");
+    TR_KV(wab_close_timeleft, "Time left:");
 
 
     // osd message

@@ -42,17 +42,14 @@ RED_AUTO_TEST_CASE(TestTranslation)
 
     RED_CHECK_EQUAL(TR(trkeys::login, lang),             "Login");
     RED_CHECK_EQUAL(TR(trkeys::password, lang),          "Password");
-    RED_CHECK_EQUAL(TR(trkeys::diagnostic, lang),        "Diagnostic");
     RED_CHECK_EQUAL(TR(trkeys::connection_closed, lang), "Connection closed");
     RED_CHECK_EQUAL(TR(trkeys::OK, lang),                "OK");
     RED_CHECK_EQUAL(TR(trkeys::close, lang),             "Close");
     RED_CHECK_EQUAL(TR(trkeys::refused, lang),           "Refused");
-    RED_CHECK_EQUAL(TR(trkeys::username, lang),          "Username");
     RED_CHECK_EQUAL(TR(trkeys::protocol, lang),          "Protocol");
     RED_CHECK_EQUAL(TR(trkeys::target, lang),            "Target");
     RED_CHECK_EQUAL(TR(trkeys::logout, lang),            "Logout");
     RED_CHECK_EQUAL(TR(trkeys::connect, lang),           "Connect");
-    RED_CHECK_EQUAL(TR(trkeys::timeleft, lang),          "Time left");
     RED_CHECK_EQUAL(TR(trkeys::second, lang),            "second");
     RED_CHECK_EQUAL(TR(trkeys::minute, lang),            "minute");
     RED_CHECK_EQUAL(TR(trkeys::before_closing, lang),    "before closing");

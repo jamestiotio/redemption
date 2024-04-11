@@ -39,18 +39,18 @@ WidgetWabClose::WidgetWabClose(
 , connection_closed_label(drawable, TR(trkeys::connection_closed, lang).to_sv(),
                           theme.global.fgcolor, theme.global.bgcolor, font)
 , separator(drawable, theme.global.separator_color)
-, username_label(drawable, "Username:",
+, username_label(drawable, TR(trkeys::wab_close_username, lang).c_str(),
                  theme.global.fgcolor, theme.global.bgcolor, font)
 , username_value(drawable, username,
                  theme.global.fgcolor, theme.global.bgcolor, font)
-, target_label(drawable, "Target:",
+, target_label(drawable, TR(trkeys::wab_close_target, lang).c_str(),
                theme.global.fgcolor, theme.global.bgcolor, font)
 , target_value(drawable, target,
                theme.global.fgcolor, theme.global.bgcolor, font)
-, diagnostic_label(drawable, "Diagnostic:",
+, diagnostic_label(drawable, TR(trkeys::wab_close_diagnostic, lang).c_str(),
                    theme.global.fgcolor, theme.global.bgcolor, font)
 , diagnostic_value(drawable, theme.global.fgcolor, theme.global.bgcolor, font)
-, timeleft_label(drawable, "Time left:",
+, timeleft_label(drawable, TR(trkeys::wab_close_timeleft, lang).c_str(),
                 theme.global.fgcolor, theme.global.bgcolor, font)
 , timeleft_value(drawable, nullptr,
                  theme.global.fgcolor, theme.global.bgcolor, font)
@@ -77,16 +77,6 @@ WidgetWabClose::WidgetWabClose(
 {
     this->set_bg_color(theme.global.bgcolor);
     this->add_widget(this->img);
-
-    char label[255];
-    snprintf(label, sizeof(label), "%s:", TR(trkeys::username, lang).c_str());
-    this->username_label.set_text(label);
-    snprintf(label, sizeof(label), "%s:", TR(trkeys::target, lang).c_str());
-    this->target_label.set_text(label);
-    snprintf(label, sizeof(label), "%s:", TR(trkeys::diagnostic, lang).c_str());
-    this->diagnostic_label.set_text(label);
-    snprintf(label, sizeof(label), "%s:", TR(trkeys::timeleft, lang).c_str());
-    this->timeleft_label.set_text(label);
 
     this->add_widget(this->connection_closed_label);
     this->add_widget(this->separator);
