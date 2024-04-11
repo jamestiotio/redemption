@@ -81,7 +81,6 @@ struct CopyPasteFront : FakeFront
                 size_t unicode_data_length = ::UTF8toUTF16(this->str, buf, buf_sz);
                 buf[unicode_data_length    ] = 0;
                 buf[unicode_data_length + 1] = 0;
-                unicode_data_length += 2;
 
                 RDPECLIP::CliprdrHeader header(RDPECLIP::CB_FORMAT_DATA_RESPONSE, RDPECLIP::CB_RESPONSE_OK, unicode_data_length);
                 RDPECLIP::FormatDataResponsePDU format_data_response_pdu;
@@ -132,7 +131,7 @@ RED_AUTO_TEST_CASE(TestPaste)
 
     WidgetScreen parent(gd, screen_info.width, screen_info.height, global_font_deja_vu_14(), Theme{});
 
-    WidgetEdit edit(gd, copy_paste, "", {WidgetEventNotifier()},
+    WidgetEdit edit(gd, copy_paste, ""_av, {WidgetEventNotifier()},
                     PINK, ORANGE, RED, global_font_deja_vu_14());
     Dimension dim = edit.get_optimal_dim();
     edit.set_wh(120, dim.h);
@@ -155,7 +154,7 @@ RED_AUTO_TEST_CASE(TestPaste)
     front.copy("xxx");
     edit_paste("ploplopxxxp", IMG_TEST_PATH "ploplopxxxp.png");
     edit_paste("ploplopxxxxxxp", IMG_TEST_PATH "ploplopxxxxxxp.png");
-    edit.set_text("");
+    edit.set_text(""_av);
     front.copy("abc\tde");
     edit_paste("abc de", IMG_TEST_PATH "abcde.png");
     front.copy("fg\nhi");

@@ -33,7 +33,7 @@ class WidgetEdit : public Widget
 {
 public:
     WidgetEdit(gdi::GraphicApi & drawable, CopyPaste & copy_paste,
-               const char * text, WidgetEventNotifier onsubmit,
+               chars_view text, WidgetEventNotifier onsubmit,
                Color fgcolor, Color bgcolor, Color focus_color,
                Font const & font, std::size_t edit_position = -1, int xtext = 0, int ytext = 0); /*NOLINT*/
 
@@ -41,9 +41,9 @@ public:
 
     Dimension get_optimal_dim() const override;
 
-    virtual void set_text(const char * text/*, int position = 0*/);
+    virtual void set_text(chars_view text);
 
-    virtual void insert_text(const char * text/*, int position = 0*/);
+    virtual void insert_text(chars_view text);
 
     zstring_view get_text() const;
 

@@ -37,12 +37,12 @@ struct TestWidgetCloseCtx
     WidgetWabClose flat_wab_close;
 
     TestWidgetCloseCtx(
-        std::string diagnostic_text, const char * username, const char * target,
+        std::string diagnostic_text, chars_view username, chars_view target,
         bool showtimer, Theme theme = Theme(),
         WidgetEventNotifier oncancel = WidgetEventNotifier())
     : flat_wab_close(
         drawable, 0, 0, 800, 600, {oncancel, WidgetEventNotifier()},
-        diagnostic_text, username, target,
+        std::move(diagnostic_text), username, target,
         showtimer, global_font_deja_vu_14(), theme, Language::en, false)
     {
         flat_wab_close.init_focus();
@@ -51,7 +51,7 @@ struct TestWidgetCloseCtx
 
 RED_AUTO_TEST_CASE(TraceWidgetWabClose)
 {
-    TestWidgetCloseCtx ctx("abc\ndef", "rec", "rec", false);
+    TestWidgetCloseCtx ctx("abc\ndef", "rec"_av, "rec"_av, false);
 
     ctx.flat_wab_close.rdp_input_invalidate(ctx.flat_wab_close.get_rect());
 
@@ -119,7 +119,7 @@ RED_AUTO_TEST_CASE(TraceWidgetWabCloseClip2)
 RED_AUTO_TEST_CASE(TraceWidgetWabCloseExit)
 {
     NotifyTrace notifier;
-    TestWidgetCloseCtx ctx("abc\ndef", "tartempion", "caufield", true, Theme(), notifier);
+    TestWidgetCloseCtx ctx("abc\ndef", "tartempion"_av, "caufield"_av, true, Theme(), notifier);
 
     ctx.flat_wab_close.rdp_input_invalidate(ctx.flat_wab_close.get_rect());
 
@@ -149,7 +149,7 @@ RED_AUTO_TEST_CASE(TraceWidgetWabClose_transparent_png_with_theme_color)
     colors.global.enable_theme = true;
     colors.global.logo_path = FIXTURES_PATH"/wablogoblue-transparent.png";
 
-    TestWidgetCloseCtx ctx("abc\ndef", "rec", "rec", false, colors);
+    TestWidgetCloseCtx ctx("abc\ndef", "rec"_av, "rec"_av, false, colors);
 
     ctx.flat_wab_close.rdp_input_invalidate(ctx.flat_wab_close.get_rect());
 

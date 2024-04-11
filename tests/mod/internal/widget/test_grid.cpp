@@ -58,8 +58,9 @@ RED_AUTO_TEST_CASE(TraceWidgetGrid)
 
     for (uint16_t line_index = 0; line_index < line_number; line_index++) {
         for (uint16_t column_index = 0; column_index < column_number; column_index++) {
-            char text[256];
-            snprintf(text, sizeof(text), "Label %ux%u", unsigned(line_index), unsigned(column_index));
+            char buffer[256];
+            int n = snprintf(buffer, sizeof(buffer), "Label %ux%u", unsigned(line_index), unsigned(column_index));
+            chars_view text{buffer, checked_int(n)};
             std::unique_ptr<Widget> w;
             if ((line_index == 2) && (column_index == 3)) {
                 w = std::make_unique<WidgetButton>(

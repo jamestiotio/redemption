@@ -30,7 +30,7 @@
 
 WidgetButton::WidgetButton(
     gdi::GraphicApi & drawable,
-    const char * text, WidgetEventNotifier onsubmit,
+    chars_view text, WidgetEventNotifier onsubmit,
     Color fg_color, Color bg_color, Color focus_color,
     unsigned border_width, Font const & font, int xtext, int ytext,
     bool logo)
@@ -66,15 +66,14 @@ void WidgetButton::set_wh(uint16_t w, uint16_t h)
     this->label_rect.cy = h - (this->border_width * 2 - 1);
 }
 
-void WidgetButton::set_text(char const* text)
+void WidgetButton::set_text(chars_view text)
 {
     this->buffer[0] = 0;
-    if (text) {
+    if (!text.empty()) {
         const size_t remain_n = buffer_size - 1;
-        const size_t n = strlen(text);
-        const size_t max = ((remain_n >= n) ? n :
-                            ::UTF8StringAdjustedNbBytes(::byte_ptr_cast(text), remain_n));
-        memcpy(this->buffer, text, max);
+        const size_t n = text.size();
+        const size_t max = ((remain_n >= n) ? n : UTF8StringAdjustedNbBytes(text, remain_n));
+        memcpy(this->buffer, text.data(), max);
         this->buffer[max] = 0;
         if (this->auto_resize_) {
             Dimension dm = WidgetLabel::get_optimal_dim(this->font, this->buffer, this->x_text, this->y_text);

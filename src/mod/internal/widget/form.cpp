@@ -47,29 +47,32 @@ WidgetForm::WidgetForm(
 )
     : WidgetComposite(drawable, Focusable::Yes)
     , events(events)
-    , warning_msg(drawable, "",
+    , warning_msg(drawable, ""_av,
                   theme.global.error_color, theme.global.bgcolor, font)
-    , duration_label(drawable, TR(trkeys::duration, lang).to_sv(),
+    , duration_label(drawable,
+                     TR((flags & DURATION_MANDATORY) ? trkeys::duration_r : trkeys::duration, lang),
                      theme.global.fgcolor, theme.global.bgcolor, font)
     , duration_edit(drawable, copy_paste, nullptr,
                     {[this]{ this->check_confirmation(); }},
                     theme.edit.fgcolor, theme.edit.bgcolor,
                     theme.edit.focus_color, font, -1, 1, 1)
-    , duration_format(drawable, TR(trkeys::note_duration_format, lang).to_sv(),
+    , duration_format(drawable, TR(trkeys::note_duration_format, lang),
                       theme.global.fgcolor, theme.global.bgcolor, font)
-    , ticket_label(drawable, TR(trkeys::ticket, lang).to_sv(),
+    , ticket_label(drawable,
+                   TR((flags & TICKET_MANDATORY) ? trkeys::ticket_r : trkeys::ticket, lang),
                    theme.global.fgcolor, theme.global.bgcolor, font)
     , ticket_edit(drawable, copy_paste, nullptr,
                   {[this]{ this->check_confirmation(); }},
                   theme.edit.fgcolor, theme.edit.bgcolor,
                   theme.edit.focus_color, font, -1, 1, 1)
-    , comment_label(drawable, TR(trkeys::comment, lang).to_sv(),
+    , comment_label(drawable,
+                    TR((flags & COMMENT_MANDATORY) ? trkeys::comment_r : trkeys::comment, lang),
                     theme.global.fgcolor, theme.global.bgcolor, font)
     , comment_edit(drawable, copy_paste, nullptr,
                    {[this]{ this->check_confirmation(); }},
                    theme.edit.fgcolor, theme.edit.bgcolor,
                    theme.edit.focus_color, font, -1, 1, 1)
-    , notes(drawable, TR(trkeys::note_required, lang).to_sv(),
+    , notes(drawable, TR(trkeys::note_required, lang),
             theme.global.fgcolor, theme.global.bgcolor, font)
     , confirm(drawable, TR(trkeys::confirm, lang),
               [this]{ return this->check_confirmation(); },
@@ -96,15 +99,6 @@ WidgetForm::WidgetForm(
     if (this->flags & COMMENT_DISPLAY) {
         this->add_widget(this->comment_label);
         this->add_widget(this->comment_edit);
-    }
-    if (this->flags & DURATION_MANDATORY) {
-        this->duration_label.set_text(TR(trkeys::duration_r, lang).to_sv());
-    }
-    if (this->flags & TICKET_MANDATORY) {
-        this->ticket_label.set_text(TR(trkeys::ticket_r, lang).to_sv());
-    }
-    if (this->flags & COMMENT_MANDATORY) {
-        this->comment_label.set_text(TR(trkeys::comment_r, lang).to_sv());
     }
 
     if (this->flags & (COMMENT_MANDATORY | TICKET_MANDATORY | DURATION_MANDATORY)) {
@@ -214,8 +208,9 @@ namespace
 template<class T, class... Ts>
 void WidgetForm::set_warning_buffer(TrKeyFmt<T> k, Ts const&... xs)
 {
-    tr.fmt(this->warning_buffer, sizeof(this->warning_buffer), k, to_ctype(xs)...);
-    this->warning_msg.set_text(this->warning_buffer);
+    auto msg = make_writable_array_view(this->warning_buffer);
+    std::size_t n = tr.fmt(msg.data(), msg.size(), k, to_ctype(xs)...);
+    this->warning_msg.set_text({this->warning_buffer, n});
 }
 
 namespace
@@ -280,7 +275,7 @@ void WidgetForm::check_confirmation()
         // res is duration in minutes.
         if (res <= 0min || res > this->duration_max) {
             if (res <= 0min) {
-                this->duration_edit.set_text("");
+                this->duration_edit.set_text(""_av);
                 this->set_warning_buffer(trkeys::fmt_invalid_format, tr(trkeys::duration));
             }
             else {

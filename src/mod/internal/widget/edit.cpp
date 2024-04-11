@@ -33,7 +33,7 @@
 
 WidgetEdit::WidgetEdit(
     gdi::GraphicApi & drawable, CopyPaste & copy_paste,
-    const char * text, WidgetEventNotifier onsubmit,
+    chars_view text, WidgetEventNotifier onsubmit,
     Color fgcolor, Color bgcolor, Color focus_color,
     Font const & font, std::size_t edit_position, int xtext, int ytext)
 : Widget(drawable, Focusable::Yes)
@@ -47,28 +47,7 @@ WidgetEdit::WidgetEdit(
 , font(&font)
 , copy_paste(copy_paste)
 {
-    if (text) {
-        this->buffer_size = strlen(text);
-        this->num_chars = UTF8Len(byte_ptr_cast(this->label.buffer));
-        this->edit_pos = std::min(this->num_chars, edit_position);
-        this->edit_buffer_pos = UTF8GetPos(byte_ptr_cast(this->label.buffer), this->edit_pos);
-        char c = this->label.buffer[this->edit_buffer_pos];
-        this->label.buffer[this->edit_buffer_pos] = 0;
-        gdi::TextMetrics tm1(*this->font, this->label.buffer);
-        this->w_text = tm1.width;
-        this->cursor_px_pos = this->w_text;
-        this->label.buffer[this->edit_buffer_pos] = c;
-        // TODO: tm.height unused ?
-        gdi::TextMetrics tm2(*this->font, &this->label.buffer[this->edit_buffer_pos]);
-        this->w_text += tm2.width;
-    } else {
-        this->buffer_size = 0;
-        this->num_chars = 0;
-        this->edit_buffer_pos = 0;
-        this->edit_pos = 0;
-        this->cursor_px_pos = 0;
-    }
-
+    this->set_text(text);
     this->pointer_flag = PointerType::Edit;
 }
 
@@ -87,19 +66,19 @@ Dimension WidgetEdit::get_optimal_dim() const
     return dim;
 }
 
-void WidgetEdit::set_text(const char * text/*, int position = 0*/)
+void WidgetEdit::set_text(chars_view text)
 {
     this->label.buffer[0] = 0;
     this->buffer_size = 0;
     this->num_chars = 0;
     this->w_text = 0;
-    if (text && *text) {
-        const size_t n = strlen(text);
+    if (!text.empty()) {
+        const size_t n = text.size();
         const size_t remain_n = WidgetLabel::buffer_size - 1;
 
-        this->buffer_size = ((remain_n >= n) ? n : ::UTF8StringAdjustedNbBytes(::byte_ptr_cast(text), remain_n));
+        this->buffer_size = ((remain_n >= n) ? n : UTF8StringAdjustedNbBytes(text, remain_n));
 
-        memcpy(this->label.buffer, text, this->buffer_size);
+        memcpy(this->label.buffer, text.data(), this->buffer_size);
         this->label.buffer[this->buffer_size] = 0;
         gdi::TextMetrics tm(*this->font, this->label.buffer);
         this->w_text = tm.width;
@@ -110,24 +89,24 @@ void WidgetEdit::set_text(const char * text/*, int position = 0*/)
     this->cursor_px_pos = this->w_text;
 }
 
-void WidgetEdit::insert_text(const char * text/*, int position = 0*/)
+void WidgetEdit::insert_text(chars_view text)
 {
-    if (text && *text) {
-        const size_t n = strlen(text);
+    if (!text.empty()) {
+        const size_t n = text.size();
         const size_t tmp_buffer_size = this->buffer_size;
 
         const size_t remain_n = WidgetLabel::buffer_size - 1 - this->buffer_size;
-        const size_t max_n = ((remain_n >= n) ? n : ::UTF8StringAdjustedNbBytes(::byte_ptr_cast(text), remain_n));
+        const size_t max_n = ((remain_n >= n) ? n : UTF8StringAdjustedNbBytes(text, remain_n));
         const size_t total_n = max_n + this->buffer_size;
 
         if (this->edit_pos == this->buffer_size || total_n == WidgetLabel::buffer_size - 1) {
-            memcpy(this->label.buffer + this->buffer_size, text, max_n);
+            memcpy(this->label.buffer + this->buffer_size, text.data(), max_n);
         }
         else {
             memmove(this->label.buffer + this->edit_buffer_pos + n, this->label.buffer + this->edit_buffer_pos,
                     std::min(WidgetLabel::buffer_size - 1 - (this->edit_buffer_pos + n),
                                 this->buffer_size - this->edit_buffer_pos));
-            memcpy(this->label.buffer + this->edit_buffer_pos, text, max_n);
+            memcpy(this->label.buffer + this->edit_buffer_pos, text.data(), max_n);
         }
         this->buffer_size = total_n;
         this->label.buffer[this->buffer_size] = 0;
@@ -517,7 +496,7 @@ void WidgetEdit::rdp_input_scancode(KbdFlags flags, Scancode scancode, uint32_t 
                 this->copy_paste.copy(this->get_text());
             }
 
-            this->set_text("");
+            this->set_text(""_av);
             this->label.rdp_input_invalidate(this->label.get_rect());
             this->draw_cursor(this->get_cursor_rect());
             break;
@@ -587,13 +566,12 @@ void WidgetEdit::clipboard_insert_utf8(zstring_view text)
                     *p++ = ' ';
                 }
             }
-            *p = '\0';
-            this->insert_text(buf);
+            this->insert_text({buf, p});
             return ;
         }
     }
 
-    this->insert_text(text.c_str());
+    this->insert_text(text);
 }
 
 void WidgetEdit::set_font(Font const & font)

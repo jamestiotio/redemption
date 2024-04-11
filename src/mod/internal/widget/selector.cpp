@@ -32,22 +32,21 @@
 #include <cstring>
 
 
-WidgetSelector::temporary_number_of_page::temporary_number_of_page(const char * s)
+WidgetSelector::temporary_number_of_page::temporary_number_of_page(chars_view s)
+    : len(s.size() + 1)
 {
-    size_t len = std::min(sizeof(this->buffer) - 3, strlen(s));
     this->buffer[0] = '/';
-    memcpy(&this->buffer[1], s, len);
-    this->buffer[len + 1] = '\0';
+    memcpy(this->buffer + 1, s.data(), std::min(s.size(), std::size(buffer) - 1));
 }
 
 WidgetSelector::WidgetSelector(
     gdi::GraphicApi & drawable, CopyPaste & copy_paste,
     WidgetTooltipShower & tooltip_shower,
-    const char * device_name,
+    chars_view device_name,
     int16_t left, int16_t top, uint16_t width, uint16_t height,
     Events events,
-    const char * current_page,
-    const char * number_of_page,
+    chars_view current_page,
+    chars_view number_of_page,
     WidgetButton * extra_button,
     WidgetSelectorParams const & selector_params,
     Font const & font, Theme const & theme, Language lang,
@@ -81,7 +80,7 @@ WidgetSelector::WidgetSelector(
 }
 , column_expansion_buttons{
     WidgetButton{
-        drawable, "", [this]{
+        drawable, ""_av, [this]{
             this->priority_column_index = 0;
             this->rearrange();
             this->rdp_input_invalidate(this->get_rect());
@@ -90,7 +89,7 @@ WidgetSelector::WidgetSelector(
         theme.global.focus_color, 1, font, 6, 2
     },
     WidgetButton{
-        drawable, "", [this]{
+        drawable, ""_av, [this]{
             this->priority_column_index = 1;
             this->rearrange();
             this->rdp_input_invalidate(this->get_rect());
@@ -99,7 +98,7 @@ WidgetSelector::WidgetSelector(
         theme.global.focus_color, 1, font, 6, 2
     },
     WidgetButton{
-        drawable, "", [this]{
+        drawable, ""_av, [this]{
             this->priority_column_index = 2;
             this->rearrange();
             this->rdp_input_invalidate(this->get_rect());
@@ -138,24 +137,24 @@ WidgetSelector::WidgetSelector(
                  theme.selector_selected.fgcolor,
                  font, 2)
 //BEGIN WidgetPager
-, first_page(drawable, "◀◂", events.onfirst_page,
+, first_page(drawable, "◀◂"_av, events.onfirst_page,
              theme.global.fgcolor, theme.global.bgcolor,
              theme.global.focus_color, 2, font, 6, 2, true)
-, prev_page(drawable, "◀", events.onprev_page,
+, prev_page(drawable, "◀"_av, events.onprev_page,
             theme.global.fgcolor, theme.global.bgcolor,
             theme.global.focus_color, 2, font, 6, 2, true)
 , current_page(drawable, copy_paste,
-               current_page ? current_page : "XXXX",
+               !current_page.empty() ? current_page : "XXXX"_av,
                {events.oncurrent_page},
                theme.edit.fgcolor, theme.edit.bgcolor,
                theme.edit.focus_color, font, std::size_t(-1), 1, 1)
 , number_page(drawable,
-              number_of_page ? temporary_number_of_page(number_of_page).buffer : "/XXX",
+              !number_of_page.empty() ? temporary_number_of_page(number_of_page) : "/XXX"_av,
               theme.global.fgcolor, theme.global.bgcolor, font)
-, next_page(drawable, "▶", events.onnext_page,
+, next_page(drawable, "▶"_av, events.onnext_page,
             theme.global.fgcolor, theme.global.bgcolor,
             theme.global.focus_color, 2, font, 6, 2, true)
-, last_page(drawable, "▸▶", events.onlast_page,
+, last_page(drawable, "▸▶"_av, events.onlast_page,
             theme.global.fgcolor, theme.global.bgcolor,
             theme.global.focus_color, 2, font, 6, 2, true)
 //END WidgetPager
@@ -169,7 +168,7 @@ WidgetSelector::WidgetSelector(
           theme.global.fgcolor, theme.global.bgcolor,
           theme.global.focus_color, 2, font, 6, 2)
 // TODO button without notifier
-, target_helpicon(drawable, "?", WidgetEventNotifier(),
+, target_helpicon(drawable, "?"_av, WidgetEventNotifier(),
                   theme.selector_label.fgcolor, theme.selector_label.bgcolor,
                   theme.global.focus_color, 1, font, 3, 0)
 , tr(lang)

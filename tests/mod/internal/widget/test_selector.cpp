@@ -48,7 +48,7 @@ struct TestWidgetSelectorCtx
         WidgetSelectorParams params, bool has_target_helpicon = false)
     : drawable{width, height}
     , selector(
-        drawable, copy_paste, tooltip_shower, "x@127.0.0.1", 0, 0, width, height,
+        drawable, copy_paste, tooltip_shower, "x@127.0.0.1"_av, 0, 0, width, height,
         {
             .onconnect = WidgetEventNotifier(),
             .oncancel = WidgetEventNotifier(),
@@ -60,7 +60,7 @@ struct TestWidgetSelectorCtx
             .onlast_page = WidgetEventNotifier(),
             .onctrl_shift = WidgetEventNotifier(),
         },
-        "1", "1", nullptr, params, global_font_deja_vu_14(), Theme(),
+        "1"_av, "1"_av, nullptr, params, global_font_deja_vu_14(), Theme(),
         Language::en, has_target_helpicon)
     {}
 
@@ -92,9 +92,9 @@ RED_AUTO_TEST_CASE(TraceWidgetSelector)
 {
     WidgetSelectorParams params;
     params.nb_columns = 3;
-    params.label[0] = "Authorization";
-    params.label[1] = "Target";
-    params.label[2] = "Protocol";
+    params.label[0] = "Authorization"_av;
+    params.label[1] = "Target"_av;
+    params.label[2] = "Protocol"_av;
 
     TestWidgetSelectorCtx ctx(800, 600, params);
     auto& selector = ctx.selector;
@@ -122,9 +122,9 @@ RED_AUTO_TEST_CASE(TraceWidgetSelectorResize)
     params.weight[0] = 33;
     params.weight[1] = 34;
     params.weight[2] = 33;
-    params.label[0] = "Authorization";
-    params.label[1] = "Target";
-    params.label[2] = "Protocol";
+    params.label[0] = "Authorization"_av;
+    params.label[1] = "Target"_av;
+    params.label[2] = "Protocol"_av;
 
     TestWidgetSelectorCtx ctx(640, 480, params);
     auto& selector = ctx.selector;
@@ -152,9 +152,9 @@ RED_AUTO_TEST_CASE(TraceWidgetSelector2)
     params.weight[0] = 33;
     params.weight[1] = 34;
     params.weight[2] = 33;
-    params.label[0] = "Authorization";
-    params.label[1] = "Target";
-    params.label[2] = "Protocol";
+    params.label[0] = "Authorization"_av;
+    params.label[1] = "Target"_av;
+    params.label[2] = "Protocol"_av;
 
     TestWidgetSelectorCtx ctx(800, 600, params);
 
@@ -170,9 +170,9 @@ RED_AUTO_TEST_CASE(TraceWidgetSelectorClip)
     params.weight[0] = 33;
     params.weight[1] = 34;
     params.weight[2] = 33;
-    params.label[0] = "Authorization";
-    params.label[1] = "Target";
-    params.label[2] = "Protocol";
+    params.label[0] = "Authorization"_av;
+    params.label[1] = "Target"_av;
+    params.label[2] = "Protocol"_av;
 
     TestWidgetSelectorCtx ctx(800, 600, params);
 
@@ -194,9 +194,9 @@ RED_AUTO_TEST_CASE(TraceWidgetSelectorClip2)
     params.weight[0] = 33;
     params.weight[1] = 34;
     params.weight[2] = 33;
-    params.label[0] = "Authorization";
-    params.label[1] = "Target";
-    params.label[2] = "Protocol";
+    params.label[0] = "Authorization"_av;
+    params.label[1] = "Target"_av;
+    params.label[2] = "Protocol"_av;
 
     TestWidgetSelectorCtx ctx(800, 600, params);
 
@@ -218,9 +218,9 @@ RED_AUTO_TEST_CASE(TraceWidgetSelectorEventSelect)
     params.weight[0] = 33;
     params.weight[1] = 34;
     params.weight[2] = 33;
-    params.label[0] = "Authorization";
-    params.label[1] = "Target";
-    params.label[2] = "Protocol";
+    params.label[0] = "Authorization"_av;
+    params.label[1] = "Target"_av;
+    params.label[2] = "Protocol"_av;
 
     TestWidgetSelectorCtx ctx(800, 600, params);
     auto& selector = ctx.selector;
@@ -273,9 +273,9 @@ RED_AUTO_TEST_CASE(TraceWidgetSelectorFilter)
     params.weight[0] = 33;
     params.weight[1] = 34;
     params.weight[2] = 33;
-    params.label[0] = "Authorization";
-    params.label[1] = "Target";
-    params.label[2] = "Protocol";
+    params.label[0] = "Authorization"_av;
+    params.label[1] = "Target"_av;
+    params.label[2] = "Protocol"_av;
 
     TestWidgetSelectorCtx ctx(800, 600, params);
     auto& selector = ctx.selector;
@@ -373,9 +373,9 @@ RED_AUTO_TEST_CASE(TraceWidgetSelectorTargetHelpIcon)
     params.weight[0] = 33;
     params.weight[1] = 34;
     params.weight[2] = 33;
-    params.label[0] = "Authorization";
-    params.label[1] = "Target";
-    params.label[2] = "Protocol";
+    params.label[0] = "Authorization"_av;
+    params.label[1] = "Target"_av;
+    params.label[2] = "Protocol"_av;
 
     TestWidgetSelectorCtx ctx(800, 600, params, true);
 

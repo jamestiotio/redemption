@@ -31,28 +31,28 @@ WidgetWabClose::WidgetWabClose(
     gdi::GraphicApi & drawable,
     int16_t left, int16_t top, int16_t width, int16_t height,
     Events events, std::string diagnostic_text,
-    const char * username, const char * target,
+    chars_view username, chars_view target,
     bool showtimer, Font const & font, Theme const & theme,
     Language lang, bool back_to_selector)
 : WidgetComposite(drawable, Focusable::Yes)
 , oncancel(events.oncancel)
-, connection_closed_label(drawable, TR(trkeys::connection_closed, lang).to_sv(),
+, connection_closed_label(drawable, TR(trkeys::connection_closed, lang),
                           theme.global.fgcolor, theme.global.bgcolor, font)
 , separator(drawable, theme.global.separator_color)
-, username_label(drawable, TR(trkeys::wab_close_username, lang).c_str(),
+, username_label(drawable, TR(trkeys::wab_close_username, lang),
                  theme.global.fgcolor, theme.global.bgcolor, font)
 , username_value(drawable, username,
                  theme.global.fgcolor, theme.global.bgcolor, font)
-, target_label(drawable, TR(trkeys::wab_close_target, lang).c_str(),
+, target_label(drawable, TR(trkeys::wab_close_target, lang),
                theme.global.fgcolor, theme.global.bgcolor, font)
 , target_value(drawable, target,
                theme.global.fgcolor, theme.global.bgcolor, font)
-, diagnostic_label(drawable, TR(trkeys::wab_close_diagnostic, lang).c_str(),
+, diagnostic_label(drawable, TR(trkeys::wab_close_diagnostic, lang),
                    theme.global.fgcolor, theme.global.bgcolor, font)
 , diagnostic_value(drawable, theme.global.fgcolor, theme.global.bgcolor, font)
-, timeleft_label(drawable, TR(trkeys::wab_close_timeleft, lang).c_str(),
+, timeleft_label(drawable, TR(trkeys::wab_close_timeleft, lang),
                 theme.global.fgcolor, theme.global.bgcolor, font)
-, timeleft_value(drawable, nullptr,
+, timeleft_value(drawable, ""_av,
                  theme.global.fgcolor, theme.global.bgcolor, font)
 , cancel(drawable, TR(trkeys::close, lang),
          events.oncancel,
@@ -81,7 +81,7 @@ WidgetWabClose::WidgetWabClose(
     this->add_widget(this->connection_closed_label);
     this->add_widget(this->separator);
 
-    if (username && *username) {
+    if (!username.empty()) {
         this->add_widget(this->username_label);
         this->add_widget(this->username_value);
         this->add_widget(this->target_label);
@@ -315,7 +315,7 @@ std::chrono::seconds WidgetWabClose::refresh_timeleft(std::chrono::seconds remai
         Rect old = this->timeleft_value.get_rect();
         this->timeleft_value.set_text(nullptr);
         this->rdp_input_invalidate(old);
-        this->timeleft_value.set_text(buff);
+        this->timeleft_value.set_text({buff, strlen(buff)});
 
         Dimension dim = this->timeleft_value.get_optimal_dim();
         this->timeleft_value.set_wh(dim);

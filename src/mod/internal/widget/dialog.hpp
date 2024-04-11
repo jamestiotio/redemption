@@ -52,8 +52,8 @@ public:
 
     WidgetDialogBase(
         gdi::GraphicApi & drawable, Rect widget_rect, Events events,
-        const char* caption, const char * text, WidgetButton * extra_button,
-        Theme const & theme, Font const & font, const char * ok_text,
+        chars_view caption, chars_view text, WidgetButton * extra_button,
+        Theme const & theme, Font const & font, chars_view ok_text,
         std::unique_ptr<WidgetButton> cancel,
         std::unique_ptr<WidgetEdit> challenge,
         WidgetLink* link);
@@ -99,9 +99,9 @@ public:
 
     WidgetDialog(
         gdi::GraphicApi& drawable, Rect widget_rect, Events events,
-        const char* caption, const char* text,
+        chars_view caption, chars_view text,
         Theme const& theme, Font const& font,
-        const char* ok_text, const char* cancel_text);
+        chars_view ok_text, chars_view cancel_text);
 };
 
 
@@ -114,9 +114,9 @@ public:
 
     WidgetDialogWithChallenge(
         gdi::GraphicApi & drawable, Rect widget_rect, Events events,
-        const char* caption, const char * text,
+        chars_view caption, chars_view text,
         WidgetButton * extra_button,
-        const char * ok_text,
+        chars_view ok_text,
         Font const & font, Theme const & theme, CopyPaste & copy_paste,
         ChallengeOpt challenge);
 };
@@ -129,12 +129,11 @@ public:
 
     WidgetDialogWithCopyableLink(
         gdi::GraphicApi & drawable, Rect widget_rect, Events events,
-        const char* caption, const char * text,
-        const char * link_value, const char * link_label,
-        const char * ok_text,
+        chars_view caption, chars_view text,
+        chars_view link_value, chars_view link_label,
+        chars_view ok_text,
         Font const & font, Theme const & theme, CopyPaste & copy_paste);
 
 private:
-    std::string link_value;
     CopyPaste & copy_paste;
 };

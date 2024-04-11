@@ -38,11 +38,6 @@ public:
                 Color fgcolor, Color bgcolor, Font const & font,
                 int xtext = 0, int ytext = 0); /*NOLINT*/
 
-    WidgetLabel(gdi::GraphicApi & drawable, char const* text,
-                Color fgcolor, Color bgcolor, Font const & font,
-                int xtext = 0, int ytext = 0); /*NOLINT*/
-
-    void set_text(char const* text);
     void set_text(chars_view text);
 
     [[nodiscard]] const char * get_text() const;

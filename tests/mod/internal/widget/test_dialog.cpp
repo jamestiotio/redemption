@@ -49,8 +49,8 @@ struct TestWidgetDialogCtx
 
     TestWidgetDialogCtx(
         uint16_t w, uint16_t h,
-        const char* caption, const char * text,
-        char const* logo_path = nullptr)
+        chars_view caption, chars_view text,
+        chars_view logo_path = nullptr)
     : TestWidgetDialogCtx(
         w, h, w, h, caption, text, logo_path)
     {}
@@ -58,8 +58,8 @@ struct TestWidgetDialogCtx
     TestWidgetDialogCtx(
         uint16_t w, uint16_t h,
         uint16_t dialogW, uint16_t dialogH,
-        const char* caption, const char * text,
-        char const* logo_path = nullptr)
+        chars_view caption, chars_view text,
+        chars_view logo_path = nullptr)
     : drawable{w, h}
     , flat_dialog(
         drawable, {0, 0, dialogW, dialogH},
@@ -69,12 +69,12 @@ struct TestWidgetDialogCtx
             Theme colors;
             colors.global.bgcolor = DARK_BLUE_BIS;
             colors.global.fgcolor = WHITE;
-            if (logo_path) {
+            if (!logo_path.empty()) {
                 colors.global.enable_theme = true;
-                colors.global.logo_path = logo_path;
+                colors.global.logo_path = logo_path.as<std::string_view>();
             }
             return colors;
-        }(), global_font_deja_vu_14(), "Ok", "Cancel")
+        }(), global_font_deja_vu_14(), "Ok"_av, "Cancel"_av)
     {
         flat_dialog.init_focus();
     }
@@ -90,22 +90,22 @@ struct TestWidgetDialogWithChallengeCtx
 
     TestWidgetDialogWithChallengeCtx(
         uint16_t w, uint16_t h,
-        const char* caption, const char * text,
+        chars_view caption, chars_view text,
         WidgetDialogWithChallenge::ChallengeOpt challenge,
-        char const* logo_path = nullptr)
+        chars_view logo_path = nullptr)
     : drawable{w, h}
     , flat_dialog(
         drawable, {0, 0, w, h},
         {onsubmit, oncancel, WidgetEventNotifier()},
-        caption, text, /*extra_button=*/nullptr, "Ok",
+        caption, text, /*extra_button=*/nullptr, "Ok"_av,
         global_font_deja_vu_14(),
         [logo_path]{
             Theme colors;
             colors.global.bgcolor = DARK_BLUE_BIS;
             colors.global.fgcolor = WHITE;
-            if (logo_path) {
+            if (!logo_path.empty()) {
                 colors.global.enable_theme = true;
-                colors.global.logo_path = logo_path;
+                colors.global.logo_path = logo_path.as<std::string_view>();
             }
             return colors;
         }(), copy_paste, challenge)
@@ -122,11 +122,11 @@ struct TestWidgetDialogWithCopyableLinkCtx
     NotifyTrace oncancel;
     WidgetDialogWithCopyableLink flat_dialog;
 
-    TestWidgetDialogWithCopyableLinkCtx(uint16_t w, uint16_t h, const char* caption, const char * text)
+    TestWidgetDialogWithCopyableLinkCtx(uint16_t w, uint16_t h, chars_view caption, chars_view text)
     : drawable{w, h}
     , flat_dialog(
         drawable, {0, 0, w, h}, {onsubmit, oncancel},
-        caption, text, "value", "name", "Ok", global_font_deja_vu_14(),
+        caption, text, "value"_av, "name"_av, "Ok"_av, global_font_deja_vu_14(),
         []{
             Theme colors;
             colors.global.bgcolor = DARK_BLUE_BIS;
@@ -147,12 +147,12 @@ struct TestWidgetDialogWithCopyableLinkCtx
 
 RED_AUTO_TEST_CASE(TraceWidgetDialog)
 {
-    TestWidgetDialogCtx ctx(800, 600, "test1",
+    TestWidgetDialogCtx ctx(800, 600, "test1"_av,
         "line 1\n"
         "line 2\n"
         "\n"
         "line 3, blah blah\n"
-        "line 4");
+        "line 4"_av);
 
     // ask to widget to redraw at it's current position
     ctx.flat_dialog.rdp_input_invalidate(ctx.flat_dialog.get_rect());
@@ -162,12 +162,12 @@ RED_AUTO_TEST_CASE(TraceWidgetDialog)
 
 RED_AUTO_TEST_CASE(TraceWidgetDialog2)
 {
-    TestWidgetDialogCtx ctx(800, 600, 640, 480, "test2",
+    TestWidgetDialogCtx ctx(800, 600, 640, 480, "test2"_av,
         "line 1\n"
         "line 2\n"
         "\n"
         "line 3, blah blah\n"
-        "line 4");
+        "line 4"_av);
 
     // ask to widget to redraw at it's current position
     ctx.flat_dialog.rdp_input_invalidate(ctx.flat_dialog.get_rect());
@@ -177,12 +177,12 @@ RED_AUTO_TEST_CASE(TraceWidgetDialog2)
 
 RED_AUTO_TEST_CASE(TraceWidgetDialog3)
 {
-    TestWidgetDialogCtx ctx(800, 600, 1280, 1024, "test3",
+    TestWidgetDialogCtx ctx(800, 600, 1280, 1024, "test3"_av,
         "line 1\n"
         "line 2\n"
         "\n"
         "line 3, blah blah\n"
-        "line 4");
+        "line 4"_av);
 
     // ask to widget to redraw at it's current position
     ctx.flat_dialog.rdp_input_invalidate(ctx.flat_dialog.get_rect());
@@ -192,12 +192,12 @@ RED_AUTO_TEST_CASE(TraceWidgetDialog3)
 
 RED_AUTO_TEST_CASE(TraceWidgetDialog4)
 {
-    TestWidgetDialogCtx ctx(1280, 1024, "test4",
+    TestWidgetDialogCtx ctx(1280, 1024, "test4"_av,
         "line 1\n"
         "line 2\n"
         "\n"
         "line 3, blah blah\n"
-        "line 4");
+        "line 4"_av);
 
     // ask to widget to redraw at it's current position
     ctx.flat_dialog.rdp_input_invalidate(ctx.flat_dialog.get_rect());
@@ -207,12 +207,12 @@ RED_AUTO_TEST_CASE(TraceWidgetDialog4)
 
 RED_AUTO_TEST_CASE(TraceWidgetDialog5)
 {
-    TestWidgetDialogCtx ctx(640, 480, "test5",
+    TestWidgetDialogCtx ctx(640, 480, "test5"_av,
         "line 1\n"
         "line 2\n"
         "\n"
         "line 3, blah blah\n"
-        "line 4");
+        "line 4"_av);
 
     // ask to widget to redraw at it's current position
     ctx.flat_dialog.rdp_input_invalidate(ctx.flat_dialog.get_rect());
@@ -222,12 +222,12 @@ RED_AUTO_TEST_CASE(TraceWidgetDialog5)
 
 RED_AUTO_TEST_CASE(TraceWidgetDialog6)
 {
-    TestWidgetDialogCtx ctx(352, 500, 350, 500, "test6",
+    TestWidgetDialogCtx ctx(352, 500, 350, 500, "test6"_av,
         "line 1\n"
         "line 2\n"
         "\n"
         "line 3, blah blah\n"
-        "line 4");
+        "line 4"_av);
 
     // ask to widget to redraw at it's current position
     ctx.flat_dialog.rdp_input_invalidate(ctx.flat_dialog.get_rect());
@@ -237,12 +237,12 @@ RED_AUTO_TEST_CASE(TraceWidgetDialog6)
 
 RED_AUTO_TEST_CASE(TraceWidgetDialogClip)
 {
-    TestWidgetDialogCtx ctx(800, 600, 300, 600, "test6",
+    TestWidgetDialogCtx ctx(800, 600, 300, 600, "test6"_av,
         "line 1\n"
         "line 2\n"
         "\n"
         "line 3, blah blah\n"
-        "line 4");
+        "line 4"_av);
 
     // ask to widget to redraw at position 780,-7 and of size 120x20. After clip the size is of 20x13
     ctx.flat_dialog.rdp_input_invalidate(Rect(
@@ -257,12 +257,12 @@ RED_AUTO_TEST_CASE(TraceWidgetDialogClip)
 
 RED_AUTO_TEST_CASE(TraceWidgetDialogClip2)
 {
-    TestWidgetDialogCtx ctx(800, 600, "test6",
+    TestWidgetDialogCtx ctx(800, 600, "test6"_av,
         "line 1\n"
         "line 2\n"
         "\n"
         "line 3, blah blah\n"
-        "line 4");
+        "line 4"_av);
 
     // ask to widget to redraw at position 30,12 and of size 30x10.
     ctx.flat_dialog.rdp_input_invalidate(Rect(
@@ -277,12 +277,12 @@ RED_AUTO_TEST_CASE(TraceWidgetDialogClip2)
 
 RED_AUTO_TEST_CASE(EventWidgetOkCancel)
 {
-    TestWidgetDialogCtx ctx(800, 600, "test6",
+    TestWidgetDialogCtx ctx(800, 600, "test6"_av,
         "line 1\n"
         "line 2\n"
         "\n"
         "line 3, blah blah\n"
-        "line 4");
+        "line 4"_av);
 
     ctx.flat_dialog.rdp_input_invalidate(ctx.flat_dialog.get_rect());
 
@@ -324,13 +324,13 @@ RED_AUTO_TEST_CASE(EventWidgetOkCancel)
 
 RED_AUTO_TEST_CASE(TraceWidgetDialog_transparent_png_with_theme_color)
 {
-    TestWidgetDialogCtx ctx(800, 600, "test1",
+    TestWidgetDialogCtx ctx(800, 600, "test1"_av,
         "line 1\n"
         "line 2\n"
         "\n"
         "line 3, blah blah\n"
-        "line 4",
-        FIXTURES_PATH "/wablogoblue-transparent.png");
+        "line 4"_av,
+        FIXTURES_PATH "/wablogoblue-transparent.png"_av);
 
     ctx.flat_dialog.rdp_input_invalidate(ctx.flat_dialog.get_rect());
 
@@ -343,7 +343,7 @@ RED_AUTO_TEST_CASE(TraceWidgetDialog_transparent_png_with_theme_color)
 
 RED_AUTO_TEST_CASE(EventWidgetChallenge)
 {
-    TestWidgetDialogWithChallengeCtx ctx(800, 600, "test6",
+    TestWidgetDialogWithChallengeCtx ctx(800, 600, "test6"_av,
         "Lorem ipsum dolor sit amet, consectetur\n"
         "adipiscing elit. Nam purus lacus, luctus sit\n"
         "amet suscipit vel, posuere quis turpis. Sed\n"
@@ -357,10 +357,10 @@ RED_AUTO_TEST_CASE(EventWidgetChallenge)
         "porttitor tortor, sit amet tincidunt odio\n"
         "erat ut ligula. Fusce sit amet mauris neque.\n"
         "Sed orci augue, luctus in ornare sed,\n"
-        "adipiscing et arcu.",
+        "adipiscing et arcu."_av,
         WidgetDialogWithChallenge::ChallengeOpt::Echo);
 
-    ctx.flat_dialog.challenge->set_text("challenge_test");
+    ctx.flat_dialog.challenge->set_text("challenge_test"_av);
 
     RED_CHECK(ctx.onsubmit.get_and_reset() == 0);
     RED_CHECK(ctx.oncancel.get_and_reset() == 0);
@@ -381,12 +381,12 @@ RED_AUTO_TEST_CASE(EventWidgetChallenge)
 
 RED_AUTO_TEST_CASE(TraceWidgetDialogWithCopyableLink)
 {
-    TestWidgetDialogWithCopyableLinkCtx ctx(800, 600, "test1",
+    TestWidgetDialogWithCopyableLinkCtx ctx(800, 600, "test1"_av,
         "line 1\n"
         "line 2\n"
         "\n"
         "line 3, blah blah\n"
-        "line 4");
+        "line 4"_av);
 
     // ask to widget to redraw at it's current position
     ctx.flat_dialog.rdp_input_invalidate(ctx.flat_dialog.get_rect());
@@ -396,12 +396,12 @@ RED_AUTO_TEST_CASE(TraceWidgetDialogWithCopyableLink)
 
 RED_AUTO_TEST_CASE(EventWidgetDialogWithCopyableLinkOkLink)
 {
-    TestWidgetDialogWithCopyableLinkCtx ctx(800, 600, "test1",
+    TestWidgetDialogWithCopyableLinkCtx ctx(800, 600, "test1"_av,
         "line 1\n"
         "line 2\n"
         "\n"
         "line 3, blah blah\n"
-        "line 4");
+        "line 4"_av);
 
     ctx.flat_dialog.rdp_input_invalidate(ctx.flat_dialog.get_rect());
 

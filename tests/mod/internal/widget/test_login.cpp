@@ -34,7 +34,7 @@
 
 #define IMG_TEST_PATH FIXTURES_PATH "/img_ref/mod/internal/widget/login/"
 
-constexpr const char * LOGON_MESSAGE = "Warning! Unauthorized access to this system is forbidden and will be prosecuted by law.";
+constexpr auto LOGON_MESSAGE = "Warning! Unauthorized access to this system is forbidden and will be prosecuted by law."_av;
 
 struct TestWidgetLoginCtx
 {
@@ -46,18 +46,18 @@ struct TestWidgetLoginCtx
     WidgetLogin flat_login;
 
     TestWidgetLoginCtx(
-        const char * caption,
-        const char * login,
-        const char * password,
-        const char * target,
-        const char * login_message = LOGON_MESSAGE,
+        chars_view caption,
+        chars_view login,
+        chars_view password,
+        chars_view target,
+        chars_view login_message = LOGON_MESSAGE,
         Theme theme = Theme(),
         bool enable_target_field = false)
     : flat_login(
         drawable, copy_paste, parent, 0, 0, parent.cx(), parent.cy(),
         {onsubmit, oncancel, WidgetEventNotifier()},
         caption, login, password, target,
-        "Login", "Password", "Target", "",
+        "Login"_av, "Password"_av, "Target"_av, ""_av,
         login_message, nullptr, enable_target_field, global_font_deja_vu_14(),
         Translator{Language::en}, theme)
     {}
@@ -65,7 +65,7 @@ struct TestWidgetLoginCtx
 
 RED_AUTO_TEST_CASE(TraceWidgetLogin)
 {
-    TestWidgetLoginCtx ctx("test1", "rec", "rec", "");
+    TestWidgetLoginCtx ctx("test1"_av, "rec"_av, "rec"_av, ""_av);
 
     ctx.flat_login.rdp_input_invalidate(ctx.flat_login.get_rect());
 
@@ -74,7 +74,7 @@ RED_AUTO_TEST_CASE(TraceWidgetLogin)
 
 RED_AUTO_TEST_CASE(TraceWidgetLogin2)
 {
-    TestWidgetLoginCtx ctx("test2", nullptr, nullptr, nullptr);
+    TestWidgetLoginCtx ctx("test2"_av, nullptr, nullptr, nullptr);
 
     ctx.flat_login.rdp_input_invalidate(ctx.flat_login.get_rect());
 
@@ -83,7 +83,7 @@ RED_AUTO_TEST_CASE(TraceWidgetLogin2)
 
 RED_AUTO_TEST_CASE(TraceWidgetLogin3)
 {
-    TestWidgetLoginCtx ctx("test3", nullptr, nullptr, nullptr, LOGON_MESSAGE);
+    TestWidgetLoginCtx ctx("test3"_av, nullptr, nullptr, nullptr, LOGON_MESSAGE);
 
     ctx.flat_login.set_widget_focus(ctx.flat_login.password_edit, Widget::focus_reason_tabkey);
 
@@ -109,7 +109,7 @@ RED_AUTO_TEST_CASE(TraceWidgetLogin3)
 
 RED_AUTO_TEST_CASE(TraceWidgetLoginHelp)
 {
-    TestWidgetLoginCtx ctx("test4", nullptr, nullptr, nullptr);
+    TestWidgetLoginCtx ctx("test4"_av, nullptr, nullptr, nullptr);
 
     ctx.flat_login.rdp_input_invalidate(ctx.flat_login.get_rect());
 
@@ -125,7 +125,7 @@ RED_AUTO_TEST_CASE(TraceWidgetLoginHelp)
 
 RED_AUTO_TEST_CASE(TraceWidgetLoginClip)
 {
-    TestWidgetLoginCtx ctx("test6", nullptr, nullptr, nullptr);
+    TestWidgetLoginCtx ctx("test6"_av, nullptr, nullptr, nullptr);
 
     ctx.flat_login.rdp_input_invalidate(Rect(
         20 + ctx.flat_login.x(),
@@ -139,7 +139,7 @@ RED_AUTO_TEST_CASE(TraceWidgetLoginClip)
 
 RED_AUTO_TEST_CASE(TraceWidgetLoginClip2)
 {
-    TestWidgetLoginCtx ctx("test6", nullptr, nullptr, nullptr);
+    TestWidgetLoginCtx ctx("test6"_av, nullptr, nullptr, nullptr);
 
     ctx.flat_login.rdp_input_invalidate(Rect(
         20 + ctx.flat_login.x(),
@@ -154,10 +154,10 @@ RED_AUTO_TEST_CASE(TraceWidgetLoginClip2)
 RED_AUTO_TEST_CASE(TraceWidgetLogin4)
 {
     TestWidgetLoginCtx ctx(
-        "test1",
-        "rec", "rec", "rec",
+        "test1"_av,
+        "rec"_av, "rec"_av, "rec"_av,
         "WARNING: Unauthorized access to this system is forbidden and will be prosecuted by law.\n\n"
-        "By accessing this system, you agree that your actions may be monitored if unauthorized usage is suspected.");
+        "By accessing this system, you agree that your actions may be monitored if unauthorized usage is suspected."_av);
 
     ctx.flat_login.rdp_input_invalidate(ctx.flat_login.get_rect());
 
@@ -170,7 +170,7 @@ RED_AUTO_TEST_CASE(TraceWidgetLogin_transparent_png_with_theme_color)
     colors.global.enable_theme = true;
     colors.global.logo_path = FIXTURES_PATH"/wablogoblue-transparent.png";
 
-    TestWidgetLoginCtx ctx("test1", "rec", "rec", "rec", LOGON_MESSAGE, colors);
+    TestWidgetLoginCtx ctx("test1"_av, "rec"_av, "rec"_av, "rec"_av, LOGON_MESSAGE, colors);
 
     ctx.flat_login.rdp_input_invalidate(ctx.flat_login.get_rect());
 
@@ -183,7 +183,7 @@ RED_AUTO_TEST_CASE(TraceWidgetLogin_target_field)
     colors.global.enable_theme = true;
     colors.global.logo_path = FIXTURES_PATH"/wablogoblue-transparent.png";
 
-    TestWidgetLoginCtx ctx("test1", "rec", "rec", "", LOGON_MESSAGE, colors, true);
+    TestWidgetLoginCtx ctx("test1"_av, "rec"_av, "rec"_av, ""_av, LOGON_MESSAGE, colors, true);
 
     ctx.flat_login.rdp_input_invalidate(ctx.flat_login.get_rect());
 

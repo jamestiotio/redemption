@@ -38,7 +38,7 @@ struct TestWidgetGroupBoxCtx
     TestWidgetGroupBoxCtx(const char * text)
     : wgroupbox(drawable, text,
                 /*fg_color=*/RED, /*bg_color=*/YELLOW, global_font_deja_vu_14())
-    , wbutton(drawable, "Button 1", WidgetEventNotifier(),
+    , wbutton(drawable, "Button 1"_av, WidgetEventNotifier(),
               /*fg_color=*/RED, /*bg_color=*/YELLOW, /*focuscolor*/LIGHT_YELLOW, 2,
               global_font_deja_vu_14(), 4, 1)
     {

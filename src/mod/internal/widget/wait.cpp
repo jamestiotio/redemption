@@ -57,7 +57,7 @@ WidgetWait::WidgetWait(
     , extra_button(extra_button)
     , hasform(showform)
     , hide_back_to_selector(flags & HIDE_BACK_TO_SELECTOR)
-    , message_dialog(text.as<std::string>())
+    , message_dialog(av_auto_cast{text})
 {
     this->set_bg_color(theme.global.bgcolor);
     this->groupbox.add_widget(this->dialog);

@@ -41,9 +41,9 @@ struct TestWidgetInteractivePasswordCtx
 
     TestWidgetInteractivePasswordCtx(
         bool ask_device, bool ask_login, bool ask_password,
-        const char * caption,
-        const char * text_device,
-        const char * device_str)
+        chars_view caption,
+        chars_view text_device,
+        chars_view device_str)
     : interactive(
         drawable, copy_paste, 0, 0, 800, 600,
         {WidgetEventNotifier(), WidgetEventNotifier(), WidgetEventNotifier()},
@@ -54,7 +54,7 @@ struct TestWidgetInteractivePasswordCtx
             return colors;
         }(),
         caption, text_device, device_str,
-        "Login", "user1", "Password",
+        "Login"_av, "user1"_av, "Password"_av,
         global_font_deja_vu_14(), nullptr)
     {
         interactive.rdp_input_invalidate(interactive.get_rect());
@@ -65,36 +65,36 @@ RED_AUTO_TEST_CASE(TraceWidgetInteractivePassword)
 {
     {
         TestWidgetInteractivePasswordCtx ctx(
-            true, true, true, "Target Infos",
-            "Host", "in 192.168.16.0/24 subnet");
+            true, true, true, "Target Infos"_av,
+            "Host"_av, "in 192.168.16.0/24 subnet"_av);
 
         RED_CHECK_IMG(ctx.drawable, IMG_TEST_PATH "interactive_target_1.png");
     }
     {
         TestWidgetInteractivePasswordCtx ctx(
-            true, false, false, "Target Infos",
-            "Host", "in 192.168.16.0/24 subnet");
+            true, false, false, "Target Infos"_av,
+            "Host"_av, "in 192.168.16.0/24 subnet"_av);
 
         RED_CHECK_IMG(ctx.drawable, IMG_TEST_PATH "interactive_target_2.png");
     }
     {
         TestWidgetInteractivePasswordCtx ctx(
-            false, false, true, "Target Infos",
-            "Host", "machinetruc");
+            false, false, true, "Target Infos"_av,
+            "Host"_av, "machinetruc"_av);
 
         RED_CHECK_IMG(ctx.drawable, IMG_TEST_PATH "interactive_target_3.png");
     }
     {
         TestWidgetInteractivePasswordCtx ctx(
-            false, true, true, "Target Infos",
-            "Host", "machinetruc");
+            false, true, true, "Target Infos"_av,
+            "Host"_av, "machinetruc"_av);
 
         RED_CHECK_IMG(ctx.drawable, IMG_TEST_PATH "interactive_target_4.png");
     }
     {
         TestWidgetInteractivePasswordCtx ctx(
-            true, false, true, "Target Infos",
-            "Host", "in 192.168.16.0/24 subnet");
+            true, false, true, "Target Infos"_av,
+            "Host"_av, "in 192.168.16.0/24 subnet"_av);
 
         RED_CHECK_IMG(ctx.drawable, IMG_TEST_PATH "interactive_target_5.png");
     }

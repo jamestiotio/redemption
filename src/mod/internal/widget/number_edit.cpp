@@ -24,7 +24,7 @@
 
 WidgetNumberEdit::WidgetNumberEdit(
     gdi::GraphicApi & drawable, CopyPaste & copy_paste,
-    const char* text, WidgetEventNotifier onsubmit,
+    chars_view text, WidgetEventNotifier onsubmit,
     Color fgcolor, Color bgcolor, Color focus_color,
     Font const & font, size_t edit_position,
     int xtext, int ytext)
@@ -32,15 +32,15 @@ WidgetNumberEdit::WidgetNumberEdit(
              fgcolor, bgcolor, focus_color, font, edit_position, xtext, ytext)
 {}
 
-void WidgetNumberEdit::set_text(const char * text)
+void WidgetNumberEdit::set_text(chars_view text)
 {
     this->WidgetEdit::set_text(text);
 }
 
-void WidgetNumberEdit::insert_text(const char* text)
+void WidgetNumberEdit::insert_text(chars_view text)
 {
-    for (const char * s = text; *s; ++s) {
-        if (*s < '0' || '9' < *s) {
+    for (char c : text) {
+        if (c < '0' || '9' < c) {
             return ;
         }
     }

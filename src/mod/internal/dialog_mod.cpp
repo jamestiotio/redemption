@@ -42,14 +42,14 @@ DialogMod::DialogMod(
     DialogModVariables vars,
     gdi::GraphicApi & drawable,
     uint16_t width, uint16_t height,
-    Rect const widget_rect, const char * caption, const char * message,
-    const char * cancel_text, ClientExecute & rail_client_execute,
+    Rect const widget_rect, chars_view caption, chars_view message,
+    chars_view cancel_text, ClientExecute & rail_client_execute,
     Font const& font, Theme const& theme
 )
     : RailInternalModBase(drawable, width, height, rail_client_execute, font, theme, nullptr)
     , dialog_widget(
         drawable, widget_rect,
-        cancel_text
+        !cancel_text.empty()
             ? WidgetDialog::Events{
                 .onsubmit = [this]{
                     this->vars.set_acl<cfg::context::accept_message>(true);
@@ -83,7 +83,7 @@ DialogWithChallengeMod::DialogWithChallengeMod(
     DialogWithChallengeModVariables vars,
     gdi::GraphicApi & drawable,
     FrontAPI & front, uint16_t width, uint16_t height,
-    Rect const widget_rect, const char * caption, const char * message,
+    Rect const widget_rect, chars_view caption, chars_view message,
     ClientExecute & rail_client_execute,
     Font const& font, Theme const& theme, CopyPaste& copy_paste,
     ChallengeOpt challenge
@@ -119,8 +119,8 @@ WidgetDialogWithCopyableLinkMod::WidgetDialogWithCopyableLinkMod(
     WidgetDialogWithCopyableLinkModVariables vars,
     gdi::GraphicApi & drawable,
     uint16_t width, uint16_t height,
-    Rect const widget_rect, const char * caption, const char * message,
-    const char * link_value, const char * link_label,
+    Rect const widget_rect, chars_view caption, chars_view message,
+    chars_view link_value, chars_view link_label,
     ClientExecute & rail_client_execute,
     Font const& font, Theme const& theme, CopyPaste& copy_paste
 )

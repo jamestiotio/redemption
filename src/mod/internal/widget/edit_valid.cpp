@@ -29,20 +29,20 @@
 
 namespace
 {
-    constexpr char const* button_toggle_visibility_hidden = "◉";
-    constexpr char const* button_toggle_visibility_visible = "◎";
+    constexpr auto button_toggle_visibility_hidden = "◉"_av;
+    constexpr auto button_toggle_visibility_visible = "◎"_av;
 }
 
 WidgetEditValid::WidgetEditValid(
     gdi::GraphicApi & drawable, CopyPaste & copy_paste,
-    const char * text, WidgetEventNotifier onsubmit,
+    chars_view text, WidgetEventNotifier onsubmit,
     Color fgcolor, Color bgcolor, Color focus_color, Color border_none_color,
-    Font const & font, const char * title, bool use_title, std::size_t edit_position,
+    Font const & font, chars_view title, bool use_title, std::size_t edit_position,
     // TODO re-enable
     int /*xtext*/, int /*ytext*/, bool pass
 )
     : Widget(drawable, Focusable::Yes)
-    , button_next(drawable, "➜", onsubmit,
+    , button_next(drawable, "➜"_av, onsubmit,
                   bgcolor, focus_color, focus_color, 1, font, 6, 2)
     , widget_password(pass
         ? new WidgetPassword(drawable, copy_paste, text, onsubmit, fgcolor, bgcolor,
@@ -52,7 +52,7 @@ WidgetEditValid::WidgetEditValid(
         ? widget_password
         : new WidgetEdit(drawable, copy_paste, text, onsubmit, fgcolor, bgcolor,
                          bgcolor, font, edit_position, 1, 2))
-    , label(title
+    , label(!title.empty()
         ? new WidgetLabel(drawable, title, MEDIUM_GREY, bgcolor, font, 1, 2)
         : nullptr)
     , button_toggle_visibility(pass
@@ -99,12 +99,12 @@ void WidgetEditValid::use_title(bool use)
     this->use_label_ = use;
 }
 
-void WidgetEditValid::set_text(const char * text/*, int position = 0*/)
+void WidgetEditValid::set_text(chars_view text)
 {
     this->editbox->set_text(text);
 }
 
-const char * WidgetEditValid::get_text() const
+zstring_view WidgetEditValid::get_text() const
 {
     return this->editbox->get_text();
 }

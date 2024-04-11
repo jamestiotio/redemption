@@ -32,7 +32,7 @@ WidgetPasswordFont::WidgetPasswordFont(Font const& font)
 
 WidgetPassword::WidgetPassword(
     gdi::GraphicApi & drawable, CopyPaste & copy_paste,
-    const char * text, WidgetEventNotifier onsubmit,
+    chars_view text, WidgetEventNotifier onsubmit,
     Color fgcolor, Color bgcolor, Color focus_color,
     Font const & font, std::size_t edit_position, int xtext, int ytext
 )
@@ -62,7 +62,7 @@ void WidgetPassword::rdp_input_scancode(
         case Keymap::KEvent::Copy:
             break;
         case Keymap::KEvent::Cut:
-            this->set_text("");
+            this->set_text(""_av);
             this->label.rdp_input_invalidate(this->label.get_rect());
             this->draw_cursor(this->get_cursor_rect());
             break;

@@ -489,6 +489,22 @@ constexpr writable_array_view<T> make_writable_array_view(T (&arr)[N]) noexcept
 { return writable_array_view{arr, N}; }
 
 
+template<class T>
+struct av_auto_cast
+{
+    array_view<T> av;
+
+    template<class U>
+    operator U () const
+    {
+        return av.template as<U>();
+    }
+};
+
+template<class T>
+av_auto_cast(array_view<T>) -> av_auto_cast<T>;
+
+
 using u8_array_view = array_view<std::uint8_t>;
 using u16_array_view = array_view<std::uint16_t>;
 using u32_array_view = array_view<std::uint32_t>;

@@ -41,7 +41,7 @@ public:
     };
 
     WidgetButton(gdi::GraphicApi & drawable,
-                 const char * text, WidgetEventNotifier onsubmit,
+                 chars_view text, WidgetEventNotifier onsubmit,
                  Color fg_color, Color bg_color, Color focus_color,
                  unsigned border_width, Font const & font,
                  int xtext = 0, int ytext = 0, bool logo = false); /*NOLINT*/
@@ -54,7 +54,7 @@ public:
 
     using Widget::set_wh;
 
-    void set_text(char const* text);
+    void set_text(chars_view text);
 
     void rdp_input_invalidate(Rect clip) override;
 

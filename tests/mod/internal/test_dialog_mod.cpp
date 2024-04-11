@@ -61,9 +61,9 @@ struct DialogModContextTest : DialogModContextTestBase
 {
     DialogMod d;
 
-    DialogModContextTest(char const* button_text)
+    DialogModContextTest(chars_view button_text)
     : d(ini, front.gd(), screen_info.width, screen_info.height,
-        Rect(0, 0, 799, 599), "Title", "Hello, World", button_text,
+        Rect(0, 0, 799, 599), "Title"_av, "Hello, World"_av, button_text,
         client_execute, global_font(), theme)
     {
         mod = &d;
@@ -78,7 +78,7 @@ struct DialogChallengeModContextTest : DialogModContextTestBase
 
     DialogChallengeModContextTest(DialogWithChallengeMod::ChallengeOpt has_challenge)
     : d(ini, front.gd(), front, screen_info.width, screen_info.height,
-        Rect(0, 0, 799, 599), "Title", "Hello, World",
+        Rect(0, 0, 799, 599), "Title"_av, "Hello, World"_av,
         client_execute, global_font(), theme, copy_paste, has_challenge)
     {
         mod = &d;
@@ -90,14 +90,14 @@ struct DialogChallengeModContextTest : DialogModContextTestBase
 
 RED_AUTO_TEST_CASE(TestDialogMod)
 {
-    DialogModContextTest dialog("Ok");
+    DialogModContextTest dialog("Ok"_av);
     dialog.keydown(0x1c); // enter
     RED_CHECK(dialog.ini.get<cfg::context::accept_message>());
 }
 
 RED_AUTO_TEST_CASE(TestDialogModReject)
 {
-    DialogModContextTest dialog("Cancel");
+    DialogModContextTest dialog("Cancel"_av);
     dialog.keydown(0x01); // esc
     RED_CHECK(!dialog.ini.get<cfg::context::accept_message>());
 }

@@ -37,19 +37,26 @@ struct WidgetSelectorParams
     static constexpr uint16_t nb_max_columns = 3;
 
     uint16_t nb_columns = 0;
-    const char * label[nb_max_columns] = {nullptr};
-    uint32_t weight[nb_max_columns] = {0};
+    chars_view label[nb_max_columns] = {};
+    uint32_t weight[nb_max_columns] = {};
 };
 
 
 class WidgetSelector : public WidgetComposite
 {
 public:
-    struct temporary_number_of_page
+    class temporary_number_of_page
     {
-        char buffer[15];
+        char buffer[32];
+        std::size_t len;
 
-        explicit temporary_number_of_page(const char * s);
+    public:
+        explicit temporary_number_of_page(chars_view s);
+
+        operator chars_view () const
+        {
+            return {buffer, len};
+        }
     };
 
     struct Events
@@ -70,11 +77,11 @@ public:
 
     WidgetSelector(gdi::GraphicApi & drawable, CopyPaste & copy_paste,
                    WidgetTooltipShower & tooltip_shower,
-                   const char * device_name,
+                   chars_view device_name,
                    int16_t left, int16_t top, uint16_t width, uint16_t height,
                    Events events,
-                   const char * current_page,
-                   const char * number_of_page,
+                   chars_view current_page,
+                   chars_view number_of_page,
                    WidgetButton * extra_button,
                    WidgetSelectorParams const & selector_params,
                    Font const & font, Theme const & theme, Language lang,
@@ -176,5 +183,5 @@ private:
 
     uint32_t weight[WidgetSelectorParams::nb_max_columns] = {0};
 
-    const char * label[WidgetSelectorParams::nb_max_columns] = {nullptr};
+    chars_view label[WidgetSelectorParams::nb_max_columns] = {nullptr};
 };

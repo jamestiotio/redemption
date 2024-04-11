@@ -36,7 +36,7 @@ static WidgetWabClose build_close_widget(
 {
     struct str_target_builder
     {
-        char const* text;
+        chars_view text;
         char buffer[255];
 
         explicit str_target_builder(CloseModVariables vars)
@@ -44,14 +44,15 @@ static WidgetWabClose build_close_widget(
             // TODO target_application only used for user message,
             // the two branches of alternative should be unified et message prepared by sesman
             if (!vars.get<cfg::globals::target_application>().empty()) {
-                text = vars.get<cfg::globals::target_application>().c_str();
+                text = vars.get<cfg::globals::target_application>();
             }
             else {
-                snprintf(
-                    buffer, sizeof(buffer), "%s@%s",
+                auto buf = make_writable_bounded_array_view(buffer);
+                int n = snprintf(
+                    buf.data(), buf.size(), "%s@%s",
                     vars.get<cfg::globals::target_user>().c_str(),
                     vars.get<cfg::globals::target_device>().c_str());
-                text = buffer;
+                text = {buffer, n < 0 ? 0 : std::min(buf.size(), static_cast<std::size_t>(n))};
             }
         }
     };
@@ -67,8 +68,8 @@ static WidgetWabClose build_close_widget(
         extra_message.empty()
             ? message.as<std::string>()
             : str_concat(message, extra_message[0] == ' ' ? ""_av : "\n\n"_av, extra_message),
-        is_asked ? nullptr : vars.get<cfg::globals::auth_user>().c_str(),
-        is_asked ? nullptr : str_target_builder(vars).text,
+        is_asked ? chars_view() : vars.get<cfg::globals::auth_user>(),
+        is_asked ? chars_view() : str_target_builder(vars).text,
         true,
         font, theme, language(vars), back_selector
     );

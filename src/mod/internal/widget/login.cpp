@@ -33,13 +33,13 @@ WidgetLogin::WidgetLogin(
     gdi::GraphicApi & drawable, CopyPaste & copy_paste,
     WidgetTooltipShower & tooltip_shower,
     int16_t left, int16_t top, uint16_t width, uint16_t height,
-    Events events, const char* caption,
-    const char * login, const char * password, const char * target,
-    const char * label_text_login,
-    const char * label_text_password,
-    const char * label_text_target,
-    const char * label_error_message,
-    const char * login_message,
+    Events events, chars_view caption,
+    chars_view login, chars_view password, chars_view target,
+    chars_view label_text_login,
+    chars_view label_text_password,
+    chars_view label_text_target,
+    chars_view label_error_message,
+    chars_view login_message,
     WidgetButton * extra_button,
     bool enable_target_field,
     Font const & font, Translator tr, Theme const & theme
@@ -72,7 +72,7 @@ WidgetLogin::WidgetLogin(
                   theme.edit.focus_color, theme.global.bgcolor, font,
                   label_text_target, (width <= 640), -1u, 1, 1, false)
     , message_label(drawable,
-        login_message ? std::string(login_message) : std::string(),
+        login_message,
         theme.global.fgcolor, theme.global.bgcolor, theme.global.focus_color,
         font, WIDGET_MULTILINE_BORDER_X, WIDGET_MULTILINE_BORDER_Y)
     , img(drawable,
@@ -83,7 +83,7 @@ WidgetLogin::WidgetLogin(
                     theme.global.fgcolor, theme.global.bgcolor,
                     font)
     // TODO button without notifier
-    , helpicon(drawable, "?", WidgetEventNotifier(),
+    , helpicon(drawable, "?"_av, WidgetEventNotifier(),
                theme.global.fgcolor, theme.global.bgcolor,
                theme.global.focus_color, 2, font, 6, 2)
     , extra_button(extra_button)
@@ -108,7 +108,7 @@ WidgetLogin::WidgetLogin(
 
     this->add_widget(this->error_message_label);
 
-    if (*login_message) {
+    if (!login_message.empty()) {
         this->add_widget(this->message_label);
     }
 

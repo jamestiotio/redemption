@@ -36,7 +36,7 @@ class WidgetPassword : WidgetPasswordFont, public WidgetEdit
 {
 public:
     WidgetPassword(gdi::GraphicApi & drawable, CopyPaste & copy_paste,
-                   const char * text, WidgetEventNotifier onsubmit,
+                   chars_view text, WidgetEventNotifier onsubmit,
                    Color fgcolor, Color bgcolor, Color focus_color,
                    Font const & font,
                    std::size_t edit_position = -1, int xtext = 0, int ytext = 0); /*NOLINT*/

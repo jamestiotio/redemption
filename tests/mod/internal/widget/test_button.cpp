@@ -40,7 +40,7 @@ struct ButtonContextTest
     WidgetButton wbutton;
 
     ButtonContextTest(
-        char const* text,
+        chars_view text,
         int16_t x, int16_t y,
         int xtext = 0, int ytext = 0,
         int16_t dx = 0, int16_t dy = 0,
@@ -53,7 +53,7 @@ struct ButtonContextTest
 
     ButtonContextTest(
         int16_t w, int16_t h,
-        char const* text,
+        chars_view text,
         int16_t x, int16_t y,
         int xtext = 0, int ytext = 0,
         int16_t dx = 0, int16_t dy = 0,
@@ -84,19 +84,19 @@ struct ButtonContextTest
 
 RED_AUTO_TEST_CASE(TraceWidgetButton)
 {
-    RED_CHECK_IMG(ButtonContextTest("test1", 0, 0, 4, 1).drawable, IMG_TEST_PATH "button_1.png");
-    RED_CHECK_IMG(ButtonContextTest("test2", 10, 100).drawable, IMG_TEST_PATH "button_2.png");
-    RED_CHECK_IMG(ButtonContextTest("test3", -10, 500).drawable, IMG_TEST_PATH "button_3.png");
-    RED_CHECK_IMG(ButtonContextTest("test4", 770, 500).drawable, IMG_TEST_PATH "button_4.png");
-    RED_CHECK_IMG(ButtonContextTest("test5", -20, -7).drawable, IMG_TEST_PATH "button_5.png");
-    RED_CHECK_IMG(ButtonContextTest("test6", 760, -7).drawable, IMG_TEST_PATH "button_6.png");
-    RED_CHECK_IMG(ButtonContextTest("test6", 760, -7, 0, 0, 20).drawable, IMG_TEST_PATH "button_7.png");
-    RED_CHECK_IMG(ButtonContextTest("test6", 0, 0, 0, 0, 20, 5, 30, 10).drawable, IMG_TEST_PATH "button_8.png");
+    RED_CHECK_IMG(ButtonContextTest("test1"_av, 0, 0, 4, 1).drawable, IMG_TEST_PATH "button_1.png");
+    RED_CHECK_IMG(ButtonContextTest("test2"_av, 10, 100).drawable, IMG_TEST_PATH "button_2.png");
+    RED_CHECK_IMG(ButtonContextTest("test3"_av, -10, 500).drawable, IMG_TEST_PATH "button_3.png");
+    RED_CHECK_IMG(ButtonContextTest("test4"_av, 770, 500).drawable, IMG_TEST_PATH "button_4.png");
+    RED_CHECK_IMG(ButtonContextTest("test5"_av, -20, -7).drawable, IMG_TEST_PATH "button_5.png");
+    RED_CHECK_IMG(ButtonContextTest("test6"_av, 760, -7).drawable, IMG_TEST_PATH "button_6.png");
+    RED_CHECK_IMG(ButtonContextTest("test6"_av, 760, -7, 0, 0, 20).drawable, IMG_TEST_PATH "button_7.png");
+    RED_CHECK_IMG(ButtonContextTest("test6"_av, 0, 0, 0, 0, 20, 5, 30, 10).drawable, IMG_TEST_PATH "button_8.png");
 }
 
 RED_AUTO_TEST_CASE(TraceWidgetButtonDownAndUp)
 {
-    ButtonContextTest button("test6", 10, 10, 4, 1);
+    ButtonContextTest button("test6"_av, 10, 10, 4, 1);
     RED_CHECK_IMG(button.drawable, IMG_TEST_PATH "button_9.png");
 
     auto& wbutton = button.wbutton;
@@ -117,7 +117,7 @@ RED_AUTO_TEST_CASE(TraceWidgetButtonEvent)
     int16_t x = 0;
     int16_t y = 0;
 
-    WidgetButton wbutton(drawable, "", notifier, WHITE,
+    WidgetButton wbutton(drawable, ""_av, notifier, WHITE,
                          DARK_BLUE_BIS, WINBLUE, 2, global_font_deja_vu_14());
     Dimension dim = wbutton.get_optimal_dim();
     wbutton.set_wh(dim);
@@ -162,42 +162,42 @@ RED_AUTO_TEST_CASE(TraceWidgetButtonAndComposite)
     wcomposite.set_wh(800, 600);
     wcomposite.set_xy(0, 0);
 
-    WidgetButton wbutton1(drawable, "abababab",
+    WidgetButton wbutton1(drawable, "abababab"_av,
                           notifier2, YELLOW, BLACK, WINBLUE, 2,
                           global_font_deja_vu_14());
     Dimension dim = wbutton1.get_optimal_dim();
     wbutton1.set_wh(dim);
     wbutton1.set_xy(0, 0);
 
-    WidgetButton wbutton2(drawable, "ggghdgh",
+    WidgetButton wbutton2(drawable, "ggghdgh"_av,
                           notifier2, WHITE, RED, WINBLUE, 2,
                           global_font_deja_vu_14());
     dim = wbutton2.get_optimal_dim();
     wbutton2.set_wh(dim);
     wbutton2.set_xy(0, 100);
 
-    WidgetButton wbutton3(drawable, "lldlslql",
+    WidgetButton wbutton3(drawable, "lldlslql"_av,
                           notifier2, BLUE, RED, WINBLUE, 2,
                           global_font_deja_vu_14());
     dim = wbutton3.get_optimal_dim();
     wbutton3.set_wh(dim);
     wbutton3.set_xy(100, 100);
 
-    WidgetButton wbutton4(drawable, "LLLLMLLM",
+    WidgetButton wbutton4(drawable, "LLLLMLLM"_av,
                           notifier2, PINK, DARK_GREEN, WINBLUE, 2,
                           global_font_deja_vu_14());
     dim = wbutton4.get_optimal_dim();
     wbutton4.set_wh(dim);
     wbutton4.set_xy(300, 300);
 
-    WidgetButton wbutton5(drawable, "dsdsdjdjs",
+    WidgetButton wbutton5(drawable, "dsdsdjdjs"_av,
                           notifier2, LIGHT_GREEN, DARK_BLUE, WINBLUE, 2,
                           global_font_deja_vu_14());
     dim = wbutton5.get_optimal_dim();
     wbutton5.set_wh(dim);
     wbutton5.set_xy(700, -10);
 
-    WidgetButton wbutton6(drawable, "xxwwp",
+    WidgetButton wbutton6(drawable, "xxwwp"_av,
                           notifier2, ANTHRACITE, PALE_GREEN, WINBLUE, 2,
                           global_font_deja_vu_14());
     dim = wbutton6.get_optimal_dim();
@@ -224,7 +224,7 @@ RED_AUTO_TEST_CASE(TraceWidgetButtonAndComposite)
 
 RED_AUTO_TEST_CASE(TraceWidgetButtonFocus)
 {
-    ButtonContextTest button(72, 40, "test7", 10, 10, 4, 1);
+    ButtonContextTest button(72, 40, "test7"_av, 10, 10, 4, 1);
     RED_CHECK_IMG(button.drawable, IMG_TEST_PATH "button_14.png");
 
     auto& wbutton = button.wbutton;
@@ -241,7 +241,7 @@ RED_AUTO_TEST_CASE(TraceWidgetButtonFocus)
 
 RED_AUTO_TEST_CASE(TraceWidgetButtonLite)
 {
-    ButtonContextTest button("test1", 0, 0, 4, 1, 0, 0, 0, 0, /*border_width=*/1);
+    ButtonContextTest button("test1"_av, 0, 0, 4, 1, 0, 0, 0, 0, /*border_width=*/1);
     RED_CHECK_IMG(button.drawable, IMG_TEST_PATH "button18.png");
 
     auto& wbutton = button.wbutton;
@@ -252,7 +252,7 @@ RED_AUTO_TEST_CASE(TraceWidgetButtonLite)
 
 RED_AUTO_TEST_CASE(TraceWidgetButtonStrong)
 {
-    ButtonContextTest button("test1", 0, 0, 4, 1, 0, 0, 0, 0, /*border_width=*/5);
+    ButtonContextTest button("test1"_av, 0, 0, 4, 1, 0, 0, 0, 0, /*border_width=*/5);
     RED_CHECK_IMG(button.drawable, IMG_TEST_PATH "button20.png");
 
     auto& wbutton = button.wbutton;

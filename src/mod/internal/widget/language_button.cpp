@@ -83,6 +83,7 @@ namespace
     struct LanguageButtonText
     {
         char text[128];
+        std::size_t text_len;
 
         LanguageButtonText(chars_view str, unsigned spaces)
         {
@@ -91,7 +92,12 @@ namespace
             std::size_t remaining = std::size(text) - spaces - 1;
             std::size_t len = std::min(remaining, str.size());
             memcpy(text + spaces, str.data(), len);
-            text[spaces + len] = '\0';
+            text_len = spaces + len;
+        }
+
+        operator chars_view () const
+        {
+            return {text, text_len};
         }
     };
 
@@ -127,7 +133,7 @@ LanguageButton::LanguageButton(
         : Ref(default_layout()));
 
     for (auto locale : split_with(enable_locales, ',')) {
-        auto const name = trim(locale).as<std::string_view>();
+        auto const name = trim(locale);
         if (auto const* layout = find_layout_by_name(name)) {
             if (layout->kbdid != front_layout.kbdid) {
                 this->locales.emplace_back(*layout);
@@ -139,7 +145,7 @@ LanguageButton::LanguageButton(
         }
     }
 
-    this->set_text(LanguageButtonText(this->locales.front().get().name, icon_size_in_space).text);
+    this->set_text(LanguageButtonText(this->locales.front().get().name, icon_size_in_space));
 
     Dimension dim = this->get_optimal_dim();
     this->set_wh(dim);
@@ -151,7 +157,7 @@ void LanguageButton::next_layout()
 
     this->selected_language = (this->selected_language + 1) % this->locales.size();
     KeyLayout const& layout = this->locales[this->selected_language];
-    this->set_text(LanguageButtonText(layout.name, icon_size_in_space).text);
+    this->set_text(LanguageButtonText(layout.name, icon_size_in_space));
 
     Dimension dim = this->get_optimal_dim();
     this->set_wh(dim);

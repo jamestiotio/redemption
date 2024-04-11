@@ -33,8 +33,8 @@
 
 WidgetDialogBase::WidgetDialogBase(
     gdi::GraphicApi & drawable, Rect widget_rect, Events events,
-    const char* caption, const char * text, WidgetButton * extra_button,
-    Theme const & theme, Font const & font, const char * ok_text,
+    chars_view caption, chars_view text, WidgetButton * extra_button,
+    Theme const & theme, Font const & font, chars_view ok_text,
     std::unique_ptr<WidgetButton> cancel_,
     std::unique_ptr<WidgetEdit> challenge_,
     WidgetLink* link
@@ -259,14 +259,14 @@ void WidgetDialogBase::rdp_input_scancode(KbdFlags flags, Scancode scancode, uin
 WidgetDialog::WidgetDialog(
     gdi::GraphicApi& drawable, Rect widget_rect,
     Events events,
-    const char* caption, const char* text,
+    chars_view caption, chars_view text,
     const Theme& theme, const Font& font,
-    const char* ok_text, const char* cancel_text)
+    chars_view ok_text, chars_view cancel_text)
 : WidgetDialogBase(
     drawable, widget_rect,
     {.onsubmit = events.onsubmit, .oncancel = events.oncancel},
     caption, text, nullptr, theme, font, ok_text,
-    cancel_text
+    !cancel_text.empty()
         ? std::make_unique<WidgetButton>(
             drawable, cancel_text, events.oncancel,
             theme.global.fgcolor, theme.global.bgcolor,
@@ -281,9 +281,9 @@ WidgetDialog::WidgetDialog(
 WidgetDialogWithChallenge::WidgetDialogWithChallenge(
     gdi::GraphicApi& drawable, Rect widget_rect,
     Events events,
-    const char* caption, const char * text,
+    chars_view caption, chars_view text,
     WidgetButton * extra_button,
-    const char * ok_text,
+    chars_view ok_text,
     Font const & font, Theme const & theme, CopyPaste & copy_paste,
     ChallengeOpt challenge_opt)
 : WidgetDialogBase(
@@ -309,9 +309,9 @@ WidgetDialogWithChallenge::WidgetDialogWithChallenge(
 
 WidgetDialogWithCopyableLink::WidgetDialogWithCopyableLink(
     gdi::GraphicApi & drawable, Rect widget_rect, Events events,
-    const char* caption, const char * text,
-    const char * link_value, const char * link_label,
-    const char * ok_text,
+    chars_view caption, chars_view text,
+    chars_view link_value, chars_view link_label,
+    chars_view ok_text,
     Font const & font, Theme const & theme, CopyPaste & copy_paste
 )
 : WidgetDialogBase::WidgetLink{
@@ -320,7 +320,7 @@ WidgetDialogWithCopyableLink::WidgetDialogWithCopyableLink(
                 theme.global.fgcolor, theme.global.bgcolor, theme.global.focus_color,
                 font, WIDGET_MULTILINE_BORDER_X, WIDGET_MULTILINE_BORDER_Y),
     .copy = WidgetDelegatedCopy(
-        drawable, [this]{ this->copy_paste.copy(this->link_value); },
+        drawable, [this]{ this->copy_paste.copy(this->show.get_text()); },
         theme.global.fgcolor, theme.global.bgcolor,
         theme.global.focus_color, font, 2, 2, WidgetDelegatedCopy::MouseButton::Both)
 }
@@ -330,7 +330,6 @@ WidgetDialogWithCopyableLink::WidgetDialogWithCopyableLink(
     caption, text, nullptr, theme, font,
     ok_text, nullptr, nullptr, this
 )
-, link_value(link_value)
 , copy_paste(copy_paste)
 {
 }

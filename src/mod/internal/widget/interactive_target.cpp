@@ -21,6 +21,7 @@
 
 #include "mod/internal/widget/interactive_target.hpp"
 #include "utils/theme.hpp"
+#include "utils/strutils.hpp"
 #include "keyboard/keymap.hpp"
 
 #include <cstring>
@@ -31,12 +32,11 @@ WidgetInteractiveTarget::WidgetInteractiveTarget(
     int16_t left, int16_t top, uint16_t width, uint16_t height,
     Events events,
     bool ask_device, bool ask_login, bool ask_password,
-    Theme const & theme, const char* caption,
-    const char * text_device,
-    const char * device_str,
-    const char * text_login,
-    const char * login_str,
-    const char * text_password,
+    Theme const & theme,
+    chars_view caption,
+    chars_view text_device, chars_view device_str,
+    chars_view text_login, chars_view login_str,
+    chars_view text_password,
     Font const & font,
     WidgetButton * extra_button
 )
@@ -114,8 +114,10 @@ WidgetInteractiveTarget::WidgetInteractiveTarget(
     this->add_widget(*device_show, device_has_focus);
     if (ask_device) {
         this->add_widget(this->device);
-        if ((0 == strncmp(device_str, "Error:", 6)) ||
-            (0 == strncmp(device_str, "Erreur:", 7))) {
+        // TODO error context should be transfered instead of detected with string prefix (incompatible with translation)
+        if (utils::starts_with(device_str, "Error:"_av) ||
+            utils::starts_with(device_str, "Erreur:"_av)
+        ) {
             this->device.fg_color = theme.global.error_color;
         }
     }

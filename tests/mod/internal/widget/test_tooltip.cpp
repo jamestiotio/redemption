@@ -63,13 +63,13 @@ RED_AUTO_TEST_CASE(TraceWidgetTooltipScreen)
     // WidgetTooltip is a tooltip widget at position 0,0 in it's parent context
     WidgetScreen parent(drawable, 800, 600, global_font_deja_vu_14(), Theme{});
 
-    WidgetLabel label(drawable, "TOOLTIPTEST",
+    WidgetLabel label(drawable, "TOOLTIPTEST"_av,
                       BLACK, WHITE, global_font_deja_vu_14());
     Dimension dim = label.get_optimal_dim();
     label.set_wh(dim);
     label.set_xy(x, y);
 
-    WidgetLabel label2(drawable, "TOOLTIPTESTMULTI",
+    WidgetLabel label2(drawable, "TOOLTIPTESTMULTI"_av,
                        BLACK, WHITE, global_font_deja_vu_14());
     dim = label2.get_optimal_dim();
     label2.set_wh(dim);

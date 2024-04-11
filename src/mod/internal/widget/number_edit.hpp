@@ -28,14 +28,14 @@ class WidgetNumberEdit : public WidgetEdit
 public:
     WidgetNumberEdit(
         gdi::GraphicApi & drawable, CopyPaste & copy_paste,
-        const char* text, WidgetEventNotifier onsubmit,
+        chars_view text, WidgetEventNotifier onsubmit,
         Color fgcolor, Color bgcolor, Color focus_color,
         Font const & font, size_t edit_position = -1, /*NOLINT*/
         int xtext = 0, int ytext = 0); /*NOLINT*/
 
-    void set_text(const char * text) override;
+    void set_text(chars_view text) override;
 
-    void insert_text(const char* text) override;
+    void insert_text(chars_view text) override;
 
     void rdp_input_scancode(KbdFlags flags, Scancode scancode, uint32_t event_time, Keymap const& keymap) override;
 };

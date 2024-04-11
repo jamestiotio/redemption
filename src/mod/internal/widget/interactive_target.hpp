@@ -48,12 +48,11 @@ public:
         int16_t left, int16_t top, uint16_t width, uint16_t height,
         Events events,
         bool ask_device, bool ask_login, bool ask_password,
-        Theme const & theme, const char * caption,
-        const char * text_device,
-        const char * device_str,
-        const char * text_login,
-        const char * login_str,
-        const char * text_password,
+        Theme const & theme,
+        chars_view caption,
+        chars_view text_device, chars_view device_str,
+        chars_view text_login, chars_view login_str,
+        chars_view text_password,
         Font const & font,
         WidgetButton * extra_button);
 

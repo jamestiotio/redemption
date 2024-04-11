@@ -47,6 +47,8 @@ struct int_to_chars_result
     std::string_view sv() const noexcept { return {data(), size()}; }
     operator std::string_view() const noexcept { return sv(); }
 
+    static constexpr std::size_t max_capacity() noexcept { return buffer_size_of_uint64_to_chars; }
+
 private:
     friend detail::int_to_chars_result_access;
 
@@ -74,6 +76,8 @@ struct int_to_zchars_result
 
     operator std::string_view() const noexcept { return sv(); }
     operator zstring_view() const noexcept { return zv(); }
+
+    static std::size_t constexpr max_capacity() noexcept { return buffer_size_of_uint64_to_chars; }
 
 private:
     friend detail::int_to_chars_result_access;

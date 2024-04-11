@@ -56,7 +56,7 @@ struct TestLoginModCtx
         [&]() -> Inifile& {
             ini.set<cfg::globals::authentication_timeout>(authentication_timeout);
             return ini;
-        }(), event_manager.get_events(), "user", "pass", front.gd(), front,
+        }(), event_manager.get_events(), "user"_av, "pass"_av, front.gd(), front,
         screen_info.width, screen_info.height,
         Rect(0, 0, 799, 599), client_execute, global_font(), theme, copy_paste)
     {

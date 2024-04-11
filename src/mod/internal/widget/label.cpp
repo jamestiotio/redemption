@@ -44,27 +44,13 @@ WidgetLabel::WidgetLabel(
     this->set_text(text);
 }
 
-WidgetLabel::WidgetLabel(
-    gdi::GraphicApi & drawable, char const* text,
-    Color fgcolor, Color bgcolor, Font const & font,
-    int xtext, int ytext
-)
-: WidgetLabel(drawable, {text, text ? strlen(text) : 0u},
-              fgcolor, bgcolor, font, xtext, ytext)
-{}
-
-void WidgetLabel::set_text(char const* text)
-{
-    this->set_text({text, text ? strlen(text) : 0u});
-}
-
 void WidgetLabel::set_text(chars_view text)
 {
     this->buffer[0] = 0;
     if (!text.empty()) {
         const size_t remain_n = buffer_size - 1;
         const size_t max = ((remain_n >= text.size()) ? text.size() :
-                            ::UTF8StringAdjustedNbBytes(::byte_ptr_cast(text.data()), remain_n));
+                            UTF8StringAdjustedNbBytes(text, remain_n));
         memcpy(this->buffer, text.data(), max);
         this->buffer[max] = 0;
     }

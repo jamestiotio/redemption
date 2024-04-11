@@ -47,7 +47,7 @@ struct TestWidgetLabelCtx
     WidgetLabel wlabel;
 
     TestWidgetLabelCtx(
-        char const* text, Colors colors = Colors{RED, YELLOW}, int xtext = 0, int ytext = 0)
+        chars_view text, Colors colors = Colors{RED, YELLOW}, int xtext = 0, int ytext = 0)
     : wlabel(
         drawable, text,
         colors.fg, colors.bg, global_font_deja_vu_14(), xtext, ytext)
@@ -56,7 +56,7 @@ struct TestWidgetLabelCtx
 
 RED_AUTO_TEST_CASE(TraceWidgetLabel)
 {
-    TestWidgetLabelCtx ctx("test1", {}, 4, 1);
+    TestWidgetLabelCtx ctx("test1"_av, {}, 4, 1);
 
     ctx.wlabel.set_wh(ctx.wlabel.get_optimal_dim());
     ctx.wlabel.set_xy(0, 0);
@@ -68,7 +68,7 @@ RED_AUTO_TEST_CASE(TraceWidgetLabel)
 
 RED_AUTO_TEST_CASE(TraceWidgetLabel2)
 {
-    TestWidgetLabelCtx ctx("test2");
+    TestWidgetLabelCtx ctx("test2"_av);
 
     ctx.wlabel.set_wh(ctx.wlabel.get_optimal_dim());
     ctx.wlabel.set_xy(10, 100);
@@ -80,7 +80,7 @@ RED_AUTO_TEST_CASE(TraceWidgetLabel2)
 
 RED_AUTO_TEST_CASE(TraceWidgetLabel3)
 {
-    TestWidgetLabelCtx ctx("test3");
+    TestWidgetLabelCtx ctx("test3"_av);
 
     ctx.wlabel.set_wh(ctx.wlabel.get_optimal_dim());
     ctx.wlabel.set_xy(-10, 500);
@@ -92,7 +92,7 @@ RED_AUTO_TEST_CASE(TraceWidgetLabel3)
 
 RED_AUTO_TEST_CASE(TraceWidgetLabel4)
 {
-    TestWidgetLabelCtx ctx("test4");
+    TestWidgetLabelCtx ctx("test4"_av);
 
     ctx.wlabel.set_wh(ctx.wlabel.get_optimal_dim());
     ctx.wlabel.set_xy(770, 500);
@@ -104,7 +104,7 @@ RED_AUTO_TEST_CASE(TraceWidgetLabel4)
 
 RED_AUTO_TEST_CASE(TraceWidgetLabel5)
 {
-    TestWidgetLabelCtx ctx("test5");
+    TestWidgetLabelCtx ctx("test5"_av);
 
     ctx.wlabel.set_wh(ctx.wlabel.get_optimal_dim());
     ctx.wlabel.set_xy(-20, -7);
@@ -116,7 +116,7 @@ RED_AUTO_TEST_CASE(TraceWidgetLabel5)
 
 RED_AUTO_TEST_CASE(TraceWidgetLabel6)
 {
-    TestWidgetLabelCtx ctx("test6");
+    TestWidgetLabelCtx ctx("test6"_av);
 
     ctx.wlabel.set_wh(ctx.wlabel.get_optimal_dim());
     ctx.wlabel.set_xy(760, -7);
@@ -128,7 +128,7 @@ RED_AUTO_TEST_CASE(TraceWidgetLabel6)
 
 RED_AUTO_TEST_CASE(TraceWidgetLabelClip)
 {
-    TestWidgetLabelCtx ctx("test6");
+    TestWidgetLabelCtx ctx("test6"_av);
 
     ctx.wlabel.set_wh(ctx.wlabel.get_optimal_dim());
     ctx.wlabel.set_xy(760, -7);
@@ -146,7 +146,7 @@ RED_AUTO_TEST_CASE(TraceWidgetLabelClip)
 
 RED_AUTO_TEST_CASE(TraceWidgetLabelClip2)
 {
-    TestWidgetLabelCtx ctx("test6");
+    TestWidgetLabelCtx ctx("test6"_av);
 
     ctx.wlabel.set_wh(ctx.wlabel.get_optimal_dim());
     ctx.wlabel.set_xy(0, 0);
@@ -171,32 +171,32 @@ RED_AUTO_TEST_CASE(TraceWidgetLabelAndComposite)
     wcomposite.set_xy(0, 0);
 
     WidgetLabel wlabel1(drawable,
-                        "abababab", YELLOW, BLACK, global_font_deja_vu_14());
+                        "abababab"_av, YELLOW, BLACK, global_font_deja_vu_14());
     wlabel1.set_wh(wlabel1.get_optimal_dim());
     wlabel1.set_xy(0, 0);
 
     WidgetLabel wlabel2(drawable,
-                        "ggghdgh", WHITE, BLUE, global_font_deja_vu_14());
+                        "ggghdgh"_av, WHITE, BLUE, global_font_deja_vu_14());
     wlabel2.set_wh(wlabel2.get_optimal_dim());
     wlabel2.set_xy(0, 100);
 
     WidgetLabel wlabel3(drawable,
-                        "lldlslql", BLUE, RED, global_font_deja_vu_14());
+                        "lldlslql"_av, BLUE, RED, global_font_deja_vu_14());
     wlabel3.set_wh(wlabel3.get_optimal_dim());
     wlabel3.set_xy(100, 100);
 
     WidgetLabel wlabel4(drawable,
-                        "LLLLMLLM", PINK, DARK_GREEN, global_font_deja_vu_14());
+                        "LLLLMLLM"_av, PINK, DARK_GREEN, global_font_deja_vu_14());
     wlabel4.set_wh(wlabel4.get_optimal_dim());
     wlabel4.set_xy(300, 300);
 
     WidgetLabel wlabel5(drawable,
-                        "dsdsdjdjs", LIGHT_GREEN, DARK_BLUE, global_font_deja_vu_14());
+                        "dsdsdjdjs"_av, LIGHT_GREEN, DARK_BLUE, global_font_deja_vu_14());
     wlabel5.set_wh(wlabel5.get_optimal_dim());
     wlabel5.set_xy(700, -10);
 
     WidgetLabel wlabel6(drawable,
-                        "xxwwp", ANTHRACITE, PALE_GREEN, global_font_deja_vu_14());
+                        "xxwwp"_av, ANTHRACITE, PALE_GREEN, global_font_deja_vu_14());
     wlabel6.set_wh(wlabel6.get_optimal_dim());
     wlabel6.set_xy(-10, 550);
 
@@ -226,7 +226,7 @@ RED_AUTO_TEST_CASE(TraceWidgetLabelMax)
         "éàéàéàéàéàéàéàéàéàéàéàéàéàéàéàéà"
         "éàéàéàéàéàéàéàéàéàéàéàéàéàéàéàéà"_av;
 
-    TestWidgetLabelCtx ctx(text.data());
+    TestWidgetLabelCtx ctx(text);
 
     ctx.wlabel.set_wh(ctx.wlabel.get_optimal_dim());
     ctx.wlabel.set_xy(10, 100);

@@ -156,6 +156,22 @@ size_t UTF8StringAdjustedNbBytes(const uint8_t * source, size_t max_len) noexcep
     return adjust_len;
 }
 
+// UTF8Len assumes input is valid utf8, zero terminated, that has been checked before
+size_t UTF8StringAdjustedNbBytes(bytes_view source, size_t max_len) noexcept
+{
+    size_t adjust_len = 0;
+    while (adjust_len < source.size()) {
+        const size_t char_nb_bytes = UTF8CharNbBytes(&source[adjust_len]);
+        if (adjust_len + char_nb_bytes >= max_len) {
+            break;
+        }
+
+        adjust_len += char_nb_bytes;
+    }
+
+    return adjust_len;
+}
+
 // UTF8RemoveOne assumes input is valid utf8, zero terminated, that has been checked before
 void UTF8RemoveOne(writable_bytes_view source) noexcept
 {

@@ -186,7 +186,7 @@ struct ModFactory::Impl
         return mod_pack_from_widget(new_mod);
     }
 
-    static ModPack create_dialog(ModFactory& self, const char* cancel, const char* caption)
+    static ModPack create_dialog(ModFactory& self, chars_view cancel, chars_view caption)
     {
         auto new_mod = new DialogMod(
             self.ini,
@@ -195,7 +195,7 @@ struct ModFactory::Impl
             self.client_info.screen_info.height,
             self.rail_client_execute.adjust_rect(self.client_info.get_widget_rect()),
             caption,
-            self.ini.get<cfg::context::message>().c_str(),
+            self.ini.get<cfg::context::message>(),
             cancel,
             self.rail_client_execute,
             self.glyphs,
@@ -355,23 +355,23 @@ void ModFactory::create_interactive_target_mod()
 
 void ModFactory::create_valid_message_mod()
 {
-    const char * cancel = TR(trkeys::refused, language(this->ini));
-    const char * caption = "Information";
+    chars_view cancel = TR(trkeys::refused, language(this->ini));
+    chars_view caption = "Information"_av;
     auto mod_pack = Impl::create_dialog(*this, cancel, caption);
     Impl::set_mod(*this, ModuleName::valid, mod_pack, false);
 }
 
 void ModFactory::create_display_message_mod()
 {
-    const char * cancel = nullptr;
-    const char * caption = "Information";
+    chars_view cancel = nullptr;
+    chars_view caption = "Information"_av;
     auto mod_pack = Impl::create_dialog(*this, cancel, caption);
     Impl::set_mod(*this, ModuleName::confirm, mod_pack, false);
 }
 
 void ModFactory::create_dialog_challenge_mod()
 {
-    const char * caption = "Challenge";
+    chars_view caption = "Challenge"_av;
     const auto challenge = this->ini.get<cfg::context::authentication_challenge>()
         ? DialogWithChallengeMod::ChallengeOpt::Echo
         : DialogWithChallengeMod::ChallengeOpt::Hide;
@@ -383,7 +383,7 @@ void ModFactory::create_dialog_challenge_mod()
         this->client_info.screen_info.height,
         this->rail_client_execute.adjust_rect(this->client_info.get_widget_rect()),
         caption,
-        this->ini.get<cfg::context::message>().c_str(),
+        this->ini.get<cfg::context::message>(),
         this->rail_client_execute,
         this->glyphs,
         this->theme,
@@ -395,8 +395,8 @@ void ModFactory::create_dialog_challenge_mod()
 
 void ModFactory::create_display_link_mod()
 {
-    const char * caption = "URL Redirection";
-    const char * link_label = "Copy to clipboard: ";
+    chars_view caption = "URL Redirection"_av;
+    chars_view link_label = "Copy to clipboard: "_av;
     auto new_mod = new WidgetDialogWithCopyableLinkMod(
         this->ini,
         this->graphics,
@@ -404,8 +404,8 @@ void ModFactory::create_display_link_mod()
         this->client_info.screen_info.height,
         this->rail_client_execute.adjust_rect(this->client_info.get_widget_rect()),
         caption,
-        this->ini.get<cfg::context::message>().c_str(),
-        this->ini.get<cfg::context::display_link>().c_str(),
+        this->ini.get<cfg::context::message>(),
+        this->ini.get<cfg::context::display_link>(),
         link_label,
         this->rail_client_execute,
         this->glyphs,
@@ -459,35 +459,32 @@ void ModFactory::create_transition_mod()
 void ModFactory::create_login_mod()
 {
     LOG(LOG_INFO, "ModuleManager::Creation of internal module 'Login'");
-    char username[255]; // should use string
-    username[0] = 0;
+    char username_buffer[255];
+    chars_view username;
     if (!this->ini.is_asked<cfg::globals::auth_user>()){
         if (this->ini.is_asked<cfg::globals::target_user>()
          || this->ini.is_asked<cfg::globals::target_device>()){
-            utils::strlcpy(
-                username,
-                this->ini.get<cfg::globals::auth_user>().c_str(),
-                sizeof(username));
+            username = this->ini.get<cfg::globals::auth_user>();
         }
         else {
             // TODO check this! Assembling parts to get user login with target is not obvious method used below il likely to show @: if target fields are empty
-            snprintf( username, sizeof(username), "%s@%s:%s%s%s"
-                    , this->ini.get<cfg::globals::target_user>().c_str()
-                    , this->ini.get<cfg::globals::target_device>().c_str()
-                    , this->ini.get<cfg::context::target_protocol>().c_str()
-                    , this->ini.get<cfg::context::target_protocol>().empty() ? "" : ":"
-                    , this->ini.get<cfg::globals::auth_user>().c_str()
-                    );
+            int n = snprintf( username_buffer, std::size(username_buffer), "%s@%s:%s%s%s"
+                            , this->ini.get<cfg::globals::target_user>().c_str()
+                            , this->ini.get<cfg::globals::target_device>().c_str()
+                            , this->ini.get<cfg::context::target_protocol>().c_str()
+                            , this->ini.get<cfg::context::target_protocol>().empty() ? "" : ":"
+                            , this->ini.get<cfg::globals::auth_user>().c_str()
+                            );
+            auto len = std::min(static_cast<std::size_t>(n), std::size(username_buffer));
+            username = {username_buffer, len};
         }
-
-        username[sizeof(username) - 1] = 0;
     }
 
     auto new_mod = new LoginMod(
         this->ini,
         this->events,
         username,
-        "", // password
+        ""_av, // password
         this->graphics,
         this->front,
         this->client_info.screen_info.width,

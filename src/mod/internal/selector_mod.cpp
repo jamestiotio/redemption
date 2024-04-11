@@ -34,17 +34,24 @@ namespace
 {
     struct temporary_login
     {
+        std::size_t len;
         char buffer[256];
 
         explicit temporary_login(SelectorModVariables ini)
         {
             this->buffer[0] = 0;
-            snprintf(
+            int n = snprintf(
                 this->buffer, sizeof(this->buffer),
                 "%s@%s",
                 ini.get<cfg::globals::auth_user>().c_str(),
                 ini.get<cfg::globals::host>().c_str()
             );
+            len = n <= 0 ? 0 : std::min(static_cast<std::size_t>(n), sizeof(this->buffer));
+        }
+
+        operator chars_view () const
+        {
+            return {buffer, len};
         }
     };
 
@@ -92,7 +99,7 @@ SelectorMod::SelectorMod(
         return params;
     }())
     , selector(
-        drawable, copy_paste, this->screen, temporary_login(ini).buffer,
+        drawable, copy_paste, this->screen, temporary_login(ini),
         widget_rect.x, widget_rect.y, widget_rect.cx, widget_rect.cy,
         {
             .onconnect = [this]{
@@ -164,11 +171,11 @@ SelectorMod::SelectorMod(
             .onctrl_shift = [this]{ this->language_button.next_layout(); },
         },
         ini.is_asked<cfg::context::selector_current_page>()
-            ? ""
-            : int_to_decimal_zchars(ini.get<cfg::context::selector_current_page>()).c_str(),
+            ? ""_av
+            : int_to_decimal_zchars(ini.get<cfg::context::selector_current_page>()),
         ini.is_asked<cfg::context::selector_number_of_pages>()
-            ? ""
-            : int_to_decimal_zchars(ini.get<cfg::context::selector_number_of_pages>()).c_str(),
+            ? ""_av
+            : int_to_decimal_zchars(ini.get<cfg::context::selector_number_of_pages>()),
         &this->language_button, this->selector_params, font, theme, language(ini), true)
 
     , current_page(unchecked_decimal_chars_to_int(this->selector.current_page.get_text()))
@@ -191,11 +198,11 @@ SelectorMod::SelectorMod(
 void SelectorMod::acl_update(AclFieldMask const& /*acl_fields*/)
 {
     this->current_page = this->ini.get<cfg::context::selector_current_page>();
-    this->selector.current_page.set_text(int_to_decimal_zchars(this->current_page).c_str());
+    this->selector.current_page.set_text(int_to_decimal_chars(this->current_page));
 
     this->number_page = this->ini.get<cfg::context::selector_number_of_pages>();
     this->selector.number_page.set_text(WidgetSelector::temporary_number_of_page(
-        int_to_decimal_zchars(this->number_page).c_str()).buffer);
+        int_to_decimal_chars(this->number_page)));
 
     this->selector.selector_lines.clear();
 

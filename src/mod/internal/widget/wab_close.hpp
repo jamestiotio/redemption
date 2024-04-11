@@ -47,7 +47,7 @@ public:
     WidgetWabClose(gdi::GraphicApi & drawable,
                    int16_t left, int16_t top, int16_t width, int16_t height,
                    Events events, std::string diagnostic_text,
-                   const char * username, const char * target,
+                   chars_view username, chars_view target,
                    bool showtimer, Font const & font, Theme const & theme,
                    Language lang, bool back_to_selector = false); /*NOLINT*/
 

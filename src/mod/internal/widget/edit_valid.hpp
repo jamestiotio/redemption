@@ -34,9 +34,9 @@ class WidgetEditValid : public Widget
 {
 public:
     WidgetEditValid(gdi::GraphicApi & drawable, CopyPaste & copy_paste,
-                    const char * text, WidgetEventNotifier onsubmit,
+                    chars_view text, WidgetEventNotifier onsubmit,
                     Color fgcolor, Color bgcolor, Color focus_color, Color border_none_color,
-                    Font const & font, const char * title, bool use_title,
+                    Font const & font, chars_view title, bool use_title,
                     std::size_t edit_position = -1, /*NOLINT*/
                     // TODO re-enable
                     int /*xtext*/ = 0, int /*ytext*/ = 0, bool pass = false); /*NOLINT*/
@@ -47,9 +47,9 @@ public:
 
     void use_title(bool use);
 
-    virtual void set_text(const char * text/*, int position = 0*/);
+    virtual void set_text(chars_view text);
 
-    [[nodiscard]] const char * get_text() const;
+    [[nodiscard]] zstring_view get_text() const;
 
     void set_xy(int16_t x, int16_t y) override;
 

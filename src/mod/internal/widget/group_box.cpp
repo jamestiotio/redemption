@@ -105,7 +105,7 @@ void WidgetGroupBox::set_text(const char * text)
         const size_t remain_n = buffer_size - 1;
         const size_t n = strlen(text);
         const size_t max = ((remain_n >= n) ? n :
-                            ::UTF8StringAdjustedNbBytes(::byte_ptr_cast(text), remain_n));
+                            UTF8StringAdjustedNbBytes(byte_ptr_cast(text), remain_n));
         memcpy(this->buffer, text, max);
         this->buffer[max] = 0;
     }

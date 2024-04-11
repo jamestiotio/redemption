@@ -48,7 +48,7 @@ struct TestWidgetPasswordCtx
     };
 
     TestWidgetPasswordCtx(
-        char const* text, Colors colors, uint16_t edit_width = 50,
+        chars_view text, Colors colors, uint16_t edit_width = 50,
         WidgetEventNotifier onsubmit = WidgetEventNotifier(),
         size_t password_pos = -1u, int xtext = 0, int ytext = 0)
     : wpassword(
@@ -83,7 +83,7 @@ struct TestWidgetPasswordCtx
 
 RED_AUTO_TEST_CASE(TraceWidgetPassword)
 {
-    TestWidgetPasswordCtx ctx("test1", {}, 50, WidgetEventNotifier(), 2, 4, 1);
+    TestWidgetPasswordCtx ctx("test1"_av, {}, 50, WidgetEventNotifier(), 2, 4, 1);
 
     ctx.wpassword.set_xy(0, 0);
     ctx.wpassword.rdp_input_invalidate(ctx.wpassword.get_rect());
@@ -93,7 +93,7 @@ RED_AUTO_TEST_CASE(TraceWidgetPassword)
 
 RED_AUTO_TEST_CASE(TraceWidgetPassword2)
 {
-    TestWidgetPasswordCtx ctx("test2", {}, 50);
+    TestWidgetPasswordCtx ctx("test2"_av, {}, 50);
     ctx.wpassword.set_xy(10, 100);
     ctx.wpassword.rdp_input_invalidate(ctx.wpassword.get_rect());
 
@@ -102,7 +102,7 @@ RED_AUTO_TEST_CASE(TraceWidgetPassword2)
 
 RED_AUTO_TEST_CASE(TraceWidgetPassword3)
 {
-    TestWidgetPasswordCtx ctx("test3", {}, 50);
+    TestWidgetPasswordCtx ctx("test3"_av, {}, 50);
     ctx.wpassword.set_xy(-10, 500);
     ctx.wpassword.rdp_input_invalidate(ctx.wpassword.get_rect());
 
@@ -111,7 +111,7 @@ RED_AUTO_TEST_CASE(TraceWidgetPassword3)
 
 RED_AUTO_TEST_CASE(TraceWidgetPassword4)
 {
-    TestWidgetPasswordCtx ctx("test4", {}, 50);
+    TestWidgetPasswordCtx ctx("test4"_av, {}, 50);
     ctx.wpassword.set_xy(770, 500);
     ctx.wpassword.rdp_input_invalidate(ctx.wpassword.get_rect());
 
@@ -120,7 +120,7 @@ RED_AUTO_TEST_CASE(TraceWidgetPassword4)
 
 RED_AUTO_TEST_CASE(TraceWidgetPassword5)
 {
-    TestWidgetPasswordCtx ctx("test5", {}, 50);
+    TestWidgetPasswordCtx ctx("test5"_av, {}, 50);
     ctx.wpassword.set_xy(-20, -7);
     ctx.wpassword.rdp_input_invalidate(ctx.wpassword.get_rect());
 
@@ -129,7 +129,7 @@ RED_AUTO_TEST_CASE(TraceWidgetPassword5)
 
 RED_AUTO_TEST_CASE(TraceWidgetPassword6)
 {
-    TestWidgetPasswordCtx ctx("test6", {}, 50);
+    TestWidgetPasswordCtx ctx("test6"_av, {}, 50);
     ctx.wpassword.set_xy(760, -7);
     ctx.wpassword.rdp_input_invalidate(ctx.wpassword.get_rect());
 
@@ -138,7 +138,7 @@ RED_AUTO_TEST_CASE(TraceWidgetPassword6)
 
 RED_AUTO_TEST_CASE(TraceWidgetPasswordClip)
 {
-    TestWidgetPasswordCtx ctx("test6", {}, 50);
+    TestWidgetPasswordCtx ctx("test6"_av, {}, 50);
     ctx.wpassword.set_xy(760, -7);
     ctx.wpassword.rdp_input_invalidate(Rect(
         20 + ctx.wpassword.x(),
@@ -152,7 +152,7 @@ RED_AUTO_TEST_CASE(TraceWidgetPasswordClip)
 
 RED_AUTO_TEST_CASE(TraceWidgetPasswordClip2)
 {
-    TestWidgetPasswordCtx ctx("test6", {}, 50);
+    TestWidgetPasswordCtx ctx("test6"_av, {}, 50);
     ctx.wpassword.set_xy(0, 0);
     ctx.wpassword.rdp_input_invalidate(Rect(
         20 + ctx.wpassword.x(),
@@ -167,7 +167,7 @@ RED_AUTO_TEST_CASE(TraceWidgetPasswordClip2)
 RED_AUTO_TEST_CASE(EventWidgetPassword)
 {
     NotifyTrace onsubmit;
-    TestWidgetPasswordCtx ctx("abcdef", {YELLOW, RED}, 100, onsubmit);
+    TestWidgetPasswordCtx ctx("abcdef"_av, {YELLOW, RED}, 100, onsubmit);
 
     auto& wpassword = ctx.wpassword;
     auto& drawable = ctx.drawable;
@@ -234,37 +234,37 @@ RED_AUTO_TEST_CASE(TraceWidgetPasswordAndComposite)
     wcomposite.set_wh(800, 600);
     wcomposite.set_xy(0, 0);
 
-    WidgetPassword wpassword1(drawable, copy_paste, "abababab",
+    WidgetPassword wpassword1(drawable, copy_paste, "abababab"_av,
                               {WidgetEventNotifier()}, YELLOW, BLACK, BLACK, global_font_deja_vu_14());
     Dimension dim = wpassword1.get_optimal_dim();
     wpassword1.set_wh(50, dim.h);
     wpassword1.set_xy(0, 0);
 
-    WidgetPassword wpassword2(drawable, copy_paste, "ggghdgh",
+    WidgetPassword wpassword2(drawable, copy_paste, "ggghdgh"_av,
                               {WidgetEventNotifier()}, WHITE, RED, RED, global_font_deja_vu_14());
     dim = wpassword2.get_optimal_dim();
     wpassword2.set_wh(50, dim.h);
     wpassword2.set_xy(0, 100);
 
-    WidgetPassword wpassword3(drawable, copy_paste, "lldlslql",
+    WidgetPassword wpassword3(drawable, copy_paste, "lldlslql"_av,
                               {WidgetEventNotifier()}, BLUE, RED, RED, global_font_deja_vu_14());
     dim = wpassword3.get_optimal_dim();
     wpassword3.set_wh(50, dim.h);
     wpassword3.set_xy(100, 100);
 
-    WidgetPassword wpassword4(drawable, copy_paste, "LLLLMLLM",
+    WidgetPassword wpassword4(drawable, copy_paste, "LLLLMLLM"_av,
                               {WidgetEventNotifier()}, PINK, DARK_GREEN, DARK_GREEN, global_font_deja_vu_14());
     dim = wpassword4.get_optimal_dim();
     wpassword4.set_wh(50, dim.h);
     wpassword4.set_xy(300, 300);
 
-    WidgetPassword wpassword5(drawable, copy_paste, "dsdsdjdjs",
+    WidgetPassword wpassword5(drawable, copy_paste, "dsdsdjdjs"_av,
                               {WidgetEventNotifier()}, LIGHT_GREEN, DARK_BLUE, DARK_BLUE, global_font_deja_vu_14());
     dim = wpassword5.get_optimal_dim();
     wpassword5.set_wh(50, dim.h);
     wpassword5.set_xy(700, -10);
 
-    WidgetPassword wpassword6(drawable, copy_paste, "xxwwp",
+    WidgetPassword wpassword6(drawable, copy_paste, "xxwwp"_av,
                               {WidgetEventNotifier()}, ANTHRACITE, PALE_GREEN, PALE_GREEN, global_font_deja_vu_14());
     dim = wpassword6.get_optimal_dim();
     wpassword6.set_wh(50, dim.h);
@@ -293,7 +293,7 @@ RED_AUTO_TEST_CASE(TraceWidgetPasswordAndComposite)
 RED_AUTO_TEST_CASE(DataWidgetPassword)
 {
     NotifyTrace notifier;
-    TestWidgetPasswordCtx ctx("aurélie", {YELLOW, RED}, 100, notifier);
+    TestWidgetPasswordCtx ctx("aurélie"_av, {YELLOW, RED}, 100, notifier);
 
     auto& wpassword = ctx.wpassword;
     auto& drawable = ctx.drawable;
@@ -331,7 +331,7 @@ RED_AUTO_TEST_CASE(DataWidgetPassword)
 RED_AUTO_TEST_CASE(DataWidgetPassword2)
 {
     NotifyTrace onsubmit;
-    TestWidgetPasswordCtx ctx("aurélie", {YELLOW, RED}, 100, onsubmit);
+    TestWidgetPasswordCtx ctx("aurélie"_av, {YELLOW, RED}, 100, onsubmit);
 
     auto& wpassword = ctx.wpassword;
     auto& drawable = ctx.drawable;
@@ -373,7 +373,7 @@ RED_AUTO_TEST_CASE(DataWidgetPassword2)
 RED_AUTO_TEST_CASE(DataWidgetPassword3)
 {
     NotifyTrace onsubmit;
-    TestWidgetPasswordCtx ctx("aurélie", {YELLOW, RED}, 100, onsubmit);
+    TestWidgetPasswordCtx ctx("aurélie"_av, {YELLOW, RED}, 100, onsubmit);
 
     auto& wpassword = ctx.wpassword;
     auto& drawable = ctx.drawable;

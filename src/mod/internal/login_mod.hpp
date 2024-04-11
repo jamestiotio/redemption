@@ -54,7 +54,7 @@ public:
     LoginMod(
         LoginModVariables vars,
         EventContainer& events,
-        char const * username, char const * password,
+        chars_view username, chars_view password,
         gdi::GraphicApi & drawable,
         FrontAPI & front, uint16_t width, uint16_t height,
         Rect const widget_rect, ClientExecute & rail_client_execute, Font const& font,

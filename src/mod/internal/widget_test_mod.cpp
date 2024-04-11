@@ -39,7 +39,7 @@ struct WidgetTestMod::WidgetTestModPrivate
     // , events_guard(events)
     , screen(gd, width, height, font, theme)
     , copy_paste(true)
-    , label(gd, "bla bla", theme.global.fgcolor, theme.global.bgcolor, font)
+    , label(gd, "bla bla"_av, theme.global.fgcolor, theme.global.bgcolor, font)
     , delegated_copy(
         gd, WidgetEventNotifier(), theme.global.fgcolor, theme.global.bgcolor,
         theme.global.focus_color, font, 2, 2, WidgetDelegatedCopy::MouseButton::Both)

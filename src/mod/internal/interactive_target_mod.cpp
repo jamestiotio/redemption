@@ -46,14 +46,14 @@ InteractiveTargetMod::InteractiveTargetMod(
         this->ask_device, this->ask_login, this->ask_password,
         theme,
         TR(trkeys::target_info_required, language(vars)),
-        TR(trkeys::device, language(vars)), vars.get<cfg::globals::target_device>().c_str(),
-        TR(trkeys::login, language(vars)), vars.get<cfg::globals::target_user>().c_str(),
+        TR(trkeys::device, language(vars)), vars.get<cfg::globals::target_device>(),
+        TR(trkeys::login, language(vars)), vars.get<cfg::globals::target_user>(),
         TR(trkeys::password, language(vars)),
         font, &this->language_button)
     , vars(vars)
 {
     this->screen.add_widget(this->challenge, WidgetComposite::HasFocus::Yes);
-    this->challenge.password_edit.set_text("");
+    this->challenge.password_edit.set_text(""_av);
     this->screen.init_focus();
     this->screen.rdp_input_invalidate(this->screen.get_rect());
 }

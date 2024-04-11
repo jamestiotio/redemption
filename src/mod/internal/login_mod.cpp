@@ -32,27 +32,23 @@
 
 namespace
 {
-    inline std::pair<std::string, std::string>
-    rpartition(std::string_view text, const char* seps)
+    inline std::pair<std::string_view, std::string_view>
+    rpartition(std::string_view text)
     {
-        size_t sep_pos = text.find_last_of(seps);
+        size_t sep_pos = text.find_last_of(":+");
         if (sep_pos != std::string::npos) {
             return std::make_pair(
-                std::string(text.substr(0, sep_pos)),
-                std::string(text.substr(sep_pos + 1))
+                text.substr(0, sep_pos),
+                text.substr(sep_pos + 1)
             );
         }
 
-        return std::make_pair(std::string(), std::string(text));
+        return std::make_pair(std::string_view(), text);
     }
 
     inline std::string
-    concat_target_login(std::string_view login, std::string_view target)
+    concat_target_login(chars_view login, std::string_view target)
     {
-        if (target.empty()) {
-            return std::string(login);
-        }
-
         size_t sep_pos = target.find_last_of("+:");
         char sep = (sep_pos != std::string::npos) ? target[sep_pos] : ':';
         return str_concat(target, sep, login);
@@ -62,7 +58,7 @@ namespace
 LoginMod::LoginMod(
     LoginModVariables vars,
     EventContainer & events,
-    char const * username, char const * password,
+    chars_view username, chars_view password,
     gdi::GraphicApi & drawable, FrontAPI & front, uint16_t width, uint16_t height,
     Rect const widget_rect, ClientExecute & rail_client_execute, Font const& font,
     Theme const& theme, CopyPaste& copy_paste
@@ -73,12 +69,12 @@ LoginMod::LoginMod(
         vars.get<cfg::internal_mod::keyboard_layout_proposals>(),
         this->login, drawable, front, font, theme)
     , login([&]{
-        std::string target;
-        std::string login;
+        chars_view target;
+        chars_view login;
         if (vars.get<cfg::internal_mod::enable_target_field>()) {
-            auto pair = rpartition(username, ":+");
-            target = std::move(pair.first);
-            login = std::move(pair.second);
+            auto pair = rpartition(av_auto_cast{username});
+            target = pair.first;
+            login = pair.second;
         } else {
             login = username;
         }
@@ -88,10 +84,16 @@ LoginMod::LoginMod(
             widget_rect.x, widget_rect.y, widget_rect.cx, widget_rect.cy,
             {
                 .onsubmit = [this]{
-                    this->vars.set_acl<cfg::globals::auth_user>(concat_target_login(
-                        this->login.login_edit.get_text(),
-                        this->login.target_edit.get_text()
-                    ));
+                    auto login = this->login.login_edit.get_text();
+                    auto target = this->login.target_edit.get_text();
+                    if (target.empty()) {
+                        this->vars.set_acl<cfg::globals::auth_user>(login);
+                    }
+                    else {
+                        this->vars.set_acl<cfg::globals::auth_user>(
+                            concat_target_login(login, target.to_sv())
+                        );
+                    }
                     this->vars.ask<cfg::context::selector>();
                     this->vars.ask<cfg::globals::target_user>();
                     this->vars.ask<cfg::globals::target_device>();
@@ -102,13 +104,13 @@ LoginMod::LoginMod(
                 .oncancel = [this]{ this->set_mod_signal(BACK_EVENT_STOP); },
                 .onctrl_shift = [this] { this->language_button.next_layout(); },
             },
-            "Redemption " VERSION,
-            login.c_str(), password, target.c_str(),
+            "Redemption " VERSION ""_av,
+            login, password, target,
             TR(trkeys::login, login_language(vars)),
             TR(trkeys::password, login_language(vars)),
             TR(trkeys::optional_target, login_language(vars)),
-            vars.get<cfg::context::opt_message>().c_str(),
-            vars.get<cfg::context::login_message>().c_str(),
+            vars.get<cfg::context::opt_message>(),
+            vars.get<cfg::context::login_message>(),
             &this->language_button,
             vars.get<cfg::internal_mod::enable_target_field>(),
             font, Translator(login_language(vars)), theme

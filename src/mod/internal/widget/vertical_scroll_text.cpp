@@ -41,7 +41,7 @@ namespace
 } // anonymous namespace
 
 WidgetVerticalScrollText::WidgetVerticalScrollText(
-    gdi::GraphicApi& drawable, std::string text,
+    gdi::GraphicApi& drawable, chars_view text,
     Color fg_color, Color bg_color, Color focus_color,
     Font const & font, uint16_t xtext, uint16_t ytext)
 : Widget(drawable, Focusable::No)
@@ -52,7 +52,7 @@ WidgetVerticalScrollText::WidgetVerticalScrollText(
 , x_text(xtext)
 , y_text(ytext)
 , button_dim(get_optimal_button_dim(this->font))
-, text(std::move(text))
+, text(av_auto_cast{text})
 {
 }
 
