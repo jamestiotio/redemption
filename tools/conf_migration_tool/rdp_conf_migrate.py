@@ -62,6 +62,9 @@ class RedemptionVersion:
         return (self.__major, self.__minor, self.__build, self.__revision)
 
 
+NoVersion = RedemptionVersion("0.0.0")
+
+
 class ConfigKind(IntEnum):
     Unknown = 0
     NewLine = 1
@@ -463,13 +466,14 @@ def build_with_injected_values(injections: InjectionsType,
     return new_fragments
 
 
-def migrate_file(migration_defs: Sequence[MigrationType],
-                 value_injections_desc: ValuesInjectionsDescType,
-                 version: RedemptionVersion,
-                 ini_filename: str,
-                 temporary_ini_filename: str,
-                 saved_ini_filename: str,
-                 ) -> bool:
+def migrate_file(
+        migration_defs: Sequence[MigrationType],
+        value_injections_desc: ValuesInjectionsDescType,
+        version: RedemptionVersion,
+        ini_filename: str,
+        temporary_ini_filename: str,
+        saved_ini_filename: str,
+) -> bool:
     content, fragments = parse_configuration_from_file(ini_filename)
     is_changed = False
 
@@ -597,15 +601,17 @@ def dump_json(defs: List[MigrationType]) -> List[Any]:
     return json_array
 
 
-def main(migration_defs: Sequence[MigrationType],
-         value_injections_desc: ValuesInjectionsDescType,
-         argv: List[str]) -> int:
-    if len(argv) != 4 or argv[1] not in {'-s', '-f'}:
-        if len(argv) == 2 and argv[1] == '--dump=json':
-            import json  # noqa: PLC0415
-            print(json.dumps(dump_json(migration_defs)))  # type: ignore
-            return 0
+def main(
+        migration_defs: Sequence[MigrationType],
+        value_injections_desc: ValuesInjectionsDescType,
+        argv: List[str]
+) -> int:
+    if len(argv) == 2 and argv[1] == '--dump=json':
+        import json  # noqa: PLC0415
+        print(json.dumps(dump_json(migration_defs)))  # type: ignore
+        return 0
 
+    if len(argv) <= 1:
         print(f'{argv[0]} {{-s|-f}} old_version ini_filename\n'
               '  -s   <version> is a output format of redemption --version\n'
               '  -f   <version> is a version of redemption from file\n\n'
@@ -613,11 +619,15 @@ def main(migration_defs: Sequence[MigrationType],
               file=sys.stderr)
         return 1
 
-    ini_filename = argv[3]
+    ini_pos = 3
     if argv[1] == '-f':
         old_version = RedemptionVersion.from_file(argv[2])
-    else:
+    elif argv[1] == '-s':
         old_version = RedemptionVersion(argv[2])
+    else:
+        ini_pos = 1
+        old_version = NoVersion
+    ini_filename = argv[ini_pos]
 
     print(f"PreviousRedemptionVersion={old_version}")
 
