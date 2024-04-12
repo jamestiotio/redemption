@@ -466,6 +466,13 @@ def build_with_injected_values(injections: InjectionsType,
     return new_fragments
 
 
+def extract_version_from_conf(content: str) -> RedemptionVersion:
+    rgx_ver = r"^\s*#\s+VERSION\s+(\d+\.\d+\.\d+).*"
+    for match_version in re.finditer(rgx_ver, content, flags=re.MULTILINE):
+        return RedemptionVersion(match_version.group(1))
+    return NoVersion
+
+
 def migrate_file(
         migration_defs: Sequence[MigrationType],
         value_injections_desc: ValuesInjectionsDescType,
@@ -475,6 +482,9 @@ def migrate_file(
         saved_ini_filename: str,
 ) -> bool:
     content, fragments = parse_configuration_from_file(ini_filename)
+    if version == NoVersion:
+        version = extract_version_from_conf(content)
+
     is_changed = False
 
     injections = extract_value_injections(value_injections_desc, fragments, version)

@@ -10,7 +10,9 @@ from rdp_conf_migrate import (
     fragments_to_spans_of_sections,
     migrate,
     migrate_file,
+    extract_version_from_conf,
     RedemptionVersion,
+    NoVersion,
     UpdateItem,
     RemoveItem,
     MoveSection,
@@ -334,6 +336,31 @@ class TestMigration(unittest.TestCase):
                                   value1='key', value2='other value'),
             ConfigurationFragment(text='\n', kind=ConfigKind.NewLine, value1='', value2='')
         ]))
+
+    def test_extract_version_from_conf(self):
+        data = """
+# VERSION 1.2.3
+[globals]
+toto = 111
+tata = titi
+[section]
+"""
+        assert extract_version_from_conf(data) == RedemptionVersion('1.2.3')
+        data2 = """
+[globals]
+toto = 111
+tata = titi
+[section]
+"""
+        assert extract_version_from_conf(data2) == NoVersion
+        data3 = """
+[globals]
+toto = 111
+tata = titi
+#    VERSION  3.4.6
+[section]
+"""
+        assert extract_version_from_conf(data3) == RedemptionVersion('3.4.6')
 
     def test_migrate_file(self):
         version = RedemptionVersion('9.1.38')
