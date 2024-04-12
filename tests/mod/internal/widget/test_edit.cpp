@@ -50,11 +50,11 @@ struct TestWidgetEditCtx
     TestWidgetEditCtx(
         chars_view text, Colors colors, uint16_t edit_width = 50,
         WidgetEventNotifier onsubmit = WidgetEventNotifier(),
-        size_t edit_pos = -1u, int xtext = 0, int ytext = 0)
+        int xtext = 0, int ytext = 0)
     : wedit(
         drawable, copy_paste, text, onsubmit,
         colors.fg_color, colors.bg_color, colors.bg_color,
-        global_font_deja_vu_14(), edit_pos, xtext, ytext)
+        global_font_deja_vu_14(), xtext, ytext)
     {
         Dimension dim = wedit.get_optimal_dim();
         wedit.set_wh(edit_width, dim.h);
@@ -85,7 +85,7 @@ struct TestWidgetEditCtx
 
 RED_AUTO_TEST_CASE(TraceWidgetEdit)
 {
-    TestWidgetEditCtx ctx("test1"_av, {}, 50, WidgetEventNotifier(), 2, 4, 1);
+    TestWidgetEditCtx ctx("test1"_av, {}, 50, WidgetEventNotifier(), 4, 1);
 
     ctx.wedit.set_xy(0, 0);
 
@@ -274,37 +274,43 @@ RED_AUTO_TEST_CASE(TraceWidgetEditAndComposite)
     wcomposite.set_xy(0, 0);
 
     WidgetEdit wedit1(drawable, copy_paste, "abababab"_av,
-                      {WidgetEventNotifier()}, YELLOW, BLACK, BLACK, global_font_deja_vu_14());
+                      {WidgetEventNotifier()}, YELLOW, BLACK, BLACK, global_font_deja_vu_14(),
+                      0, 0);
     Dimension dim = wedit1.get_optimal_dim();
     wedit1.set_wh(50, dim.h);
     wedit1.set_xy(0, 0);
 
     WidgetEdit wedit2(drawable, copy_paste, "ggghdgh"_av,
-                      {WidgetEventNotifier()}, WHITE, RED, RED, global_font_deja_vu_14());
+                      {WidgetEventNotifier()}, WHITE, RED, RED, global_font_deja_vu_14(),
+                      0, 0);
     dim = wedit2.get_optimal_dim();
     wedit2.set_wh(50, dim.h);
     wedit2.set_xy(0, 100);
 
     WidgetEdit wedit3(drawable, copy_paste, "lldlslql"_av,
-                      {WidgetEventNotifier()}, BLUE, RED, RED, global_font_deja_vu_14());
+                      {WidgetEventNotifier()}, BLUE, RED, RED, global_font_deja_vu_14(),
+                      0, 0);
     dim = wedit3.get_optimal_dim();
     wedit3.set_wh(50, dim.h);
     wedit3.set_xy(100, 100);
 
     WidgetEdit wedit4(drawable, copy_paste, "LLLLMLLM"_av,
-                      {WidgetEventNotifier()}, PINK, DARK_GREEN, DARK_GREEN, global_font_deja_vu_14());
+                      {WidgetEventNotifier()}, PINK, DARK_GREEN, DARK_GREEN, global_font_deja_vu_14(),
+                      0, 0);
     dim = wedit4.get_optimal_dim();
     wedit4.set_wh(50, dim.h);
     wedit4.set_xy(300, 300);
 
     WidgetEdit wedit5(drawable, copy_paste, "dsdsdjdjs"_av,
-                      {WidgetEventNotifier()}, LIGHT_GREEN, DARK_BLUE, DARK_BLUE, global_font_deja_vu_14());
+                      {WidgetEventNotifier()}, LIGHT_GREEN, DARK_BLUE, DARK_BLUE, global_font_deja_vu_14(),
+                      0, 0);
     dim = wedit5.get_optimal_dim();
     wedit5.set_wh(50, dim.h);
     wedit5.set_xy(700, -10);
 
     WidgetEdit wedit6(drawable, copy_paste, "xxwwp"_av,
-                      {WidgetEventNotifier()}, ANTHRACITE, PALE_GREEN, PALE_GREEN, global_font_deja_vu_14());
+                      {WidgetEventNotifier()}, ANTHRACITE, PALE_GREEN, PALE_GREEN, global_font_deja_vu_14(),
+                      0, 0);
     dim = wedit6.get_optimal_dim();
     wedit6.set_wh(50, dim.h);
     wedit6.set_xy(-10, 550);
@@ -329,7 +335,7 @@ RED_AUTO_TEST_CASE(TraceWidgetEditAndComposite)
 
 RED_AUTO_TEST_CASE(TraceWidgetEditScrolling)
 {
-    TestWidgetEditCtx ctx("abcde"_av, {BLACK, WHITE, WHITE}, 100, {WidgetEventNotifier()}, size_t(-1u), 1, 1);
+    TestWidgetEditCtx ctx("abcde"_av, {BLACK, WHITE, WHITE}, 100, {WidgetEventNotifier()}, 1, 1);
     WidgetScreen parent{ctx.drawable, 800, 600, global_font_deja_vu_14(), Theme{}};
 
     ctx.wedit.set_xy(0, 0);

@@ -34,11 +34,11 @@ WidgetPassword::WidgetPassword(
     gdi::GraphicApi & drawable, CopyPaste & copy_paste,
     chars_view text, WidgetEventNotifier onsubmit,
     Color fgcolor, Color bgcolor, Color focus_color,
-    Font const & font, std::size_t edit_position, int xtext, int ytext
+    Font const & font, int xtext, int ytext
 )
     : WidgetPasswordFont(font)
     , WidgetEdit(drawable, copy_paste, text, onsubmit,
-                 fgcolor, bgcolor, focus_color, this->shadow_font, edit_position, xtext, ytext)
+                 fgcolor, bgcolor, focus_color, this->shadow_font, xtext, ytext)
     , font(font)
 {
 }

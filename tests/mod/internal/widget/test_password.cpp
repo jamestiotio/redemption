@@ -50,11 +50,11 @@ struct TestWidgetPasswordCtx
     TestWidgetPasswordCtx(
         chars_view text, Colors colors, uint16_t edit_width = 50,
         WidgetEventNotifier onsubmit = WidgetEventNotifier(),
-        size_t password_pos = -1u, int xtext = 0, int ytext = 0)
+        int xtext = 0, int ytext = 0)
     : wpassword(
         drawable, copy_paste, text, onsubmit,
         colors.fg_color, colors.bg_color, colors.focus_color,
-        global_font_deja_vu_14(), password_pos, xtext, ytext)
+        global_font_deja_vu_14(), xtext, ytext)
     {
         Dimension dim = wpassword.get_optimal_dim();
         wpassword.set_wh(edit_width, dim.h);
@@ -83,7 +83,7 @@ struct TestWidgetPasswordCtx
 
 RED_AUTO_TEST_CASE(TraceWidgetPassword)
 {
-    TestWidgetPasswordCtx ctx("test1"_av, {}, 50, WidgetEventNotifier(), 2, 4, 1);
+    TestWidgetPasswordCtx ctx("test1"_av, {}, 50, WidgetEventNotifier(), 4, 1);
 
     ctx.wpassword.set_xy(0, 0);
     ctx.wpassword.rdp_input_invalidate(ctx.wpassword.get_rect());

@@ -111,17 +111,17 @@ WidgetSelector::WidgetSelector(
     WidgetEdit{
         drawable, copy_paste, nullptr, events.onfilter,
         theme.edit.fgcolor, theme.edit.bgcolor,
-        theme.edit.focus_color, font, std::size_t(-1), 1, 1
+        theme.edit.focus_color, font, 1, 1
     },
     WidgetEdit{
         drawable, copy_paste, nullptr, events.onfilter,
         theme.edit.fgcolor, theme.edit.bgcolor,
-        theme.edit.focus_color, font, std::size_t(-1), 1, 1
+        theme.edit.focus_color, font, 1, 1
     },
     WidgetEdit{
         drawable, copy_paste, nullptr, events.onfilter,
         theme.edit.fgcolor, theme.edit.bgcolor,
-        theme.edit.focus_color, font, std::size_t(-1), 1, 1
+        theme.edit.focus_color, font, 1, 1
     }
 }
 , selector_lines(drawable, tooltip_shower,
@@ -147,7 +147,7 @@ WidgetSelector::WidgetSelector(
                !current_page.empty() ? current_page : "XXXX"_av,
                {events.oncurrent_page},
                theme.edit.fgcolor, theme.edit.bgcolor,
-               theme.edit.focus_color, font, std::size_t(-1), 1, 1)
+               theme.edit.focus_color, font, 1, 1)
 , number_page(drawable,
               !number_of_page.empty() ? temporary_number_of_page(number_of_page) : "/XXX"_av,
               theme.global.fgcolor, theme.global.bgcolor, font)

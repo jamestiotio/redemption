@@ -38,8 +38,7 @@ public:
     WidgetPassword(gdi::GraphicApi & drawable, CopyPaste & copy_paste,
                    chars_view text, WidgetEventNotifier onsubmit,
                    Color fgcolor, Color bgcolor, Color focus_color,
-                   Font const & font,
-                   std::size_t edit_position = -1, int xtext = 0, int ytext = 0); /*NOLINT*/
+                   Font const & font, int xtext = 0, int ytext = 0); /*NOLINT*/
 
     void toggle_password_visibility();
 

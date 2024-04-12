@@ -30,8 +30,7 @@ public:
         gdi::GraphicApi & drawable, CopyPaste & copy_paste,
         chars_view text, WidgetEventNotifier onsubmit,
         Color fgcolor, Color bgcolor, Color focus_color,
-        Font const & font, size_t edit_position = -1, /*NOLINT*/
-        int xtext = 0, int ytext = 0); /*NOLINT*/
+        Font const & font, int xtext = 0, int ytext = 0); /*NOLINT*/
 
     void set_text(chars_view text) override;
 

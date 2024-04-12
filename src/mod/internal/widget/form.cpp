@@ -55,7 +55,7 @@ WidgetForm::WidgetForm(
     , duration_edit(drawable, copy_paste, nullptr,
                     {[this]{ this->check_confirmation(); }},
                     theme.edit.fgcolor, theme.edit.bgcolor,
-                    theme.edit.focus_color, font, -1, 1, 1)
+                    theme.edit.focus_color, font, 1, 1)
     , duration_format(drawable, TR(trkeys::note_duration_format, lang),
                       theme.global.fgcolor, theme.global.bgcolor, font)
     , ticket_label(drawable,
@@ -64,14 +64,14 @@ WidgetForm::WidgetForm(
     , ticket_edit(drawable, copy_paste, nullptr,
                   {[this]{ this->check_confirmation(); }},
                   theme.edit.fgcolor, theme.edit.bgcolor,
-                  theme.edit.focus_color, font, -1, 1, 1)
+                  theme.edit.focus_color, font, 1, 1)
     , comment_label(drawable,
                     TR((flags & COMMENT_MANDATORY) ? trkeys::comment_r : trkeys::comment, lang),
                     theme.global.fgcolor, theme.global.bgcolor, font)
     , comment_edit(drawable, copy_paste, nullptr,
                    {[this]{ this->check_confirmation(); }},
                    theme.edit.fgcolor, theme.edit.bgcolor,
-                   theme.edit.focus_color, font, -1, 1, 1)
+                   theme.edit.focus_color, font, 1, 1)
     , notes(drawable, TR(trkeys::note_required, lang),
             theme.global.fgcolor, theme.global.bgcolor, font)
     , confirm(drawable, TR(trkeys::confirm, lang),

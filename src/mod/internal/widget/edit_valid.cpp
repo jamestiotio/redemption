@@ -37,7 +37,7 @@ WidgetEditValid::WidgetEditValid(
     gdi::GraphicApi & drawable, CopyPaste & copy_paste,
     chars_view text, WidgetEventNotifier onsubmit,
     Color fgcolor, Color bgcolor, Color focus_color, Color border_none_color,
-    Font const & font, chars_view title, bool use_title, std::size_t edit_position,
+    Font const & font, chars_view title, bool use_title,
     // TODO re-enable
     int /*xtext*/, int /*ytext*/, bool pass
 )
@@ -46,12 +46,12 @@ WidgetEditValid::WidgetEditValid(
                   bgcolor, focus_color, focus_color, 1, font, 6, 2)
     , widget_password(pass
         ? new WidgetPassword(drawable, copy_paste, text, onsubmit, fgcolor, bgcolor,
-                             bgcolor, font, edit_position, 1, 2)
+                             bgcolor, font, 1, 2)
         : nullptr)
     , editbox(pass
         ? widget_password
         : new WidgetEdit(drawable, copy_paste, text, onsubmit, fgcolor, bgcolor,
-                         bgcolor, font, edit_position, 1, 2))
+                         bgcolor, font, 1, 2))
     , label(!title.empty()
         ? new WidgetLabel(drawable, title, MEDIUM_GREY, bgcolor, font, 1, 2)
         : nullptr)

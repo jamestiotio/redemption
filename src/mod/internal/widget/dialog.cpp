@@ -295,12 +295,12 @@ WidgetDialogWithChallenge::WidgetDialogWithChallenge(
         ? std::make_unique<WidgetEdit>(
             drawable, copy_paste, nullptr, events.onsubmit,
             theme.edit.fgcolor, theme.edit.bgcolor,
-            theme.edit.focus_color, font, -1u, 1, 1
+            theme.edit.focus_color, font, 1, 1
         )
         :  std::make_unique<WidgetPassword>(
             drawable, copy_paste, nullptr, events.onsubmit,
             theme.edit.fgcolor, theme.edit.bgcolor,
-            theme.edit.focus_color, font, -1u, 1, 1
+            theme.edit.focus_color, font, 1, 1
         ),
     nullptr
 )

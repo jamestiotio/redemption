@@ -56,21 +56,20 @@ WidgetLogin::WidgetLogin(
     , login_edit(drawable, copy_paste, login, events.onsubmit,
                  theme.edit.fgcolor, theme.edit.bgcolor,
                  theme.edit.focus_color, theme.global.bgcolor, font,
-                 label_text_login, (width <= 640), -1u, 1, 1, false)
+                 label_text_login, (width <= 640), 1, 1, false)
     , password_label(drawable, label_text_password,
                      theme.global.fgcolor, theme.global.bgcolor,
                      font)
     , password_edit(drawable, copy_paste, password, events.onsubmit,
                     theme.edit.fgcolor,
                     theme.edit.bgcolor, theme.edit.focus_color, theme.global.bgcolor,
-                    font, label_text_password, (width <= 640),
-                    -1u, 1, 1, true)
+                    font, label_text_password, (width <= 640), 1, 1, true)
     , target_label(drawable, label_text_target,
                    theme.global.fgcolor, theme.global.bgcolor, font)
     , target_edit(drawable, copy_paste, target, events.onsubmit,
                   theme.edit.fgcolor, theme.edit.bgcolor,
                   theme.edit.focus_color, theme.global.bgcolor, font,
-                  label_text_target, (width <= 640), -1u, 1, 1, false)
+                  label_text_target, (width <= 640), 1, 1, false)
     , message_label(drawable,
         login_message,
         theme.global.fgcolor, theme.global.bgcolor, theme.global.focus_color,

@@ -35,7 +35,7 @@ WidgetEdit::WidgetEdit(
     gdi::GraphicApi & drawable, CopyPaste & copy_paste,
     chars_view text, WidgetEventNotifier onsubmit,
     Color fgcolor, Color bgcolor, Color focus_color,
-    Font const & font, std::size_t edit_position, int xtext, int ytext)
+    Font const & font, int xtext, int ytext)
 : Widget(drawable, Focusable::Yes)
 , onsubmit(onsubmit)
 , label(drawable, text, fgcolor, bgcolor, font, xtext, ytext)

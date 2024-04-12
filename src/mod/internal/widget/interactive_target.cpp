@@ -55,7 +55,7 @@ WidgetInteractiveTarget::WidgetInteractiveTarget(
                     ? WidgetEventNotifier([this]{ this->next_focus(); })
                     : events.onsubmit,
                   theme.edit.fgcolor, theme.edit.bgcolor,
-                  theme.edit.focus_color, theme.global.bgcolor, font, nullptr, false, -1u, 1, 1)
+                  theme.edit.focus_color, theme.global.bgcolor, font, nullptr, false, 1, 1)
     , login_label(drawable, text_login,
                   theme.global.fgcolor, theme.global.bgcolor, font)
     , login(drawable, login_str,
@@ -63,7 +63,7 @@ WidgetInteractiveTarget::WidgetInteractiveTarget(
     , login_edit(drawable, copy_paste, nullptr,
                  [this]{ this->next_focus(); },
                  theme.edit.fgcolor, theme.edit.bgcolor,
-                 theme.edit.focus_color, theme.global.bgcolor, font, nullptr, false, -1u, 1, 1)
+                 theme.edit.focus_color, theme.global.bgcolor, font, nullptr, false, 1, 1)
     , password_label(drawable, text_password,
                         theme.global.fgcolor, theme.global.bgcolor, font)
     , password_edit(drawable, copy_paste, nullptr,
@@ -71,7 +71,7 @@ WidgetInteractiveTarget::WidgetInteractiveTarget(
                         ? WidgetEventNotifier([this]{ this->next_focus(); })
                         : events.onsubmit,
                     theme.edit.fgcolor, theme.edit.bgcolor,
-                    theme.edit.focus_color, theme.global.bgcolor, font, nullptr, false, -1u, 1, 1, true)
+                    theme.edit.focus_color, theme.global.bgcolor, font, nullptr, false, 1, 1, true)
     , extra_button(extra_button)
     , fgcolor(theme.global.fgcolor)
     , ask_device(ask_device)
