@@ -30,19 +30,20 @@
 
 #define IMG_TEST_PATH FIXTURES_PATH "/img_ref/mod/internal/widget/multiline/"
 
-constexpr char const* short_message_ml =
+constexpr auto short_message_ml =
     "line 1\n"
     "line 2\n"
     "\n"
     "line 3, blah blah\n"
-    "line 4";
+    "line 4"
+    ""_av;
 
 struct TestWidgetMultiLineCtx
 {
     TestGraphic drawable{800, 600};
     WidgetMultiLine wmultiline;
 
-    TestWidgetMultiLineCtx(char const* text, int xtext = 0, int ytext = 0)
+    TestWidgetMultiLineCtx(chars_view text, int xtext = 0, int ytext = 0)
     : wmultiline(
         drawable, text, 4096, BLUE, CYAN,
         global_font_deja_vu_14(), xtext, ytext)
@@ -149,7 +150,8 @@ RED_AUTO_TEST_CASE(TraceWidgetMultiLineTooLong)
         "Nam non magna sit amet dui vestibulum feugiat.\n"
         "Praesent vitae purus et lacus tincidunt lobortis.\n"
         "Nam lacinia purus luctus ante congue facilisis.\n"
-        "Donec sodales mauris luctus ante ultrices blandit.");
+        "Donec sodales mauris luctus ante ultrices blandit."
+        ""_av);
 
     ctx.wmultiline.set_xy(0, 0);
     ctx.wmultiline.rdp_input_invalidate(ctx.wmultiline.get_rect());

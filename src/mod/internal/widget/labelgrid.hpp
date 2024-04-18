@@ -43,7 +43,7 @@ struct WidgetLabelGrid : public WidgetGrid
 
     void add_line(array_view<chars_view> entries);
 
-    const char * get_cell_text(uint16_t row_index, uint16_t column_index);
+    chars_view get_cell_text(uint16_t row_index, uint16_t column_index);
 
 private:
     Font const & font;

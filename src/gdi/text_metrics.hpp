@@ -21,6 +21,7 @@
 #pragma once
 
 #include "gdi/graphic_api.hpp"
+#include "utils/sugar/bytes_view.hpp"
 
 #include <memory>
 
@@ -34,30 +35,52 @@ struct TextMetrics
     int width = 0;
     int height = 0;
 
-    TextMetrics(const Font & font, const char * unicode_text);
+    explicit TextMetrics(const Font & font, bytes_view utf8_text);
+
+    static int char_width(const Font & font, uint32_t unicode);
 };
 
 struct MultiLineTextMetrics
 {
-    struct Line
-    {
-        char const* str;
-        int width;
-    };
+    explicit MultiLineTextMetrics() noexcept = default;
+    explicit MultiLineTextMetrics(const Font& font, bytes_view utf8_text, unsigned max_width);
 
-    array_view<Line> lines() const noexcept
+    MultiLineTextMetrics(MultiLineTextMetrics const&) = delete;
+    MultiLineTextMetrics operator = (MultiLineTextMetrics const&) = delete;
+
+    MultiLineTextMetrics(MultiLineTextMetrics&& other) noexcept
+        : d(other.d)
     {
-        return {this->lines_.get(), this->size_};
+        other.d = Data();
     }
 
-    MultiLineTextMetrics() = default;
-    MultiLineTextMetrics(const Font& font, const char* unicode_text, unsigned max_width);
+    MultiLineTextMetrics& operator=(MultiLineTextMetrics&& other) noexcept
+    {
+        MultiLineTextMetrics g(std::move(*this));
+        std::swap(d, other.d);
+        return *this;
+    }
 
-    uint16_t max_width() const noexcept;
+    ~MultiLineTextMetrics();
+
+    array_view<bytes_view> lines() const noexcept
+    {
+        return {d.lines, d.nb_line};
+    }
+
+    uint16_t max_width() const noexcept
+    {
+        return d.max_width;
+    }
 
 private:
-    std::unique_ptr<Line[]> lines_;
-    std::size_t size_ = 0;
+    struct Data {
+        bytes_view* lines = nullptr;
+        unsigned nb_line = 0;
+        uint16_t max_width = 0;
+    };
+
+    Data d;
 };
 
 
@@ -65,7 +88,7 @@ private:
 // TODO: is it still used ? If yes move it somewhere else. Method from internal mods ?
 void server_draw_text(
     GraphicApi & drawable, Font const & font,
-    int16_t x, int16_t y, const char * text,
+    int16_t x, int16_t y, bytes_view utf8_text,
     RDPColor fgcolor, RDPColor bgcolor,
     ColorCtx color_ctx,
     Rect clip

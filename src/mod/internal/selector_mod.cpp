@@ -109,10 +109,12 @@ SelectorMod::SelectorMod(
                 this->selector.selector_lines.get_selection(row_index, column_index);
                 if (static_cast<uint16_t>(-1u) != row_index)
                 {
-                    const char * target = this->selector.selector_lines.get_cell_text(row_index, WidgetSelector::IDX_TARGET);
-                    const char * groups = this->selector.selector_lines.get_cell_text(row_index, WidgetSelector::IDX_TARGETGROUP);
-                    snprintf(buffer, sizeof(buffer), "%s:%s:%s",
-                                target, groups, this->ini.get<cfg::globals::auth_user>().c_str());
+                    chars_view target = this->selector.selector_lines.get_cell_text(row_index, WidgetSelector::IDX_TARGET);
+                    chars_view groups = this->selector.selector_lines.get_cell_text(row_index, WidgetSelector::IDX_TARGETGROUP);
+                    snprintf(buffer, sizeof(buffer), "%.*s:%.*s:%s",
+                             static_cast<int>(target.size()), target.data(),
+                             static_cast<int>(groups.size()), groups.data(),
+                             this->ini.get<cfg::globals::auth_user>().c_str());
                     this->ini.set_acl<cfg::globals::auth_user>(buffer);
                     this->ini.ask<cfg::globals::target_user>();
                     this->ini.ask<cfg::globals::target_device>();
@@ -179,7 +181,7 @@ SelectorMod::SelectorMod(
         &this->language_button, this->selector_params, font, theme, language(ini), true)
 
     , current_page(unchecked_decimal_chars_to_int(this->selector.current_page.get_text()))
-    , number_page(unchecked_decimal_chars_to_int(this->selector.number_page.get_text()+1))
+    , number_page(unchecked_decimal_chars_to_int(this->selector.number_page.get_text().from_offset(1)))
 {
     this->screen.add_widget(this->selector, WidgetComposite::HasFocus::Yes);
     this->screen.init_focus();

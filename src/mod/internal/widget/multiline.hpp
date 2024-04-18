@@ -32,11 +32,11 @@ public:
                     int xtext = 0, int ytext = 0); /*NOLINT*/
 
     WidgetMultiLine(gdi::GraphicApi & drawable,
-                    const char * text, unsigned max_width,
+                    chars_view text, unsigned max_width,
                     Color fgcolor, Color bgcolor, Font const & font,
                     int xtext = 0, int ytext = 0); /*NOLINT*/
 
-    void set_text(const char * text, unsigned max_width);
+    void set_text(bytes_view text, unsigned max_width);
     void set_text(gdi::MultiLineTextMetrics&& line_metrics);
 
     void rdp_input_invalidate(Rect clip) override;

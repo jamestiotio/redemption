@@ -10,7 +10,7 @@ SPDX-License-Identifier: GPL-2.0-or-later
 
 struct NullTooltipShower : WidgetTooltipShower
 {
-    void show_tooltip(const char * text, int x, int y, Rect preferred_display_rect, Rect mouse_area) override
+    void show_tooltip(chars_view text, int x, int y, Rect preferred_display_rect, Rect mouse_area) override
     {
         (void)text;
         (void)x;

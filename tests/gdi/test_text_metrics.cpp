@@ -25,6 +25,7 @@
 #include "test_only/test_framework/check_img.hpp"
 
 #include "gdi/text_metrics.hpp"
+#include "utils/sugar/to_sv.hpp"
 #include "test_only/core/font.hpp"
 #include "test_only/gdi/test_graphic.hpp"
 
@@ -38,28 +39,33 @@
 RED_AUTO_TEST_CASE(TextMetrics)
 {
     {
-        gdi::TextMetrics text(global_font_deja_vu_14(), "abc");
+        gdi::TextMetrics text(global_font_deja_vu_14(), "abc"_av);
         RED_CHECK_EQUAL(18, text.height);
         RED_CHECK_EQUAL(25, text.width);
     }
     {
-        gdi::TextMetrics text(global_font_deja_vu_14(), "abcde");
+        gdi::TextMetrics text(global_font_deja_vu_14(), "abcde"_av);
         RED_CHECK_EQUAL(18, text.height);
         RED_CHECK_EQUAL(43, text.width);
     }
     {
-        gdi::TextMetrics text(global_font_deja_vu_14(), "Ay");
+        gdi::TextMetrics text(global_font_deja_vu_14(), "Ay"_av);
         RED_CHECK_EQUAL(18, text.height);
         RED_CHECK_EQUAL(19, text.width);
     }
 }
 
 
-struct LineForTest : gdi::MultiLineTextMetrics::Line
+struct LineForTest : bytes_view
 {
+    std::string_view sv() const
+    {
+        return to_sv(as_chars());
+    }
+
     bool operator == (LineForTest const& other) const
     {
-        return this->width == other.width && 0 == strcmp(this->str, other.str);
+        return sv() == other.sv();
     }
 };
 
@@ -71,26 +77,24 @@ static ut::assertion_result test_comp_lines(
     return ut::ops::compare_collection_EQ(a, b, [&](std::ostream& out, size_t pos, ...) /*NOLINT*/
     {
         auto put_view = [&](std::ostream& oss, auto av){
-            if (pos != 0) {
-                oss << "..., ";
-            }
-
             if (av.empty()) {
                 oss << "--";
             }
             else {
+                size_t i = 0;
                 auto put = [&](LineForTest const& line) {
-                    oss << "{.width=" << line.width << ", .str=" << std::quoted(line.str) << "}";
+                    oss << (i == pos ? "*{" : "{") << std::quoted(line.sv()) << "}";
+                    ++i;
                 };
                 put(av.front());
                 for (auto const& l : av.from_offset(1)) {
-                    oss << "  ";
+                    oss << " ";
                     put(l);
                 }
             }
         };
 
-        ut::put_data_with_diff(out, a.from_offset(pos), "!=", b.from_offset(pos), put_view);
+        ut::put_data_with_diff(out, a, "!=", b, put_view);
     });
 }
 
@@ -100,125 +104,146 @@ RED_TEST_DISPATCH_COMPARISON_EQ((), (::array_view<::LineForTest>), (::array_view
 #define TEST_LINES(font, s, max_width, ...) [&](                                          \
     gdi::MultiLineTextMetrics const& metrics                                              \
 ) {                                                                                       \
-    gdi::MultiLineTextMetrics::Line expected_[] {__VA_ARGS__};                            \
+    bytes_view expected_[] {__VA_ARGS__};                                                 \
     array_view lines_ = metrics.lines();                                                  \
     array_view<LineForTest> expected{                                                     \
         static_cast<LineForTest const*>(&expected_[0]), std::size(expected_)}; /*NOLINT*/ \
     array_view lines = {                                                                  \
         static_cast<LineForTest const*>(lines_.data()), lines_.size()}; /*NOLINT*/        \
     RED_CHECK(lines == expected);                                                         \
-}(gdi::MultiLineTextMetrics(font, s, max_width))
+}(gdi::MultiLineTextMetrics(font, s ""_av, max_width))
 
 
 RED_AUTO_TEST_CASE(MultiLineTextMetrics)
 {
     auto& font14 = global_font_deja_vu_14();
 
-    RED_TEST(gdi::MultiLineTextMetrics(font14, "", 0).lines().size() == 0);
+    RED_TEST(gdi::MultiLineTextMetrics(font14, ""_av, 0).lines().size() == 0);
 
     TEST_LINES(font14, "ab", 0,
-        {"a", 8},
-        {"b", 9},
+        "a"_av,
+        "b"_av,
     );
 
     TEST_LINES(font14, "abc", 100,
-        {"abc", 25},
+        "abc"_av,
     );
 
     TEST_LINES(font14, "abc", 17,
-        {"ab", 17},
-        {"c", 8},
+        "ab"_av,
+        "c"_av,
     );
 
     TEST_LINES(font14, "abc", 1,
-        {"a", 8},
-        {"b", 9},
-        {"c", 8},
+        "a"_av,
+        "b"_av,
+        "c"_av,
     );
 
     TEST_LINES(font14, "a\nb\nc", 100,
-        {"a", 8},
-        {"b", 9},
-        {"c", 8},
+        "a"_av,
+        "b"_av,
+        "c"_av,
     );
 
     TEST_LINES(font14, "a\nb\nc", 17,
-        {"a", 8},
-        {"b", 9},
-        {"c", 8},
+        "a"_av,
+        "b"_av,
+        "c"_av,
     );
 
     TEST_LINES(font14, "a\nb\nc", 1,
-        {"a", 8},
-        {"b", 9},
-        {"c", 8},
+        "a"_av,
+        "b"_av,
+        "c"_av,
     );
 
     TEST_LINES(font14, "ab cd", 17,
-        {"ab", 17},
-        {"cd", 17},
+        "ab"_av,
+        "cd"_av,
+    );
+
+    TEST_LINES(font14, "ab   cd", 17,
+        "ab"_av,
+        "cd"_av,
     );
 
     TEST_LINES(font14, "ab cd", 1,
-        {"a", 8},
-        {"b", 9},
-        {"", 0},
-        {"c", 8},
-        {"d", 9},
+        "a"_av,
+        "b"_av,
+        "c"_av,
+        "d"_av,
     );
 
     TEST_LINES(font14, "annvhg jgsy kfhdis hnvlkj gks hxk.hf", 50,
-        {"annvh", 44},
-        {"g jgsy", 45},
-        {"kfhdis", 42},
-        {"hnvlkj", 43},
-        {"gks", 25},
-        {"hxk.hf", 45},
+        "annvh"_av,
+        "g jgsy"_av,
+        "kfhdis"_av,
+        "hnvlkj"_av,
+        "gks"_av,
+        "hxk.hf"_av,
     );
 
     TEST_LINES(font14, "annvhg jgsy kfhdis hnvlkj gks hxk.hf", 150,
-        {"annvhg jgsy kfhdis", 136},
-        {"hnvlkj gks hxk.hf", 123},
+        "annvhg jgsy kfhdis"_av,
+        "hnvlkj gks hxk.hf"_av,
     );
 
     TEST_LINES(font14, "veryverylonglonglong string", 100,
-        {"veryverylongl", 97},
-        {"onglong", 57},
-        {"string", 40},
+        "veryverylongl"_av,
+        "onglong"_av,
+        "string"_av,
     );
 
     TEST_LINES(font14, "  veryverylonglonglong string", 100,
-        {"", 0},
-        {"veryverylongl", 97},
-        {"onglong", 57},
-        {"string", 40},
+        ""_av,
+        "veryverylongl"_av,
+        "onglong"_av,
+        "string"_av,
     );
 
     TEST_LINES(font14, "  veryverylonglonglong string", 130,
-        {"", 0},
-        {"veryverylonglongl", 127},
-        {"ong string", 72},
+        ""_av,
+        "veryverylonglongl"_av,
+        "ong string"_av,
     );
 
     TEST_LINES(font14, "  veryverylonglonglong\n string", 100,
-        {"", 0},
-        {"veryverylongl", 97},
-        {"onglong", 57},
-        {" string", 45},
+        ""_av,
+        "veryverylongl"_av,
+        "onglong"_av,
+        " string"_av,
     );
 
     TEST_LINES(font14, "  veryverylonglonglong \nstring", 100,
-        {"", 0},
-        {"veryverylongl", 97},
-        {"onglong", 57},
-        {"string", 40},
+        ""_av,
+        "veryverylongl"_av,
+        "onglong"_av,
+        "string"_av,
     );
 
     TEST_LINES(font14, "bla bla\n\n - abc\n - def", 100,
-        {"bla bla", 45},
-        {"", 0},
-        {" - abc", 41},
-        {" - def", 39},
+        "bla bla"_av,
+        ""_av,
+        " - abc"_av,
+        " - def"_av,
+    );
+
+    TEST_LINES(font14, "Le pastafarisme (mot-valise faisant référence aux pâtes et au mouvement rastafari) est originellement une parodie de religion1,2,3,4 dont la divinité est le Monstre en spaghetti volant (Flying Spaghetti Monster)5,6 créée en 2005 par Bobby Henderson, alors étudiant de l'université d'État de l'Oregon. Depuis, le pastafarisme a été reconnu administrativement comme religion par certains pays7,8,9,10,11, et rejeté en tant que telle par d'autres12,13,14.", 273,
+        "Le pastafarisme (mot-valise faisant"_av,
+        "référence aux pâtes et au"_av,
+        "mouvement rastafari) est"_av,
+        "originellement une parodie de"_av,
+        "religion1,2,3,4 dont la divinité est le"_av,
+        "Monstre en spaghetti volant (Flying"_av,
+        "Spaghetti Monster)5,6 créée en 2005"_av,
+        "par Bobby Henderson, alors étudiant"_av,
+        "de l'université d'État de l'Oregon."_av,
+        "Depuis, le pastafarisme a été reconnu"_av,
+        "administrativement comme religion"_av,
+        "par certains pays7,8,9,10,11, et rejeté"_av,
+        "en tant que telle par"_av,
+        "d'autres12,13,14."_av,
     );
 }
 
@@ -231,10 +256,11 @@ RED_AUTO_TEST_CASE(TestServerDrawText)
     const uint16_t h = 30;
     TestGraphic gd(w, h);
 
-    char const * text = ""
+    auto text = ""
         "Unauthorized access to this system is forbidden and will be prosecuted"
         " by law. By accessing this system, you agree that your actions may be"
         " monitored if unauthorized usage is suspected."
+        ""_av
     ;
 
     using color_encoder = encode_color24;

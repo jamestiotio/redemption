@@ -50,7 +50,7 @@ void TransitionMod::rdp_input_invalidate(Rect r)
 
     if (!clip.isempty()) {
         int padding = 20;
-        int width = gdi::TextMetrics(font, ttmessage.c_str()).width + padding * 2;
+        int width = gdi::TextMetrics(font, ttmessage).width + padding * 2;
         int height = this->font.max_height() + padding * 2;
         int x = widget_rect.x + (widget_rect.cx - width) / 2;
         int y = widget_rect.y + (widget_rect.cy - height) / 2;
@@ -67,7 +67,7 @@ void TransitionMod::rdp_input_invalidate(Rect r)
         gdi::server_draw_text(
             drawable, font,
             x + padding, y + padding,
-            ttmessage.c_str(), encode(fgcolor), encode(bgcolor),
+            ttmessage, encode(fgcolor), encode(bgcolor),
             color_ctx, clip
         );
         gdi_draw_border(drawable, encode(border_color), area, 1, clip, color_ctx);

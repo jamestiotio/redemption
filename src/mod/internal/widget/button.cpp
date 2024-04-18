@@ -76,7 +76,7 @@ void WidgetButton::set_text(chars_view text)
         memcpy(this->buffer, text.data(), max);
         this->buffer[max] = 0;
         if (this->auto_resize_) {
-            Dimension dm = WidgetLabel::get_optimal_dim(this->font, this->buffer, this->x_text, this->y_text);
+            Dimension dm = WidgetLabel::get_optimal_dim(this->font, std::string_view(this->buffer), this->x_text, this->y_text);
 
             this->label_rect.cx = dm.w;
             this->label_rect.cy = dm.h;
@@ -93,7 +93,7 @@ void WidgetButton::rdp_input_invalidate(Rect clip)
 
     if (!rect_intersect.isempty()) {
         this->draw(
-            rect_intersect, this->get_rect(), this->drawable, this->logo, this->has_focus, this->buffer,
+            rect_intersect, this->get_rect(), this->drawable, this->logo, this->has_focus, std::string_view(this->buffer),
             this->fg_color, this->bg_color, this->focus_color, gdi::ColorCtx::depth24(),
             this->label_rect, this->state, this->border_width, this->font, this->x_text, this->y_text);
     }
@@ -101,7 +101,7 @@ void WidgetButton::rdp_input_invalidate(Rect clip)
 
 void WidgetButton::draw(
     Rect const clip, Rect const rect, gdi::GraphicApi& drawable,
-    bool logo, bool has_focus, char const* text,
+    bool logo, bool has_focus, chars_view text,
     Color fg_color, Color bg_color, Color focuscolor, gdi::ColorCtx color_ctx,
     Rect label_rect, State state, unsigned border_width, Font const& font, int xtext, int ytext)
 {
@@ -194,24 +194,12 @@ void WidgetButton::rdp_input_unicode(KbdFlags flag, uint16_t unicode)
 
 Dimension WidgetButton::get_optimal_dim() const
 {
-    Dimension dm = WidgetLabel::get_optimal_dim(this->font, this->buffer, this->x_text, this->y_text);
+    Dimension dm = WidgetLabel::get_optimal_dim(this->font, std::string_view(this->buffer), this->x_text, this->y_text);
     return Dimension(dm.w + (this->border_width * 2 - 1), dm.h + (this->border_width * 2 - 1));
 }
 
-Dimension WidgetButton::get_optimal_dim(unsigned border_width, Font const& font, char const* text, int xtext, int ytext)
+Dimension WidgetButton::get_optimal_dim(unsigned border_width, Font const& font, chars_view text, int xtext, int ytext)
 {
-    char buffer[buffer_size];
-
-    buffer[0] = 0;
-    if (text) {
-        const size_t remain_n = buffer_size - 1;
-        const size_t n = strlen(text);
-        const size_t max = ((remain_n >= n) ? n :
-                            ::UTF8StringAdjustedNbBytes(::byte_ptr_cast(text), remain_n));
-        memcpy(buffer, text, max);
-        buffer[max] = 0;
-    }
-
-    Dimension dm = WidgetLabel::get_optimal_dim(font, buffer, xtext, ytext);
+    Dimension dm = WidgetLabel::get_optimal_dim(font, text, xtext, ytext);
     return Dimension(dm.w + (border_width * 2 - 1), dm.h + (border_width * 2 - 1));
 }

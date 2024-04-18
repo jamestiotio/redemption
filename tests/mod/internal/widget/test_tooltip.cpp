@@ -41,9 +41,8 @@ RED_AUTO_TEST_CASE(TraceWidgetTooltip)
     BGRColor border_color = BLACK;
     int16_t x = 10;
     int16_t y = 10;
-    const char * tooltiptext = "testémq";
 
-    WidgetTooltip wtooltip(drawable, tooltiptext, 4096, fg_color, bg_color, border_color, global_font_deja_vu_14());
+    WidgetTooltip wtooltip(drawable, "testémq"_av, 4096, fg_color, bg_color, border_color, global_font_deja_vu_14());
     Dimension dim = wtooltip.get_optimal_dim();
     wtooltip.set_wh(dim);
     wtooltip.set_xy(x, y);
@@ -78,7 +77,7 @@ RED_AUTO_TEST_CASE(TraceWidgetTooltipScreen)
     parent.add_widget(label);
     parent.add_widget(label2);
 
-    auto rdp_input_mouse = [&](WidgetLabel const& label, const char * text) {
+    auto rdp_input_mouse = [&](WidgetLabel const& label, chars_view text) {
         auto x = label.x() + label.cx() / 2;
         auto y = label.y() + label.cy() / 2;
         parent.rdp_input_mouse(MOUSE_FLAG_MOVE, x, y);
@@ -92,19 +91,19 @@ RED_AUTO_TEST_CASE(TraceWidgetTooltipScreen)
 
     RED_CHECK_IMG(drawable, IMG_TEST_PATH "tooltip_2.png");
 
-    rdp_input_mouse(label, "Test tooltip description");
+    rdp_input_mouse(label, "Test tooltip description"_av);
     RED_CHECK_IMG(drawable, IMG_TEST_PATH "tooltip_3.png");
     parent.show_tooltip(nullptr, x, y, Rect(), Rect());
 
     rdp_input_mouse(label2,
                     "Test tooltip\n"
                     "description in\n"
-                    "multilines !");
+                    "multilines !"_av);
     RED_CHECK_IMG(drawable, IMG_TEST_PATH "tooltip_4.png");
 
     parent.tooltip->set_text("Test tooltip\n"
                              "Text modification\n"
-                             "text has been changed !", parent.cx());
+                             "text has been changed !"_av, parent.cx());
     parent.rdp_input_invalidate(parent.get_rect());
 
     RED_CHECK_IMG(drawable, IMG_TEST_PATH "tooltip_5.png");

@@ -181,7 +181,7 @@ void WidgetWabClose::move_size_widget(int16_t left, int16_t top, uint16_t width,
 
     uint16_t x = 0;
 
-    if (this->username_value.get_text()[0]) {
+    if (!this->username_value.get_text().empty()) {
         dim = this->username_label.get_optimal_dim();
         this->username_label.set_wh(dim);
         this->username_label.set_xy(left + (width - this->separator.cx()) / 2,
@@ -211,7 +211,7 @@ void WidgetWabClose::move_size_widget(int16_t left, int16_t top, uint16_t width,
 
     x += 10;
 
-    if (this->username_value.get_text()[0]) {
+    if (!this->username_value.get_text().empty()) {
         this->username_label.set_xy(this->username_label.x(), top + y);
 
         dim = this->username_value.get_optimal_dim();
@@ -232,7 +232,7 @@ void WidgetWabClose::move_size_widget(int16_t left, int16_t top, uint16_t width,
     this->diagnostic_label.set_xy(this->diagnostic_label.x(), top + y);
 
     this->diagnostic_value.set_text(gdi::MultiLineTextMetrics(
-        this->font, this->diagnostic_text.c_str(),
+        this->font, this->diagnostic_text,
         (this->diagnostic_label.cx() > this->cx() - (x + 10))
             ? this->separator.cx()
             : this->separator.cx() - x)

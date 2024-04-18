@@ -95,7 +95,7 @@ void WidgetWait::move_size_widget(int16_t left, int16_t top, uint16_t width, uin
 
     int y = 20;
 
-    this->dialog.set_text(this->message_dialog.c_str(), width - 60);
+    this->dialog.set_text(this->message_dialog, width - 60);
     Dimension dim = this->dialog.get_optimal_dim();
     this->dialog.set_wh(dim);
     this->dialog.set_xy(left + 30, top + y + 10);

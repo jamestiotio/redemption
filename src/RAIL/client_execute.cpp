@@ -614,7 +614,7 @@ void draw_icon(
 void draw_text_region(
     gdi::GraphicApi& drawable, Font const* font, Rect const& rect,
     RDPColor fg_color, RDPColor bg_color,
-    int16_t offset_x, int16_t offset_y, zstring_view text, Rect const& clip)
+    int16_t offset_x, int16_t offset_y, chars_view text, Rect const& clip)
 {
     drawable.draw(RDPOpaqueRect(rect, bg_color), clip, gdi::ColorCtx::depth24());
     if (font) {
@@ -623,7 +623,7 @@ void draw_text_region(
             *font,
             rect.x + offset_x,
             rect.y + offset_y,
-            text.c_str(),
+            text,
             fg_color,
             bg_color,
             gdi::ColorCtx::depth24(),
@@ -659,7 +659,7 @@ constexpr RDPColor close_button_fg_colors[]{
 
 void draw_title(
     gdi::GraphicApi& drawable, Font const* font, Rect const& rect,
-    zstring_view window_title, Rect const& clip)
+    chars_view window_title, Rect const& clip)
 {
     auto fg_color = black;
     auto bg_color = white;
@@ -672,7 +672,7 @@ void draw_button_mini(
 {
     auto fg_color = black;
     auto bg_color = normal_button_bg_colors[underlying_cast(button_style)];
-    draw_text_region(drawable, font, rect, fg_color, bg_color, 12, 2, "−"_zv, clip);
+    draw_text_region(drawable, font, rect, fg_color, bg_color, 12, 2, "−"_av, clip);
 }
 
 void draw_button_maxi(
@@ -798,7 +798,7 @@ void draw_button_close(
 {
     auto bg_color = close_button_bg_colors[underlying_cast(button_style)];
     auto fg_color = close_button_fg_colors[underlying_cast(button_style)];
-    draw_text_region(drawable, font, rect, fg_color, bg_color, 13, 2, "x"_zv, clip);
+    draw_text_region(drawable, font, rect, fg_color, bg_color, 13, 2, "x"_av, clip);
 }
 
 

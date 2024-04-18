@@ -80,7 +80,7 @@ void WidgetEdit::set_text(chars_view text)
 
         memcpy(this->label.buffer, text.data(), this->buffer_size);
         this->label.buffer[this->buffer_size] = 0;
-        gdi::TextMetrics tm(*this->font, this->label.buffer);
+        gdi::TextMetrics tm(*this->font, std::string(this->label.buffer));
         this->w_text = tm.width;
         this->num_chars = UTF8Len(byte_ptr_cast(this->label.buffer));
     }
@@ -110,7 +110,7 @@ void WidgetEdit::insert_text(chars_view text)
         }
         this->buffer_size = total_n;
         this->label.buffer[this->buffer_size] = 0;
-        gdi::TextMetrics tm(*this->font, this->label.buffer);
+        gdi::TextMetrics tm(*this->font, std::string(this->label.buffer));
         this->w_text = tm.width;
         const size_t tmp_num_chars = this->num_chars;
         this->num_chars = UTF8Len(byte_ptr_cast(this->label.buffer));
@@ -125,7 +125,7 @@ void WidgetEdit::insert_text(chars_view text)
             const char c = this->label.buffer[pos];
             this->label.buffer[pos] = 0;
             // TODO: tm.height unused ?
-            gdi::TextMetrics tm(*this->font, this->label.buffer + this->edit_buffer_pos);
+            gdi::TextMetrics tm(*this->font, std::string_view(this->label.buffer + this->edit_buffer_pos));
             this->label.buffer[pos] = c;
             this->cursor_px_pos += tm.width;
             this->edit_buffer_pos += max_n;
@@ -201,7 +201,7 @@ void WidgetEdit::increment_edit_pos()
     size_t n = UTF8GetPos(byte_ptr_cast(this->label.buffer + this->edit_buffer_pos), 1);
     char c = this->label.buffer[this->edit_buffer_pos + n];
     this->label.buffer[this->edit_buffer_pos + n] = 0;
-    gdi::TextMetrics tm(*this->font, this->label.buffer + this->edit_buffer_pos);
+    gdi::TextMetrics tm(*this->font, std::string_view(this->label.buffer + this->edit_buffer_pos));
     this->cursor_px_pos += tm.width;
     this->label.buffer[this->edit_buffer_pos + n] = c;
     this->edit_buffer_pos += n;
@@ -231,7 +231,7 @@ void WidgetEdit::decrement_edit_pos()
     this->edit_pos--;
     char c = this->label.buffer[this->edit_buffer_pos];
     this->label.buffer[this->edit_buffer_pos] = 0;
-    gdi::TextMetrics tm(*this->font, this->label.buffer + this->edit_buffer_pos - len);
+    gdi::TextMetrics tm(*this->font, std::string_view(this->label.buffer + this->edit_buffer_pos - len));
     this->cursor_px_pos -= tm.width;
     this->label.buffer[this->edit_buffer_pos] = c;
     this->edit_buffer_pos -= len;
@@ -309,7 +309,7 @@ void WidgetEdit::rdp_input_mouse(uint16_t device_flags, uint16_t x, uint16_t y)
         while (this->edit_buffer_pos < this->buffer_size) {
             char c = this->label.buffer[this->edit_buffer_pos + len];
             this->label.buffer[this->edit_buffer_pos + len] = 0;
-            gdi::TextMetrics tm(*this->font, this->label.buffer + this->edit_buffer_pos);
+            gdi::TextMetrics tm(*this->font, std::string_view(this->label.buffer + this->edit_buffer_pos));
             this->label.buffer[this->edit_buffer_pos + len] = c;
             xx += tm.width;
             if (xx >= x) {
@@ -417,7 +417,7 @@ void WidgetEdit::rdp_input_scancode(KbdFlags flags, Scancode scancode, uint32_t 
                     size_t len = this->utf8len_current_char();
                     char c = this->label.buffer[this->edit_buffer_pos + len];
                     this->label.buffer[this->edit_buffer_pos + len] = 0;
-                    gdi::TextMetrics tm(*this->font, this->label.buffer + this->edit_buffer_pos);
+                    gdi::TextMetrics tm(*this->font, std::string_view(this->label.buffer + this->edit_buffer_pos));
                     this->label.buffer[this->edit_buffer_pos + len] = c;
                     UTF8RemoveOne(make_writable_array_view(this->label.buffer).drop_front(this->edit_buffer_pos));
                     this->buffer_size -= len;
@@ -579,12 +579,12 @@ void WidgetEdit::set_font(Font const & font)
     this->label.set_font(font);
     this->font = &font;
 
-    this->w_text = gdi::TextMetrics(font, this->label.buffer).width;
+    this->w_text = gdi::TextMetrics(font, std::string_view(this->label.buffer)).width;
 
     auto& ch_ref = this->label.buffer[this->edit_buffer_pos];
     const auto c = std::exchange(ch_ref, '\0');
 
-    this->cursor_px_pos = gdi::TextMetrics(font, this->label.buffer).width;
+    this->cursor_px_pos = gdi::TextMetrics(font, std::string_view(this->label.buffer)).width;
 
     ch_ref = c;
 }

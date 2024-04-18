@@ -40,7 +40,7 @@ WidgetMultiLine::WidgetMultiLine(
 
 WidgetMultiLine::WidgetMultiLine(
     gdi::GraphicApi & drawable,
-    const char * text, unsigned max_width,
+    chars_view text, unsigned max_width,
     Color fgcolor, Color bgcolor, Font const & font,
     int xtext, int ytext)
 : WidgetMultiLine(drawable, fgcolor, bgcolor, font, xtext, ytext)
@@ -48,7 +48,7 @@ WidgetMultiLine::WidgetMultiLine(
     this->set_text(text, max_width);
 }
 
-void WidgetMultiLine::set_text(const char * text, unsigned max_width)
+void WidgetMultiLine::set_text(bytes_view text, unsigned max_width)
 {
     this->set_text(gdi::MultiLineTextMetrics(this->font, text, max_width));
 }
@@ -74,7 +74,7 @@ void WidgetMultiLine::rdp_input_invalidate(Rect clip)
                                 , this->font
                                 , this->x_text + this->x()
                                 , dy
-                                , line.str
+                                , line
                                 , this->fg_color
                                 , this->bg_color
                                 , gdi::ColorCtx::depth24()

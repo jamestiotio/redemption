@@ -50,8 +50,8 @@ void WidgetGroupBox::rdp_input_invalidate(Rect clip)
         const uint16_t text_margin      = 6;
         const uint16_t text_indentation = border + text_margin + 4;
 
-        gdi::TextMetrics tm1(this->font, "bp");
-        gdi::TextMetrics tm2(this->font, this->buffer);
+        gdi::TextMetrics tm1(this->font, "bp"_av);
+        gdi::TextMetrics tm2(this->font, std::string_view(this->buffer));
 
         auto gcy = this->cy() - tm1.height / 2 - border;
         auto gcx = this->cx() - border * 2 + 1;
@@ -68,7 +68,7 @@ void WidgetGroupBox::rdp_input_invalidate(Rect clip)
         gdi::server_draw_text(this->drawable, this->font
                             , this->x() + text_indentation
                             , this->y()
-                            , this->buffer
+                            , std::string_view(this->buffer)
                             , this->fg_color
                             , this->get_bg_color()
                             , color_ctx

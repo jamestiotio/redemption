@@ -99,7 +99,7 @@ WidgetLogin::WidgetLogin(
         this->add_widget(this->target_edit);
     }
 
-    bool focus_on_login = (this->login_edit.get_text()[0] == '\0');
+    bool focus_on_login = this->login_edit.get_text().empty();
     this->add_widget(this->login_edit, focus_on_login ? HasFocus::Yes : HasFocus::No);
     this->add_widget(this->password_edit, focus_on_login ? HasFocus::No : HasFocus::Yes);
 

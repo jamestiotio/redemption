@@ -121,11 +121,11 @@ void TestCardMod::draw_event()
         RDPLineTo(1, 145, 200, 1198, 201, RDPColor{}, 13, RDPPen(0, 1, encode_color24()(RED))),
         Rect(145, 200, 110, 1), color_ctx);
 
-    gdi::server_draw_text(gd, this->font, 30, 30, "White", encode_color24()(WHITE), encode_color24()(BLACK), color_ctx, clip);
-    gdi::server_draw_text(gd, this->font, 30, 50, "Red  ", encode_color24()(RED), encode_color24()(BLACK), color_ctx, clip);
-    gdi::server_draw_text(gd, this->font, 30, 70, "Green", encode_color24()(GREEN), encode_color24()(BLACK), color_ctx, clip);
-    gdi::server_draw_text(gd, this->font, 30, 90, "Blue ", encode_color24()(BLUE), encode_color24()(BLACK), color_ctx, clip);
-    gdi::server_draw_text(gd, this->font, 30, 110, "Black", encode_color24()(BLACK), encode_color24()(WHITE), color_ctx, clip);
+    gdi::server_draw_text(gd, this->font, 30, 30, "White"_av, encode_color24()(WHITE), encode_color24()(BLACK), color_ctx, clip);
+    gdi::server_draw_text(gd, this->font, 30, 50, "Red  "_av, encode_color24()(RED), encode_color24()(BLACK), color_ctx, clip);
+    gdi::server_draw_text(gd, this->font, 30, 70, "Green"_av, encode_color24()(GREEN), encode_color24()(BLACK), color_ctx, clip);
+    gdi::server_draw_text(gd, this->font, 30, 90, "Blue "_av, encode_color24()(BLUE), encode_color24()(BLACK), color_ctx, clip);
+    gdi::server_draw_text(gd, this->font, 30, 110, "Black"_av, encode_color24()(BLACK), encode_color24()(WHITE), color_ctx, clip);
 
     Bitmap card = bitmap_from_file(app_path(AppPath::RedemptionLogo24), BLACK);
     gd.draw(RDPMemBlt(0,

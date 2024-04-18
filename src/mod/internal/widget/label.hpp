@@ -40,17 +40,17 @@ public:
 
     void set_text(chars_view text);
 
-    [[nodiscard]] const char * get_text() const;
+    [[nodiscard]] chars_view get_text() const;
 
     void rdp_input_invalidate(Rect clip) override;
 
     static void draw(Rect const clip, Rect const rect, gdi::GraphicApi& drawable,
-                     char const* text, Color fgcolor, Color bgcolor, gdi::ColorCtx color_ctx,
+                     chars_view text, Color fgcolor, Color bgcolor, gdi::ColorCtx color_ctx,
                      Font const & font, int xtext, int ytext);
 
     Dimension get_optimal_dim() const override;
 
-    static Dimension get_optimal_dim(Font const & font, char const* text, int xtext, int ytext);
+    static Dimension get_optimal_dim(Font const & font, chars_view text, int xtext, int ytext);
 
     bool shift_text(int pos_x);
 

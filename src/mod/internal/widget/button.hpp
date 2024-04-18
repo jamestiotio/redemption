@@ -59,7 +59,7 @@ public:
     void rdp_input_invalidate(Rect clip) override;
 
     static void draw(Rect const clip, Rect const rect, gdi::GraphicApi& drawable,
-                     bool logo, bool has_focus, char const* text,
+                     bool logo, bool has_focus, chars_view text,
                      Color fg_color, Color bg_color, Color focuscolor, gdi::ColorCtx color_ctx,
                      Rect label_rect, State state, unsigned border_width, Font const& font, int xtext, int ytext);
 
@@ -71,7 +71,7 @@ public:
 
     Dimension get_optimal_dim() const override;
 
-    static Dimension get_optimal_dim(unsigned border_width, Font const& font, char const* text, int xtext = 0, int ytext = 0);
+    static Dimension get_optimal_dim(unsigned border_width, Font const& font, chars_view text, int xtext = 0, int ytext = 0);
 
 private:
     static const size_t buffer_size = 256;

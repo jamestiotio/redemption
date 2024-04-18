@@ -288,7 +288,7 @@ void WidgetSelector::rearrange()
     bool column_width_is_optimal[WidgetSelectorParams::nb_max_columns];
 
     for (int i = 0; i < this->nb_columns; i++) {
-        gdi::TextMetrics tm (this->font, this->header_labels[i].get_text());
+        gdi::TextMetrics tm(this->font, this->header_labels[i].get_text());
         column_width_strategies[i] = { static_cast<uint16_t>(tm.width + 5 + COLUMN_EXPANSION_BUTTON_PLACE_HOLDER), this->weight[i] };
 
         column_width_is_optimal[i] = false;
@@ -448,7 +448,7 @@ void WidgetSelector::rdp_input_mouse(uint16_t device_flags, uint16_t x, uint16_t
 }
 
 void WidgetSelector::TooltipShower::show_tooltip(
-    const char * text, int x, int y,
+    chars_view text, int x, int y,
     Rect const preferred_display_rect,
     Rect const mouse_area)
 {

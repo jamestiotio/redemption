@@ -27,172 +27,166 @@
 
 namespace
 {
-    inline int compute_incby(Font const& font, uint32_t c)
-    {
-        FontCharView const& font_item = font.item(c).view;
-        return font_item.offsetx + font_item.incby;
-    }
-
-    template<class Getc>
-    void textmetrics_impl(
-        const Font & font, const char * unicode_text, int & width, int & height, Getc getc)
-    {
-        UTF8toUnicodeIterator unicode_iter(unicode_text);
-        for (; uint32_t c = getc(unicode_iter); ++unicode_iter) {
-            width += compute_incby(font, c);
-        }
-        height = font.max_height();
-    }
-
-    struct WordInfo
-    {
-        int w = 0;
-        uint8_t const* p;
-
-        WordInfo(const Font& font, uint8_t const* p)
-        {
-            for (;;) {
-                switch (*p) {
-                    case ' ':
-                    case '\n':
-                    case '\0':
-                        this->p = p;
-                        return;
-                    default:
-                        UTF8toUnicodeIterator iter(p);
-                        FontCharView const& font_item = font.item(*iter).view;
-                        w += font_item.offsetx + font_item.incby;
-                        p = iter.pos();
-                }
-            }
-        }
-    };
-
-    template<class NewLine>
-    void multi_textmetrics_impl(
-        const Font& font, uint8_t const* unicode_text,
-        const int max_width, const int space_w,
-        NewLine new_line
+    bytes_view* multi_textmetrics_impl(
+        const Font& font,
+        bytes_view utf8_text,
+        const int max_width,
+        bytes_view* output,
+        int* real_max_width
     ) {
-        _start:
+        auto push_line_and_width = [&](bytes_view line, int width) {
+            assert(gdi::TextMetrics(font, line).width == width);
+            *output++ = line;
+            *real_max_width = std::max(width, *real_max_width);
+        };
 
-        int w = 0;
+        const int space_w = gdi::TextMetrics::char_width(font, ' ');
 
-        // left spaces
-        auto* start = unicode_text;
+        uint8_t const* p = utf8_text.begin();
+        uint8_t const* end = utf8_text.end();
+
+        UTF8Reader utf8_reader;
+
+    _start:
+
+        auto* start_line = p;
+
+        // consume spaces and new lines
         for (;;) {
-            switch (*unicode_text) {
-                case ' ':
-                    ++unicode_text;
-                    continue;
-
-                case '\n':
-                    new_line(start, start, 0);
-                    ++unicode_text;
-                    goto _start; /* NOLINT */
-
-                case '\0':
-                    return;
-
-                default:;
+            // left spaces are ignored (empty line)
+            if (p == end) {
+                return output;
             }
+
+            if (*p == ' ') {
+                ++p;
+                continue;
+            }
+
+            if (*p == '\n') {
+                *output++ = {};
+                ++p;
+                goto _start;
+            }
+
             break;
         }
 
-        w = (unicode_text - start) * space_w;
+    _start_at_word:
+
+        auto* start_first_word = p;
+
+        int left_space_width = checked_cast<int>(p - start_line) * space_w;
+        int line_width = left_space_width;
 
         // first word
-        {
-            WordInfo winfo{font, unicode_text};
-            if (max_width < w + winfo.w) {
-                if (w) {
-                    new_line(start, start, 0);
-                    start = unicode_text;
-                    w = 0;
-                }
-
-                // word too long
-                if (max_width < winfo.w) {
-                    for (;;) {
-                        switch (*unicode_text) {
-                            case ' ':
-                                goto _words; /* NOLINT */
-
-                            case '\n':
-                                if (w) {
-                                    new_line(start, unicode_text, w);
-                                }
-                                ++unicode_text;
-                                goto _start; /* NOLINT */
-
-                            case '\0':
-                                if (w) {
-                                    new_line(start, unicode_text, w);
-                                }
-                                return ;
-
-                            default:
-                                UTF8toUnicodeIterator iter(unicode_text);
-                                int cw = compute_incby(font, *iter);
-                                if (max_width < w + cw) {
-                                    if (w) {
-                                        new_line(start, unicode_text, w);
-                                        w = 0;
-                                    }
-                                    else {
-                                        new_line(start, iter.pos(), cw);
-                                        unicode_text = iter.pos();
-                                    }
-                                    start = unicode_text;
-                                    continue;
-                                }
-                                w += cw;
-                                unicode_text = iter.pos();
-                        }
-                    }
-                }
+        for (;;) {
+            if (!utf8_reader.next({p, end})) {
+                push_line_and_width({start_line, p}, line_width);
+                return output;
             }
 
-            w += winfo.w;
-            unicode_text = winfo.p;
-        }
+            auto uc = utf8_reader.unicode();
 
-        _words:
-
-        for (;;) {
-            auto* end_word = unicode_text;
-
-            for (;;) {
-                switch (*unicode_text) {
-                    case ' ':
-                        ++unicode_text;
-                        continue;
-
-                    case '\n':
-                        new_line(start, end_word, w);
-                        ++unicode_text;
-                        goto _start; /* NOLINT */
-
-                    case '\0':
-                        new_line(start, end_word, w);
-                        return;
-
-                    default:;
-                }
+            if (uc == ' ') {
                 break;
             }
 
-            auto ws = (unicode_text - end_word) * space_w;
+            if (uc == '\n') {
+                push_line_and_width({start_line, p}, line_width);
+                ++p;
+                goto _start;
+            }
 
-            WordInfo winfo{font, unicode_text};
-            if (max_width >= w + winfo.w + ws) {
-                w += winfo.w + ws;
-                unicode_text = winfo.p;
+            int w = gdi::TextMetrics::char_width(font, uc);
+
+            auto* new_p = utf8_reader.end_ptr;
+
+            // too long
+            if (max_width < line_width + w) [[unlikely]] {
+                if (left_space_width) {
+                    line_width -= left_space_width;
+                    left_space_width = 0;
+                    start_line = start_first_word;
+
+                    // insert new line
+                    *output++ = {};
+                }
+
+                // alway too long, push partial word
+                if (max_width < line_width + w) {
+                    if (start_first_word != p) {
+                        push_line_and_width({start_first_word, p}, line_width);
+                    }
+                    line_width = 0;
+                    start_line = p;
+                    start_first_word = p;
+                }
             }
-            else {
-                new_line(start, end_word, w);
-                goto _start; /* NOLINT */
+
+            line_width += w;
+            p = new_p;
+        }
+
+    _word:
+
+        // right space after word
+        assert(*p == ' ');
+        int line_to_end_word_width = line_width;
+        auto* end_word = p;
+        while (++p < end && *p == ' ') {
+        }
+
+        int sep_width = checked_cast<int>(p - end_word) * space_w;
+
+        if (p == end || *p == '\n' || max_width < line_width + sep_width) {
+            push_line_and_width({start_line, end_word}, line_width);
+            if (p == end) {
+                return output;
             }
+            if (*p == '\n') {
+                ++p;
+            }
+            goto _start;
+        }
+
+        line_width += sep_width;
+
+        auto* start_word = p;
+
+        // other words
+        for (;;) {
+            if (!utf8_reader.next({p, end})) {
+                push_line_and_width({start_line, p}, line_width);
+                return output;
+            }
+
+            auto uc = utf8_reader.unicode();
+
+            if (uc == ' ') {
+                goto _word;
+            }
+
+            if (uc == '\n') {
+                push_line_and_width({start_line, p}, line_width);
+                ++p;
+                goto _start;
+            }
+
+            int w = gdi::TextMetrics::char_width(font, uc);
+
+            auto* new_p = utf8_reader.end_ptr;
+
+            // too long
+            if (max_width < line_width + w) [[unlikely]] {
+                push_line_and_width({start_line, end_word}, line_to_end_word_width);
+                start_line = start_word;
+                p = start_word;
+                goto _start_at_word;
+            }
+
+            line_width += w;
+            p = new_p;
         }
     }
 } // namespace
@@ -200,60 +194,47 @@ namespace
 namespace gdi
 {
 
-TextMetrics::TextMetrics(const Font & font, const char * unicode_text)
+TextMetrics::TextMetrics(const Font & font, bytes_view utf8_text)
+: height(font.max_height())
 {
-    textmetrics_impl(
-        font, unicode_text, this->width, this->height,
-        [](UTF8toUnicodeIterator & it){ return *it; });
+    auto invalid_char = [&](auto){
+        FontCharView const& font_item = font.unknown_glyph();
+        width += font_item.offsetx + font_item.incby;
+    };
+    utf8_for_each(utf8_text,
+        [&](uint32_t uc){ width += char_width(font, uc); },
+        invalid_char,
+        invalid_char
+    );
+}
+
+int TextMetrics::char_width(Font const& font, uint32_t c)
+{
+    FontCharView const& font_item = font.item(c).view;
+    return font_item.offsetx + font_item.incby;
 }
 
 MultiLineTextMetrics::MultiLineTextMetrics(
-    const Font& font, const char* unicode_text, unsigned max_width)
+    const Font& font, bytes_view utf8_text, unsigned max_width)
 {
-    FontCharView const& font_item = font.item(' ').view;
-    const int space_w = font_item.offsetx + font_item.incby;
-
-    uint8_t const* p = byte_ptr(unicode_text).as_u8p();
-
-    int nb_line = 0;
-    int nb_byte = 0;
-    multi_textmetrics_impl(font, p, int(max_width), space_w,
-        [&](auto* p, auto* e, int /*w*/){
-            ++nb_line;
-            nb_byte += e - p;
-        });
-
-    this->size_ = nb_line;
-
-    if (!this->size_) {
+    if (utf8_text.empty()) {
         return;
     }
 
-    this->lines_.reset(new Line[nb_line /* NOLINT */
-        // char buffer
-        + (nb_line * 4 + nb_byte) / sizeof(Line) + sizeof(Line)]);
-    Line* pline = this->lines_.get();
-    char* s = reinterpret_cast<char*>(pline + nb_line); /* NOLINT */
+    using Line = bytes_view;
 
-    multi_textmetrics_impl(font, p, int(max_width), space_w,
-        [&](auto* p, auto* e, int w){
-            pline->str = s;
-            pline->width = w;
-            ++pline;
-            memcpy(s, p, e-p);
-            s += e-p;
-            memset(s, 0, 4);
-            s += 4;
-        });
+    void* mem = aligned_alloc(alignof(Line), utf8_text.size() * 2 * sizeof(Line));
+    d.lines = static_cast<bytes_view*>(mem);
+
+    int real_max_width = 0;
+    auto* end = multi_textmetrics_impl(font, utf8_text, int(max_width), d.lines, &real_max_width);
+    d.max_width = checked_int(real_max_width);
+    d.nb_line = checked_int(end - d.lines);
 }
 
-uint16_t MultiLineTextMetrics::max_width() const noexcept
+MultiLineTextMetrics::~MultiLineTextMetrics()
 {
-    int max_line_width = 0;
-    for (auto const& line : this->lines()) {
-        max_line_width = std::max(max_line_width, line.width);
-    }
-    return saturated_int{max_line_width};
+    free(d.lines);
 }
 
 
@@ -261,7 +242,7 @@ uint16_t MultiLineTextMetrics::max_width() const noexcept
 // TODO: is it still used ? If yes move it somewhere else. Method from internal mods ?
 void server_draw_text(
     GraphicApi & drawable, Font const & font,
-    int16_t x, int16_t y, const char * text,
+    int16_t x, int16_t y, bytes_view text,
     RDPColor fgcolor, RDPColor bgcolor,
     ColorCtx color_ctx,
     Rect clip
@@ -269,13 +250,14 @@ void server_draw_text(
     // BUG TODO static not const is a bad idea
     static GlyphCache mod_glyph_cache;
 
-    UTF8toUnicodeIterator unicode_iter(text);
+    UTF8TextReader reader(text);
 
     int16_t endx = clip.eright();
 
-    if (*unicode_iter && x <= clip.x) {
+    if (reader.has_value() && x <= clip.x) {
         do {
-            const uint32_t charnum = *unicode_iter;
+            auto old_state_reader = reader;
+            const uint32_t charnum = reader.next();
 
             Font::FontCharElement font_item = font.item(charnum);
             // if (!font_item.is_valid) {
@@ -284,15 +266,15 @@ void server_draw_text(
 
             auto nextx = x + font_item.view.offsetx + font_item.view.incby;
             if (nextx > clip.x) {
+                reader = old_state_reader;
                 break;
             }
 
             x = nextx;
-            ++unicode_iter;
-        } while (*unicode_iter);
+        } while (reader.has_value());
     }
 
-    while (*unicode_iter) {
+    while (reader.has_value()) {
         int total_width = 0;
         uint8_t data[256];
         data[1] = 0;
@@ -300,9 +282,8 @@ void server_draw_text(
         const auto data_end = std::end(data)-2;
 
         const int cacheId = 7;
-        while (data_begin < data_end && *unicode_iter && x+total_width <= endx) {
-            const uint32_t charnum = *unicode_iter;
-            ++unicode_iter;
+        while (data_begin < data_end && reader.has_value() && x+total_width <= endx) {
+            const uint32_t charnum = reader.next();
 
             int cacheIndex = 0;
             Font::FontCharElement font_item = font.item(charnum);

@@ -56,9 +56,9 @@ void WidgetLabel::set_text(chars_view text)
     }
 }
 
-const char * WidgetLabel::get_text() const
+chars_view WidgetLabel::get_text() const
 {
-    return this->buffer;
+    return std::string_view(this->buffer);
 }
 
 void WidgetLabel::rdp_input_invalidate(Rect clip)
@@ -67,7 +67,7 @@ void WidgetLabel::rdp_input_invalidate(Rect clip)
 
     if (!rect_intersect.isempty()) {
         this->draw(
-            rect_intersect, this->get_rect(), this->drawable, this->buffer,
+            rect_intersect, this->get_rect(), this->drawable, std::string_view(this->buffer),
             this->fg_color, this->bg_color, gdi::ColorCtx::depth24(),
             *this->font, this->x_text, this->y_text);
     }
@@ -75,7 +75,7 @@ void WidgetLabel::rdp_input_invalidate(Rect clip)
 
 void WidgetLabel::draw(
     Rect const clip, Rect const rect, gdi::GraphicApi& drawable,
-    char const* text, Color fgcolor, Color bgcolor, gdi::ColorCtx color_ctx,
+    chars_view text, Color fgcolor, Color bgcolor, gdi::ColorCtx color_ctx,
     Font const & font, int xtext, int ytext)
 {
     drawable.draw(RDPOpaqueRect(rect, bgcolor), clip, color_ctx);
@@ -89,25 +89,23 @@ void WidgetLabel::draw(
 
 Dimension WidgetLabel::get_optimal_dim() const
 {
-    int width = this->buffer[0] ? gdi::TextMetrics(*this->font, this->buffer).width : 0;
+    int width = this->buffer[0] ? gdi::TextMetrics(*this->font, std::string_view(this->buffer)).width : 0;
     return Dimension(width + this->x_text * 2, this->font->max_height() + this->y_text * 2);
 }
 
-Dimension WidgetLabel::get_optimal_dim(Font const & font, char const* text, int xtext, int ytext)
+Dimension WidgetLabel::get_optimal_dim(Font const & font, chars_view text, int xtext, int ytext)
 {
-    char buffer[buffer_size];
+    size_t len = 0;
 
-    buffer[0] = 0;
-    if (text) {
+    if (!text.empty()) {
         const size_t remain_n = buffer_size - 1;
-        const size_t n = strlen(text);
+        const size_t n = text.size();
         const size_t max = ((remain_n >= n) ? n :
-                            ::UTF8StringAdjustedNbBytes(::byte_ptr_cast(text), remain_n));
-        memcpy(buffer, text, max);
-        buffer[max] = 0;
+                            ::UTF8StringAdjustedNbBytes(text, remain_n));
+        len = max;
     }
 
-    int width = buffer[0] ? gdi::TextMetrics(font, buffer).width : 0;
+    int width = gdi::TextMetrics(font, text.first(len)).width;
     return Dimension(width + xtext * 2, font.max_height() + ytext * 2);
 }
 

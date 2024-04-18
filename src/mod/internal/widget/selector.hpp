@@ -107,7 +107,7 @@ private:
         {}
 
         void show_tooltip(
-            const char * text, int x, int y,
+            chars_view text, int x, int y,
             Rect const preferred_display_rect,
             Rect const mouse_area) override;
 

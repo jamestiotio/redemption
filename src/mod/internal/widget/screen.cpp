@@ -44,11 +44,11 @@ WidgetScreen::WidgetScreen(
 WidgetScreen::~WidgetScreen() = default;
 
 void WidgetScreen::show_tooltip(
-    const char * text, int x, int y,
+    chars_view text, int x, int y,
     Rect const preferred_display_rect,
     Rect const mouse_area)
 {
-    if (text == nullptr) {
+    if (text.empty()) {
         if (this->tooltip) {
             this->remove_widget(*this->tooltip);
             this->rdp_input_invalidate(this->tooltip->get_rect());

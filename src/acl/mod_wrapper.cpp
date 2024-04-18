@@ -240,7 +240,7 @@ void ModWrapper::draw_osd_message(bool disable_by_input)
     }
 
     this->line_metrics = gdi::MultiLineTextMetrics(this->glyphs,
-                                                   this->osd_message.c_str(),
+                                                   this->osd_message,
                                                    w - padw);
 
     unsigned line_width = this->line_metrics.max_width() + padw * 2;
@@ -287,7 +287,7 @@ void ModWrapper::draw_osd_message(bool disable_by_input)
     draw_line(clip.x + clip.cx - 1, clip.y + clip.cy - 1, clip.x + clip.cx - 1, clip.y);
     draw_line(clip.x + clip.cx - 1, clip.y, clip.x, clip.y);
 
-    auto draw_text = [&](int16_t y, RDPColor fgcolor, const char* str) {
+    auto draw_text = [&](int16_t y, RDPColor fgcolor, bytes_view str) {
         gdi::server_draw_text(
             drawable,
             this->glyphs,
@@ -307,13 +307,13 @@ void ModWrapper::draw_osd_message(bool disable_by_input)
         lines = lines.drop_back(1);
     }
 
-    for (auto const& line : lines) {
-        draw_text(dy, this->color, line.str);
+    for (bytes_view line : lines) {
+        draw_text(dy, this->color, line);
         dy += this->glyphs.max_height();
     }
 
     if (this->is_disable_by_input) {
-        draw_text(dy + 4, black, this->line_metrics.lines().back().str);
+        draw_text(dy + 4, black, this->line_metrics.lines().back());
     }
 }
 

@@ -28,7 +28,8 @@ namespace
 {
     Dimension get_optimal_button_dim(const Font& font, bool is_horizontal)
     {
-        Dimension dim = WidgetButton::get_optimal_dim(1, font, is_horizontal ? "▶" : "▲", 3, 2);
+        Dimension dim = WidgetButton::get_optimal_dim(1, font,
+            is_horizontal ? "▶"_av : "▲"_av, 3, 2);
 
         dim.w += 1;
         dim.h += 2;
@@ -157,7 +158,7 @@ void WidgetScrollBar::rdp_input_invalidate(Rect clip)
     Rect rect_intersect = clip.intersect(this->get_rect());
 
     if (!rect_intersect.isempty()) {
-        auto draw_button = [&](Rect const& rect, bool has_focus, char const* button){
+        auto draw_button = [&](Rect const& rect, bool has_focus, chars_view button){
             WidgetButton::draw(rect_intersect, rect, this->drawable,
                 false, (this->mouse_down && has_focus), button,
                 this->fg_color, this->bg_color,
@@ -170,7 +171,7 @@ void WidgetScrollBar::rdp_input_invalidate(Rect clip)
                 (this->rail_style ? 1 : -1));
         };
 
-        auto draw_cursor_button = [&](bool has_focus, char const* button, int xtext, int ytext){
+        auto draw_cursor_button = [&](bool has_focus, chars_view button, int xtext, int ytext){
             WidgetButton::draw(rect_intersect, this->cursor_button_rect, this->drawable,
                 false, (this->mouse_down && has_focus), button,
                 this->fg_color, this->bg_color,
@@ -193,9 +194,9 @@ void WidgetScrollBar::rdp_input_invalidate(Rect clip)
 
         if (this->horizontal) {
             draw_button(this->left_or_top_button_rect,
-                        this->selected_button == BUTTON_LEFT_OR_TOP, "◀");
+                        this->selected_button == BUTTON_LEFT_OR_TOP, "◀"_av);
             draw_button(this->right_or_bottom_button_rect,
-                        this->selected_button == BUTTON_RIGHT_OR_BOTTOM, "▶");
+                        this->selected_button == BUTTON_RIGHT_OR_BOTTOM, "▶"_av);
 
             draw_rect(this->bg_color, this->scroll_bar_rect);
 
@@ -208,7 +209,7 @@ void WidgetScrollBar::rdp_input_invalidate(Rect clip)
                 rect.y += this->cy() - 1;
                 draw_rect(this->fg_color, rect);
 
-                draw_cursor_button(this->selected_button == BUTTON_CURSOR, "▤", 0, -1);
+                draw_cursor_button(this->selected_button == BUTTON_CURSOR, "▤"_av, 0, -1);
             }
             else {
                 draw_rect(this->fg_color, this->cursor_button_rect);
@@ -216,9 +217,9 @@ void WidgetScrollBar::rdp_input_invalidate(Rect clip)
         }
         else {
             draw_button(this->left_or_top_button_rect,
-                        this->selected_button == BUTTON_LEFT_OR_TOP, "▲");
+                        this->selected_button == BUTTON_LEFT_OR_TOP, "▲"_av);
             draw_button(this->right_or_bottom_button_rect,
-                        this->selected_button == BUTTON_RIGHT_OR_BOTTOM, "▼");
+                        this->selected_button == BUTTON_RIGHT_OR_BOTTOM, "▼"_av);
 
             draw_rect(this->bg_color, this->scroll_bar_rect);
 
@@ -231,7 +232,7 @@ void WidgetScrollBar::rdp_input_invalidate(Rect clip)
                 rect.x += this->cx() - 1;
                 draw_rect(this->fg_color, rect);
 
-                draw_cursor_button(this->selected_button == BUTTON_CURSOR, "▥", -1, 0);
+                draw_cursor_button(this->selected_button == BUTTON_CURSOR, "▥"_av, -1, 0);
             }
             else {
                 draw_rect(this->fg_color, this->cursor_button_rect);

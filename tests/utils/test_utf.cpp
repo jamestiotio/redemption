@@ -26,8 +26,11 @@
 #include "test_only/test_framework/redemption_unit_tests.hpp"
 
 #include "utils/utf.hpp"
+#include "utils/strutils.hpp"
 #include "utils/sugar/cast.hpp"
+#include "utils/sugar/int_to_chars.hpp"
 #include <string_view>
+#include <vector>
 #include <cstring>
 
 using namespace std::string_view_literals;
@@ -470,9 +473,124 @@ RED_AUTO_TEST_CASE(TestUTF8StrLenInChar)
     RED_CHECK_EQUAL(4u, UTF8StrLenInChar("€uro"));
 }
 
-RED_AUTO_TEST_CASE(Testis_ASCII_string)
+RED_AUTO_TEST_CASE(Test_is_ASCII_string)
 {
     RED_CHECK(is_ASCII_string(byte_ptr_cast("abcd")));
     RED_CHECK(!is_ASCII_string(byte_ptr_cast("éric")));
     RED_CHECK(is_ASCII_string(byte_ptr_cast("")));
+}
+
+static auto push_utf8_char(std::string& s, char prefix)
+{
+    return [&, prefix](utf8_char_generic utf8_char) {
+        s += prefix;
+        s += utf8_char.bytes().as_chars().as<std::string_view>();
+        s += '[';
+        s += int_to_hexadecimal_upper_chars(utf8_char.unicode()).sv();
+        s += ']';
+    };
+};
+
+RED_AUTO_TEST_CASE(Test_utf8_for_each)
+{
+    std::string result;
+
+    auto push_utf_truncated = [&](bytes_view remaining){
+        result += '?'; result += remaining.as_chars().as<std::string_view>();
+    };
+
+    auto utf8_for_each_fn = [&](bytes_view utf8)
+    {
+        result.clear();
+        utf8_for_each(utf8,
+            push_utf8_char(result, '='),
+            push_utf8_char(result, '!'),
+            push_utf_truncated
+        );
+        return result;
+    };
+
+    auto utf8_for_each_er = [&](bytes_view utf8)
+    {
+        result.clear();
+        utf8_for_each(utf8,
+            push_utf8_char(result, '='),
+            [&](auto ch) { push_utf8_char(result, '!')(ch); return false; },
+            push_utf_truncated
+        );
+        return result;
+    };
+
+    RED_CHECK(utf8_for_each_fn("a"_av) == "=a[61]"_av);
+    RED_CHECK(utf8_for_each_er("a"_av) == "=a[61]"_av);
+    RED_CHECK(utf8_for_each_fn("abc"_av) == "=a[61]=b[62]=c[63]"_av);
+    RED_CHECK(utf8_for_each_er("abc"_av) == "=a[61]=b[62]=c[63]"_av);
+    RED_CHECK(utf8_for_each_fn("abcde"_av) == "=a[61]=b[62]=c[63]=d[64]=e[65]"_av);
+    RED_CHECK(utf8_for_each_er("abcde"_av) == "=a[61]=b[62]=c[63]=d[64]=e[65]"_av);
+
+    RED_CHECK(utf8_for_each_fn("€"_av) == "=€[20AC]"_av);
+    RED_CHECK(utf8_for_each_er("€"_av) == "=€[20AC]"_av);
+    RED_CHECK(utf8_for_each_fn("🚀"_av) == "=🚀[1F680]"_av);
+    RED_CHECK(utf8_for_each_er("🚀"_av) == "=🚀[1F680]"_av);
+    RED_CHECK(utf8_for_each_fn("𡞰"_av) == "=𡞰[217B0]"_av);
+    RED_CHECK(utf8_for_each_er("𡞰"_av) == "=𡞰[217B0]"_av);
+    RED_CHECK(utf8_for_each_fn("\x80"_av) == "!\x80[FFFD]"_av);
+    RED_CHECK(utf8_for_each_er("\x80"_av) == "!\x80[FFFD]"_av);
+    RED_CHECK(utf8_for_each_fn("\xC0"_av) == "?\xC0"_av);
+    RED_CHECK(utf8_for_each_er("\xC0"_av) == "?\xC0"_av);
+    RED_CHECK(utf8_for_each_fn("\xF0\xAA"_av) == "?\xF0\xAA"_av);
+    RED_CHECK(utf8_for_each_er("\xF0\xAA"_av) == "?\xF0\xAA"_av);
+    RED_CHECK(utf8_for_each_fn("a𡞰b"_av) == "=a[61]=𡞰[217B0]=b[62]"_av);
+    RED_CHECK(utf8_for_each_er("a𡞰b"_av) == "=a[61]=𡞰[217B0]=b[62]"_av);
+    RED_CHECK(utf8_for_each_fn("a\xA0""b"_av) == "=a[61]!\xA0[FFFD]=b[62]"_av);
+    RED_CHECK(utf8_for_each_er("a\xA0""b"_av) == "=a[61]!\xA0[FFFD]"_av);
+    RED_CHECK(utf8_for_each_fn("a\xA0""abcde"_av) == "=a[61]!\xA0[FFFD]=a[61]=b[62]=c[63]=d[64]=e[65]"_av);
+    RED_CHECK(utf8_for_each_er("a\xA0""abcde"_av) == "=a[61]!\xA0[FFFD]"_av);
+    RED_CHECK(utf8_for_each_fn("abc𡞰b"_av) == "=a[61]=b[62]=c[63]=𡞰[217B0]=b[62]"_av);
+    RED_CHECK(utf8_for_each_er("abc𡞰b"_av) == "=a[61]=b[62]=c[63]=𡞰[217B0]=b[62]"_av);
+
+    RED_CHECK(utf8_for_each_fn("abc€"_av) == "=a[61]=b[62]=c[63]=€[20AC]"_av);
+    RED_CHECK(utf8_for_each_er("abc€"_av) == "=a[61]=b[62]=c[63]=€[20AC]"_av);
+    RED_CHECK(utf8_for_each_fn("abc🚀"_av) == "=a[61]=b[62]=c[63]=🚀[1F680]"_av);
+    RED_CHECK(utf8_for_each_er("abc🚀"_av) == "=a[61]=b[62]=c[63]=🚀[1F680]"_av);
+    RED_CHECK(utf8_for_each_fn("abc𡞰"_av) == "=a[61]=b[62]=c[63]=𡞰[217B0]"_av);
+    RED_CHECK(utf8_for_each_er("abc𡞰"_av) == "=a[61]=b[62]=c[63]=𡞰[217B0]"_av);
+    RED_CHECK(utf8_for_each_fn("abc\x80"_av) == "=a[61]=b[62]=c[63]!\x80[FFFD]"_av);
+    RED_CHECK(utf8_for_each_er("abc\x80"_av) == "=a[61]=b[62]=c[63]!\x80[FFFD]"_av);
+    RED_CHECK(utf8_for_each_fn("abc\xC0"_av) == "=a[61]=b[62]=c[63]?\xC0"_av);
+    RED_CHECK(utf8_for_each_er("abc\xC0"_av) == "=a[61]=b[62]=c[63]?\xC0"_av);
+    RED_CHECK(utf8_for_each_fn("abc\xF0\xAA"_av) == "=a[61]=b[62]=c[63]?\xF0\xAA"_av);
+    RED_CHECK(utf8_for_each_er("abc\xF0\xAA"_av) == "=a[61]=b[62]=c[63]?\xF0\xAA"_av);
+    RED_CHECK(utf8_for_each_fn("abc\xA0""abcde"_av) == "=a[61]=b[62]=c[63]!\xA0[FFFD]=a[61]=b[62]=c[63]=d[64]=e[65]"_av);
+    RED_CHECK(utf8_for_each_er("abc\xA0""abcde"_av) == "=a[61]=b[62]=c[63]!\xA0[FFFD]"_av);
+}
+
+RED_AUTO_TEST_CASE(Test_utf8_read_on_char)
+{
+    std::string result;
+    auto utf8_read_char = [&](bytes_view s) {
+        auto fn = [&result](char c) {
+            return [&result, c](auto ch) -> chars_view {
+                push_utf8_char(result, c)(ch);
+                return result;
+            };
+        };
+        result.clear();
+        return utf8_read_one_char(s, []{ return "null"_av; }, fn('='), fn('!'), fn('?'));
+    };
+
+    RED_CHECK(utf8_read_char(""_av) == "null"_av);
+    RED_CHECK(utf8_read_char("a"_av) == "=a[61]"_av);
+    RED_CHECK(utf8_read_char("ab"_av) == "=a[61]"_av);
+    RED_CHECK(utf8_read_char("abc"_av) == "=a[61]"_av);
+    RED_CHECK(utf8_read_char("🚀"_av) == "=🚀[1F680]"_av);
+    RED_CHECK(utf8_read_char("𡞰"_av) == "=𡞰[217B0]"_av);
+    RED_CHECK(utf8_read_char("🚀𡞰"_av) == "=🚀[1F680]"_av);
+    RED_CHECK(utf8_read_char("𡞰🚀"_av) == "=𡞰[217B0]"_av);
+    RED_CHECK(utf8_read_char("\x80"_av) == "!\x80[FFFD]"_av);
+    RED_CHECK(utf8_read_char("\x80X"_av) == "!\x80[FFFD]"_av);
+    RED_CHECK(utf8_read_char("\xAA"_av) == "!\xAA[FFFD]"_av);
+    RED_CHECK(utf8_read_char("\xAAX"_av) == "!\xAA[FFFD]"_av);
+    RED_CHECK(utf8_read_char("\xF0\xAA"_av) == "?\xF0\xAA[FFFD]"_av);
+    RED_CHECK(utf8_read_char("\xF0\xAAX"_av) == "?\xF0\xAAX[FFFD]"_av);
 }

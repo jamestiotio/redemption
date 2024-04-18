@@ -24,7 +24,7 @@
 #include "gdi/draw_utils.hpp"
 
 WidgetTooltip::WidgetTooltip(
-    gdi::GraphicApi & drawable, const char * text, unsigned max_width,
+    gdi::GraphicApi & drawable, chars_view text, unsigned max_width,
     Color fgcolor, Color bgcolor, Color border_color,
     Font const & font
 )
@@ -48,12 +48,12 @@ Dimension WidgetTooltip::get_optimal_dim() const
     return dim;
 }
 
-void WidgetTooltip::set_text(const char * text)
+void WidgetTooltip::set_text(chars_view text)
 {
     this->desc.set_text(text, this->cx());
 }
 
-void WidgetTooltip::set_text(const char * text, unsigned max_width)
+void WidgetTooltip::set_text(chars_view text, unsigned max_width)
 {
     this->desc.set_text(text, max_width);
     Dimension dim = this->desc.get_optimal_dim();

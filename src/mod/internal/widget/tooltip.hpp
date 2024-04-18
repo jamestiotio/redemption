@@ -27,7 +27,7 @@
 class WidgetTooltip : public Widget
 {
 public:
-    WidgetTooltip(gdi::GraphicApi & drawable, const char * text, unsigned max_width,
+    WidgetTooltip(gdi::GraphicApi & drawable, chars_view text, unsigned max_width,
                   Color fgcolor, Color bgcolor, Color border_color,
                   Font const & font);
 
@@ -35,8 +35,8 @@ public:
 
     Dimension get_optimal_dim() const override;
 
-    void set_text(const char * text);
-    void set_text(const char * text, unsigned max_width);
+    void set_text(chars_view text);
+    void set_text(chars_view text, unsigned max_width);
 
     void rdp_input_invalidate(Rect clip) override;
 

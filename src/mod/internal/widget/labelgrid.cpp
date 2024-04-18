@@ -38,7 +38,7 @@ namespace
         void rdp_input_mouse(uint16_t device_flags, uint16_t x, uint16_t y) override
         {
             if (device_flags == MOUSE_FLAG_MOVE && label_width > static_cast<int>(this->cx())) {
-                this->tooltip_shower.show_tooltip(this->buffer, x, y, Rect(), this->get_rect());
+                this->tooltip_shower.show_tooltip(std::string_view(this->buffer), x, y, Rect(), this->get_rect());
             }
         }
 
@@ -93,9 +93,9 @@ void WidgetLabelGrid::add_line(array_view<chars_view> entries)
     }
 }
 
-const char * WidgetLabelGrid::get_cell_text(uint16_t row_index, uint16_t column_index)
+chars_view WidgetLabelGrid::get_cell_text(uint16_t row_index, uint16_t column_index)
 {
-    const char * result = "";
+    chars_view result = ""_av;
     Widget * w = this->get_widget(row_index, column_index);
     if (w) {
         WidgetLabel * label = static_cast<WidgetLabel*>(w); /*NOLINT*/

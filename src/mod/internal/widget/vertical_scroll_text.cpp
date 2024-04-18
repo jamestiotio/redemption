@@ -28,13 +28,13 @@
 
 namespace
 {
-    constexpr char const* top_button_char = "▲";
-    constexpr char const* cursor_button_char = "▥";
-    constexpr char const* bottom_button_char = "▼";
+    constexpr auto top_button_char = "▲"_av;
+    constexpr auto cursor_button_char = "▥"_av;
+    constexpr auto bottom_button_char = "▼"_av;
 
     Dimension get_optimal_button_dim(const Font& font)
     {
-        UTF8toUnicodeIterator unicode_iter(top_button_char);
+        UTF8toUnicodeIterator unicode_iter(top_button_char.data());
         auto const& glyph = font.item(*unicode_iter).view;
         return Dimension(glyph.width + 8, glyph.height + 12);
     }
@@ -79,14 +79,20 @@ void WidgetVerticalScrollText::set_wh(uint16_t w, uint16_t h)
                               < this->text.size() / 4 /* worst case: 4 bytes by character */;
 
     if (!force_scroll) {
-        this->line_metrics = gdi::MultiLineTextMetrics(this->font, this->text.c_str(), cx);
+        this->line_metrics = gdi::MultiLineTextMetrics(this->font, this->text, cx);
     }
 
     // show scroll bar
     if (force_scroll || cy < this->line_metrics.lines().size() * glyph_cy) {
         this->has_scroll = true;
         uint16_t const new_cx = cx - this->button_dim.w;
-        this->line_metrics = gdi::MultiLineTextMetrics(this->font, this->text.c_str(), new_cx);
+        this->line_metrics = gdi::MultiLineTextMetrics(this->font, this->text, new_cx);
+
+
+        for (auto line : line_metrics.lines()) {
+            LOG(LOG_DEBUG, "%hu / %hu", gdi::TextMetrics(font, line).width, new_cx);
+        }
+
 
         const int text_h = int(this->line_metrics.lines().size() * glyph_cy - this->y_text);
         const int total_scroll_h = std::max(cy - this->button_dim.h * 2, 1);
@@ -320,7 +326,7 @@ void WidgetVerticalScrollText::rdp_input_invalidate(Rect clip)
             };
 
             auto draw_text_button = [&](
-                char const* text, ButtonType button_type, int16_t y, uint16_t bh, uint16_t dy
+                chars_view text, ButtonType button_type, int16_t y, uint16_t bh, uint16_t dy
             ){
                 bool const has_focus = (this->selected_button == button_type);
                 auto const bg = has_focus ? this->focus_color : this->bg_color;
@@ -376,7 +382,7 @@ void WidgetVerticalScrollText::rdp_input_invalidate(Rect clip)
                     this->font,
                     dx,
                     int16_t(dy),
-                    line.str,
+                    line,
                     this->fg_color,
                     this->bg_color,
                     gdi::ColorCtx::depth24(),
