@@ -4725,21 +4725,21 @@ namespace cfg
     };
     /// Background color for tooltip <br/>
     /// type: ::configs::spec_types::rgb <br/>
-    /// default: 0x000000 <br/>
+    /// default: 0xFFFF9F <br/>
     struct theme::tooltip_bgcolor {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
         using type = ::configs::spec_types::rgb;
         using mapped_type = ::configs::spec_types::rgb;
-        type value { 0x000000 };
+        type value { 0xFFFF9F };
     };
     /// Foreground color for tooltip <br/>
     /// type: ::configs::spec_types::rgb <br/>
-    /// default: 0xFFFF9F <br/>
+    /// default: 0x000000 <br/>
     struct theme::tooltip_fgcolor {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
         using type = ::configs::spec_types::rgb;
         using mapped_type = ::configs::spec_types::rgb;
-        type value { 0xFFFF9F };
+        type value { 0x000000 };
     };
     /// Border color for tooltip <br/>
     /// type: ::configs::spec_types::rgb <br/>

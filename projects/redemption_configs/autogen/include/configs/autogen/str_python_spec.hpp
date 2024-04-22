@@ -583,11 +583,11 @@ edit_focus_color = string(default="#004D9C")
 
 # Background color for tooltip<br/>
 # (in rgb format: hexadecimal (0x21AF21), #rgb (#2fa), #rrggbb (#22ffaa) or a <a href="https://en.wikipedia.org/wiki/Web_colors#Extended_colors">named color</a> case insensitive (red, skyBlue, etc))
-tooltip_bgcolor = string(default="#000000")
+tooltip_bgcolor = string(default="#FFFF9F")
 
 # Foreground color for tooltip<br/>
 # (in rgb format: hexadecimal (0x21AF21), #rgb (#2fa), #rrggbb (#22ffaa) or a <a href="https://en.wikipedia.org/wiki/Web_colors#Extended_colors">named color</a> case insensitive (red, skyBlue, etc))
-tooltip_fgcolor = string(default="#FFFF9F")
+tooltip_fgcolor = string(default="#000000")
 
 # Border color for tooltip<br/>
 # (in rgb format: hexadecimal (0x21AF21), #rgb (#2fa), #rrggbb (#22ffaa) or a <a href="https://en.wikipedia.org/wiki/Web_colors#Extended_colors">named color</a> case insensitive (red, skyBlue, etc))

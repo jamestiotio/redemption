@@ -44,8 +44,8 @@ struct Theme
     } edit;
 
     struct {
-        BGRColor fgcolor = BLACK;
         BGRColor bgcolor = LIGHT_YELLOW;
+        BGRColor fgcolor = BLACK;
         BGRColor border_color = BLACK;
     } tooltip;
 

@@ -27,6 +27,7 @@
 
 #include "configs/config.hpp"
 #include "configs/autogen/str_authid.hpp"
+#include "utils/theme.hpp"
 #include <algorithm>
 #include <sstream>
 #include <fstream>
@@ -1613,7 +1614,6 @@ RED_AUTO_TEST_CASE(TestConfigSet)
     RED_CHECK(ini.get<cfg::crypto::encryption_key>() == akey);
 }
 
-
 RED_AUTO_TEST_CASE(TestConfigNotifications)
 {
     Inifile             ini;
@@ -1651,4 +1651,36 @@ RED_AUTO_TEST_CASE(TestConfigNotifications)
     }
     ini.clear_acl_fields_changed();
     RED_CHECK(ini.get_acl_fields_changed().size() == 0);
+}
+
+RED_AUTO_TEST_CASE(TestConfigThemeDefault)
+{
+    Theme theme;
+    Inifile ini;
+
+    auto bgr = [](configs::spec_types::rgb rgb){
+        return BGRColor(BGRasRGBColor(BGRColor(rgb.to_rgb888())));
+    };
+
+    RED_CHECK(bgr(ini.get<cfg::theme::bgcolor>()) == theme.global.bgcolor);
+    RED_CHECK(bgr(ini.get<cfg::theme::fgcolor>()) == theme.global.fgcolor);
+    RED_CHECK(bgr(ini.get<cfg::theme::separator_color>()) == theme.global.separator_color);
+    RED_CHECK(bgr(ini.get<cfg::theme::focus_color>()) == theme.global.focus_color);
+    RED_CHECK(bgr(ini.get<cfg::theme::error_color>()) == theme.global.error_color);
+    RED_CHECK(bgr(ini.get<cfg::theme::edit_bgcolor>()) == theme.edit.bgcolor);
+    RED_CHECK(bgr(ini.get<cfg::theme::edit_fgcolor>()) == theme.edit.fgcolor);
+    RED_CHECK(bgr(ini.get<cfg::theme::edit_focus_color>()) == theme.edit.focus_color);
+    RED_CHECK(bgr(ini.get<cfg::theme::tooltip_bgcolor>()) == theme.tooltip.bgcolor);
+    RED_CHECK(bgr(ini.get<cfg::theme::tooltip_fgcolor>()) == theme.tooltip.fgcolor);
+    RED_CHECK(bgr(ini.get<cfg::theme::tooltip_border_color>()) == theme.tooltip.border_color);
+    RED_CHECK(bgr(ini.get<cfg::theme::selector_line1_bgcolor>()) == theme.selector_line1.bgcolor);
+    RED_CHECK(bgr(ini.get<cfg::theme::selector_line1_fgcolor>()) == theme.selector_line1.fgcolor);
+    RED_CHECK(bgr(ini.get<cfg::theme::selector_line2_bgcolor>()) == theme.selector_line2.bgcolor);
+    RED_CHECK(bgr(ini.get<cfg::theme::selector_line2_fgcolor>()) == theme.selector_line2.fgcolor);
+    RED_CHECK(bgr(ini.get<cfg::theme::selector_focus_bgcolor>()) == theme.selector_focus.bgcolor);
+    RED_CHECK(bgr(ini.get<cfg::theme::selector_focus_fgcolor>()) == theme.selector_focus.fgcolor);
+    RED_CHECK(bgr(ini.get<cfg::theme::selector_selected_bgcolor>()) == theme.selector_selected.bgcolor);
+    RED_CHECK(bgr(ini.get<cfg::theme::selector_selected_fgcolor>()) == theme.selector_selected.fgcolor);
+    RED_CHECK(bgr(ini.get<cfg::theme::selector_label_bgcolor>()) == theme.selector_label.bgcolor);
+    RED_CHECK(bgr(ini.get<cfg::theme::selector_label_fgcolor>()) == theme.selector_label.fgcolor);
 }

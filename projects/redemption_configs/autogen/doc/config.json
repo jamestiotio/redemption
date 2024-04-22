@@ -4013,7 +4013,7 @@
       "section": "theme",
       "name": "tooltip_bgcolor",
       "type": "rgb",
-      "value": "#000000",
+      "value": "#FFFF9F",
       "description": "Background color for tooltip",
       "globalSpec": true
     },
@@ -4021,7 +4021,7 @@
       "section": "theme",
       "name": "tooltip_fgcolor",
       "type": "rgb",
-      "value": "#FFFF9F",
+      "value": "#000000",
       "description": "Foreground color for tooltip",
       "globalSpec": true
     },

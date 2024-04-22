@@ -3512,14 +3512,14 @@ _.section("theme", [&]
 
     _.member(MemberInfo{
         .name = "tooltip_bgcolor",
-        .value = rgb(BLACK),
+        .value = rgb(LIGHT_YELLOW),
         .spec = global_spec(no_acl),
         .desc = "Background color for tooltip",
     });
 
     _.member(MemberInfo{
         .name = "tooltip_fgcolor",
-        .value = rgb(LIGHT_YELLOW),
+        .value = rgb(BLACK),
         .spec = global_spec(no_acl),
         .desc = "Foreground color for tooltip",
     });

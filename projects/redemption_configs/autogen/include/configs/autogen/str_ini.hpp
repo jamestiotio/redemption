@@ -1583,11 +1583,11 @@ R"gen_config_ini(## Config file for RDP proxy.
 
 # Background color for tooltip
 # (in rgb format: hexadecimal (0x21AF21), #rgb (#2fa), #rrggbb (#22ffaa) or a named color case insensitive ("https://en.wikipedia.org/wiki/Web_colors#Extended_colors"))
-#tooltip_bgcolor = #000000
+#tooltip_bgcolor = #FFFF9F
 
 # Foreground color for tooltip
 # (in rgb format: hexadecimal (0x21AF21), #rgb (#2fa), #rrggbb (#22ffaa) or a named color case insensitive ("https://en.wikipedia.org/wiki/Web_colors#Extended_colors"))
-#tooltip_fgcolor = #FFFF9F
+#tooltip_fgcolor = #000000
 
 # Border color for tooltip
 # (in rgb format: hexadecimal (0x21AF21), #rgb (#2fa), #rrggbb (#22ffaa) or a named color case insensitive ("https://en.wikipedia.org/wiki/Web_colors#Extended_colors"))
