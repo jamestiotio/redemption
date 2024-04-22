@@ -600,7 +600,7 @@ ocrypto::Result ocrypto::close(HashArray & qhash, HashArray & fhash)
 {
     size_t towrite = 0;
     if (this->cctx.get_with_encryption()) {
-        size_t buflen = sizeof(this->result_buffer);
+        size_t const buflen = sizeof(this->result_buffer);
         this->flush(this->result_buffer, buflen, towrite);
 
         // this->ectx.deinit();
@@ -638,22 +638,15 @@ ocrypto::Result ocrypto::write(bytes_view data)
         return Result{data, data.size()};
     }
 
-    size_t buflen = sizeof(this->result_buffer);
-    if (data.size() > buflen - 1000) { // 1000: magic enough for header, actual value is smaller
-        data = data.first(buflen);
-    }
     // Check how much we can append into buffer
-    size_t available_size = CRYPTO_BUFFER_SIZE - this->pos;
-    if (available_size > data.size()) {
-        available_size = data.size();
-    }
+    size_t available_size = std::min(CRYPTO_BUFFER_SIZE - this->pos, data.size());
     // Append and update pos pointer
     ::memcpy(this->buf + this->pos, data.data(), available_size);
     this->pos += available_size;
     // If buffer is full, flush it to disk
     size_t towrite = 0;
     if (this->pos == CRYPTO_BUFFER_SIZE) {
-        this->flush(this->result_buffer, buflen, towrite);
+        this->flush(this->result_buffer, sizeof(this->result_buffer), towrite);
     }
     // Update raw size counter
     this->raw_size += available_size;
