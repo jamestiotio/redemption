@@ -32,7 +32,7 @@ constexpr unsigned HIDE_BACK_TO_SELECTOR = 0x10000;
 
 WidgetWait::WidgetWait(
     gdi::GraphicApi & drawable, CopyPaste & copy_paste, Rect const widget_rect,
-    Events events, const char* caption, chars_view text,
+    Events events, chars_view caption, chars_view text,
     WidgetButton * extra_button,
     Font const & font, Theme const & theme, Language lang,
     bool showform, unsigned flags, std::chrono::minutes duration_max

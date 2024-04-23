@@ -35,7 +35,7 @@ struct TestWidgetGroupBoxCtx
     WidgetGroupBox wgroupbox;
     WidgetButton wbutton;
 
-    TestWidgetGroupBoxCtx(const char * text)
+    TestWidgetGroupBoxCtx(chars_view text)
     : wgroupbox(drawable, text,
                 /*fg_color=*/RED, /*bg_color=*/YELLOW, global_font_deja_vu_14())
     , wbutton(drawable, "Button 1"_av, WidgetEventNotifier(),
@@ -65,7 +65,7 @@ struct TestWidgetGroupBoxCtx
 
 RED_AUTO_TEST_CASE(TraceWidgetGroupBox)
 {
-    TestWidgetGroupBoxCtx ctx("Group 1");
+    TestWidgetGroupBoxCtx ctx("Group 1"_av);
 
     RED_CHECK_IMG(ctx.drawable, IMG_TEST_PATH "group_box_1.png");
 
@@ -82,9 +82,7 @@ RED_AUTO_TEST_CASE(TraceWidgetGroupBoxMax)
         "éàéàéàéàéàéàéàéàéàéàéàéàéàéàéàéà"
         "éàéàéàéàéàéàéàéàéàéàéàéàéàéàéàéà"_av;
 
-    TestWidgetGroupBoxCtx ctx(text.data());
-
-    RED_CHECK(std::string_view(ctx.wgroupbox.get_text()) == text.first(text.size()-2));
+    TestWidgetGroupBoxCtx ctx(text);
 
     RED_CHECK_IMG(ctx.drawable, IMG_TEST_PATH "group_box_3.png");
 

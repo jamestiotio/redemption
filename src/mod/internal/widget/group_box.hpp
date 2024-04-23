@@ -21,25 +21,21 @@
 #pragma once
 
 #include "mod/internal/widget/composite.hpp"
-#include "mod/internal/widget/language_button.hpp"
+#include "utils/sugar/array_view.hpp"
+#include "utils/static_string.hpp"
 
 class Font;
 
 class WidgetGroupBox : public WidgetComposite
 {
 public:
-    WidgetGroupBox( gdi::GraphicApi & drawable, const char * text
+    WidgetGroupBox( gdi::GraphicApi & drawable, chars_view text
                   , Color fgcolor, Color bgcolor, Font const & font);
 
     void rdp_input_invalidate(Rect clip) override;
 
-    [[nodiscard]] const char * get_text() const;
-    void set_text(const char * text);
-
 private:
-    static const size_t buffer_size = 256;
-
-    char buffer[buffer_size];
+    static_string<255> caption;
 
     Color fg_color;
 

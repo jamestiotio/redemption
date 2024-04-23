@@ -42,7 +42,7 @@ struct TestWidgetWaitCtx
     : flat_dialog(
         drawable, copy_paste, {0, 0, 800, 600},
         {WidgetEventNotifier(), WidgetEventNotifier(), WidgetEventNotifier(), WidgetEventNotifier()},
-        "Invalid Target",
+        "Invalid Target"_av,
         "Target \"trucmuch@machinbidule:serv\" is not allowed because you either\n"
         "has no right to access it or it does not exist.\n"
         "you can either return to selector or exit."_av,

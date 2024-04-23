@@ -418,7 +418,6 @@ void ModFactory::create_display_link_mod()
 void ModFactory::create_wait_info_mod()
 {
     LOG(LOG_INFO, "ModuleManager::Creation of internal module 'Wait Info Message'");
-    const char * caption = TR(trkeys::information, language(this->ini));
     bool showform = this->ini.get<cfg::context::showform>();
     uint flag = this->ini.get<cfg::context::formflag>();
     auto new_mod = new WaitMod(
@@ -429,7 +428,7 @@ void ModFactory::create_wait_info_mod()
         this->client_info.screen_info.width,
         this->client_info.screen_info.height,
         this->rail_client_execute.adjust_rect(this->client_info.get_widget_rect()),
-        caption,
+        TR(trkeys::information, language(this->ini)),
         this->ini.get<cfg::context::message>(),
         this->rail_client_execute,
         this->glyphs,

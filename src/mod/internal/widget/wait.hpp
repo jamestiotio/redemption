@@ -44,7 +44,7 @@ public:
 
     WidgetWait(
         gdi::GraphicApi & drawable, CopyPaste & copy_paste, Rect const widget_rect,
-        Events events, const char* caption, chars_view text,
+        Events events, chars_view caption, chars_view text,
         WidgetButton * extra_button,
         Font const & font, Theme const & theme, Language lang,
         bool showform = false, unsigned flags = WidgetForm::NONE,

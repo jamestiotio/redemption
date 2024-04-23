@@ -27,15 +27,15 @@
 
 
 WidgetGroupBox::WidgetGroupBox(
-    gdi::GraphicApi & drawable, const char * text,
+    gdi::GraphicApi & drawable, chars_view text,
     Color fgcolor, Color bgcolor, Font const & font
 )
   : WidgetComposite(drawable, Focusable::Yes)
+  , caption(truncated_bounded_array_view(text))
   , fg_color(fgcolor)
   , font(font)
 {
     this->set_bg_color(bgcolor);
-    this->set_text(text);
 }
 
 void WidgetGroupBox::rdp_input_invalidate(Rect clip)
@@ -51,7 +51,7 @@ void WidgetGroupBox::rdp_input_invalidate(Rect clip)
         const uint16_t text_indentation = border + text_margin + 4;
 
         gdi::TextMetrics tm1(this->font, "bp"_av);
-        gdi::TextMetrics tm2(this->font, std::string_view(this->buffer));
+        gdi::TextMetrics tm2(this->font, this->caption);
 
         auto gcy = this->cy() - tm1.height / 2 - border;
         auto gcx = this->cx() - border * 2 + 1;
@@ -68,7 +68,7 @@ void WidgetGroupBox::rdp_input_invalidate(Rect clip)
         gdi::server_draw_text(this->drawable, this->font
                             , this->x() + text_indentation
                             , this->y()
-                            , std::string_view(this->buffer)
+                            , this->caption
                             , this->fg_color
                             , this->get_bg_color()
                             , color_ctx
@@ -90,23 +90,5 @@ void WidgetGroupBox::rdp_input_invalidate(Rect clip)
 
 
         this->invalidate_children(rect_intersect);
-    }
-}
-
-const char * WidgetGroupBox::get_text() const
-{
-    return this->buffer;
-}
-
-void WidgetGroupBox::set_text(const char * text)
-{
-    this->buffer[0] = 0;
-    if (text) {
-        const size_t remain_n = buffer_size - 1;
-        const size_t n = strlen(text);
-        const size_t max = ((remain_n >= n) ? n :
-                            UTF8StringAdjustedNbBytes(byte_ptr_cast(text), remain_n));
-        memcpy(this->buffer, text, max);
-        this->buffer[max] = 0;
     }
 }
