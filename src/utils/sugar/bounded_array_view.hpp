@@ -1519,7 +1519,7 @@ make_writable_sized_array_view(T* ptr) noexcept
 
 namespace detail
 {
-    struct truncated_bounded_array_view_policy
+    struct truncatable_bounded_array_view_policy
     {
         template<class ToBoundedArrayView, class BoundedArrayView>
         static constexpr ToBoundedArrayView convert(BoundedArrayView av) noexcept
@@ -1545,25 +1545,25 @@ namespace detail
     };
 
     template<class Cont, class = void>
-    struct truncated_bounded_array_view_selector
+    struct truncatable_bounded_array_view_selector
     {
         using av_type = decltype(array_view{std::declval<Cont const&>()});
         using policy_type = truncated_array_view_policy;
     };
 
     template<class Cont>
-    struct truncated_bounded_array_view_selector<Cont, std::void_t<
+    struct truncatable_bounded_array_view_selector<Cont, std::void_t<
         decltype(bounded_array_view{std::declval<Cont const&>()})
     >>
     {
         using av_type = decltype(bounded_array_view{std::declval<Cont const&>()});
-        using policy_type = truncated_bounded_array_view_policy;
+        using policy_type = truncatable_bounded_array_view_policy;
     };
 } // namespace detail
 
 // TODO rename to truncatable_bounded_array_view
-template<class Cont, class S = detail::truncated_bounded_array_view_selector<Cont>>
-constexpr auto truncated_bounded_array_view(Cont const& cont)
+template<class Cont, class S = detail::truncatable_bounded_array_view_selector<Cont>>
+constexpr auto truncatable_bounded_array_view(Cont const& cont)
     noexcept(noexcept(typename S::av_type{cont}))
 -> recomputable_bounded_array_view<
     typename S::av_type,
@@ -1574,9 +1574,9 @@ constexpr auto truncated_bounded_array_view(Cont const& cont)
 }
 
 template<std::size_t AtMost, class Cont>
-constexpr auto truncated_bounded_array_view(Cont const& cont)
+constexpr auto truncatable_bounded_array_view(Cont const& cont)
     REDEMPTION_DECLTYPE_AUTO_RETURN_NOEXCEPT(
-        make_bounded_array_view<0, AtMost>(truncated_bounded_array_view(cont)))
+        make_bounded_array_view<0, AtMost>(truncatable_bounded_array_view(cont)))
 
 
 namespace detail

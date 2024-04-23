@@ -560,7 +560,7 @@ struct PgsFile
         UpdateProgressData update_progress_data(progress_filename, permissions,
                                                 MonotonicTimePoint(), MonotonicTimePoint());
 
-        update_progress_data.raise_error(code, truncated_bounded_array_view(message));
+        update_progress_data.raise_error(code, truncatable_bounded_array_view(message));
     }
 
     void raise_error_and_log(zstring_view message)
@@ -1248,7 +1248,7 @@ static inline int replay(
                             const bool msg_with_error_id = false;
                             update_progress_data.raise_error(
                                 e.id,
-                                truncated_bounded_array_view(
+                                truncatable_bounded_array_view(
                                     e.errmsg(msg_with_error_id)
                                 )
                             );

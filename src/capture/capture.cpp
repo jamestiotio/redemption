@@ -719,7 +719,7 @@ private:
         auto result_code = this->redis_session.open(
             redis_params.address,
             redis_params.port,
-            truncated_bounded_array_view(redis_params.password),
+            truncatable_bounded_array_view(redis_params.password),
             redis_params.db,
             redis_params.timeout, RedisSyncSession::TlsParams{
                 .enable_tls = redis_params.tls.enable_tls,

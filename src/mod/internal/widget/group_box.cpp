@@ -31,7 +31,7 @@ WidgetGroupBox::WidgetGroupBox(
     Color fgcolor, Color bgcolor, Font const & font
 )
   : WidgetComposite(drawable, Focusable::Yes)
-  , caption(truncated_bounded_array_view(text))
+  , caption(truncatable_bounded_array_view(text))
   , fg_color(fgcolor)
   , font(font)
 {

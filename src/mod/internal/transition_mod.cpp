@@ -32,7 +32,7 @@ TransitionMod::TransitionMod(
     Theme const& theme
 )
     : RailInternalModBase(drawable, width, height, rail_client_execute, font, theme, nullptr)
-    , ttmessage(truncated_bounded_array_view(message))
+    , ttmessage(truncatable_bounded_array_view(message))
     , drawable(drawable)
     , font(font)
     , widget_rect(widget_rect)

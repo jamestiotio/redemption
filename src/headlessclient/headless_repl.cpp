@@ -124,14 +124,14 @@ bool HeadlessRepl::execute_command(RdpInput& mod, chars_view cmd_line)
         case HeadlessCommand::Result::ConfigStr:
             load_headless_config_from_string(
                 ini, client_info,
-                static_string<1024>(truncated_bounded_array_view(cmd_ctx.output_message)).data()
+                static_string<1024>(truncatable_bounded_array_view(cmd_ctx.output_message)).data()
             );
             break;
 
         case HeadlessCommand::Result::ConfigFile:
             load_headless_config_from_file(
                 ini, client_info,
-                static_string<1024>(truncated_bounded_array_view(cmd_ctx.output_message)).c_str()
+                static_string<1024>(truncatable_bounded_array_view(cmd_ctx.output_message)).c_str()
             );
             break;
 
