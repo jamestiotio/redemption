@@ -80,7 +80,7 @@ void WidgetEdit::set_text(chars_view text)
 
         memcpy(this->label.buffer, text.data(), this->buffer_size);
         this->label.buffer[this->buffer_size] = 0;
-        gdi::TextMetrics tm(*this->font, std::string(this->label.buffer));
+        gdi::TextMetrics tm(*this->font, std::string_view(this->label.buffer));
         this->w_text = tm.width;
         this->num_chars = UTF8Len(byte_ptr_cast(this->label.buffer));
     }
@@ -110,7 +110,7 @@ void WidgetEdit::insert_text(chars_view text)
         }
         this->buffer_size = total_n;
         this->label.buffer[this->buffer_size] = 0;
-        gdi::TextMetrics tm(*this->font, std::string(this->label.buffer));
+        gdi::TextMetrics tm(*this->font, std::string_view(this->label.buffer));
         this->w_text = tm.width;
         const size_t tmp_num_chars = this->num_chars;
         this->num_chars = UTF8Len(byte_ptr_cast(this->label.buffer));
