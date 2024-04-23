@@ -88,12 +88,6 @@ void WidgetVerticalScrollText::set_wh(uint16_t w, uint16_t h)
         uint16_t const new_cx = cx - this->button_dim.w;
         this->line_metrics = gdi::MultiLineTextMetrics(this->font, this->text, new_cx);
 
-
-        for (auto line : line_metrics.lines()) {
-            LOG(LOG_DEBUG, "%hu / %hu", gdi::TextMetrics(font, line).width, new_cx);
-        }
-
-
         const int text_h = int(this->line_metrics.lines().size() * glyph_cy - this->y_text);
         const int total_scroll_h = std::max(cy - this->button_dim.h * 2, 1);
 
