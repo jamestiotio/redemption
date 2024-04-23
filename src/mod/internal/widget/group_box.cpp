@@ -20,6 +20,7 @@
 
 #include "mod/internal/widget/group_box.hpp"
 #include "core/RDP/orders/RDPOrdersPrimaryOpaqueRect.hpp"
+#include "core/font.hpp"
 #include "gdi/graphic_api.hpp"
 #include "gdi/text_metrics.hpp"
 #include "utils/sugar/cast.hpp"
@@ -50,15 +51,14 @@ void WidgetGroupBox::rdp_input_invalidate(Rect clip)
         const uint16_t text_margin      = 6;
         const uint16_t text_indentation = border + text_margin + 4;
 
-        gdi::TextMetrics tm1(this->font, "bp"_av);
-        gdi::TextMetrics tm2(this->font, this->caption);
+        gdi::TextMetrics tm(this->font, this->caption);
 
-        auto gcy = this->cy() - tm1.height / 2 - border;
+        auto gcy = this->cy() - tm.height / 2 - border;
         auto gcx = this->cx() - border * 2 + 1;
         auto px = this->x() + border - 1;
 
-        auto wlabel = text_margin * 2 + tm2.width;
-        auto y = this->y() + tm1.height / 2;
+        auto wlabel = text_margin * 2 + tm.width;
+        auto y = this->y() + tm.height / 2;
 
         auto const color_ctx = gdi::ColorCtx::depth24();
 
