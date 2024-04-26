@@ -1072,6 +1072,7 @@ private:
 
                     if (has_field(cfg::context::module())
                      && ((ini.get<cfg::context::module>() != mod_factory.mod_name()
+                       || ModuleName::waitinfo == mod_factory.mod_name()
                        || ini.get<cfg::context::try_alternate_target>())
                     )) {
                         next_module = ini.get<cfg::context::module>();
