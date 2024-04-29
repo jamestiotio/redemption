@@ -234,7 +234,7 @@ bool SocketTransport::connect()
 size_t SocketTransport::do_partial_read(uint8_t * buffer, size_t len)
 {
     LOG_IF(bool(this->verbose & (Verbose::meta | Verbose::dump)), LOG_INFO,
-        "Socket %s (%d) asking for %zu bytes", this->name, this->sck, len);
+        "SocketTransport::do_partial_read: %s (%d) asking for %zu bytes", this->name, this->sck, len);
 
     ssize_t const res = this->tls
       ? this->tls->privpartial_recv_tls(buffer, len)
@@ -250,7 +250,10 @@ size_t SocketTransport::do_partial_read(uint8_t * buffer, size_t len)
     std::size_t result_len = static_cast<std::size_t>(res);
 
     if (REDEMPTION_UNLIKELY(bool(this->verbose & (Verbose::meta | Verbose::dump)))) {
-        socket_transport_log("Recv done", "Dump done", this->verbose, {buffer, result_len}, this->name, this->sck);
+        socket_transport_log(
+            "SocketTransport::do_partial_read: Recv done", "Dump done",
+            this->verbose, {buffer, result_len}, this->name, this->sck
+        );
     }
 
     return result_len;
@@ -259,7 +262,7 @@ size_t SocketTransport::do_partial_read(uint8_t * buffer, size_t len)
 SocketTransport::Read SocketTransport::do_atomic_read(uint8_t * buffer, size_t len)
 {
     LOG_IF(bool(this->verbose & (Verbose::meta | Verbose::dump)), LOG_INFO,
-        "Socket %s (%d) receiving %zu bytes", this->name, this->sck, len);
+        "SocketTransport::do_atomic_read: %s (%d) asking %zu bytes", this->name, this->sck, len);
 
     ssize_t res = this->tls
       ? tls_recv_all(*this->tls, buffer, len)
@@ -277,7 +280,10 @@ SocketTransport::Read SocketTransport::do_atomic_read(uint8_t * buffer, size_t l
     }
 
     if (REDEMPTION_UNLIKELY(bool(this->verbose & (Verbose::meta | Verbose::dump)))) {
-        socket_transport_log("Recv done", "Dump done", this->verbose, {buffer, len}, this->name, this->sck);
+        socket_transport_log(
+            "SocketTransport::do_atomic_read: Recv done", "Dump done",
+            this->verbose, {buffer, len}, this->name, this->sck
+        );
     }
 
     this->total_received += res;
@@ -299,13 +305,14 @@ void SocketTransport::do_send(const uint8_t * const buffer, size_t const len)
 {
     if (len == 0) { return; }
 
+    LOG_IF(bool(this->verbose & (Verbose::meta | Verbose::dump)), LOG_INFO,
+        "SocketTransport::do_send: %s (%d) asking for %zu bytes", this->name, this->sck, len);
+
     if (!this->async_buffers.empty()) {
+        LOG_IF(bool(this->verbose & (Verbose::meta | Verbose::dump)), LOG_INFO,
+            "SocketTransport::do_send: %s (%d) bufferize data", this->name, this->sck);
         this->async_buffers.emplace_back(buffer, len);
         return;
-    }
-
-    if (REDEMPTION_UNLIKELY(bool(this->verbose & (Verbose::meta | Verbose::dump)))) {
-        socket_transport_log("Sending", "Sent dumped", this->verbose, {buffer, len}, this->name, this->sck);
     }
 
     ssize_t res = socket_send_partial(this->tls.get(), this->sck, buffer, len);
@@ -317,18 +324,29 @@ void SocketTransport::do_send(const uint8_t * const buffer, size_t const len)
         throw Error(ERR_TRANSPORT_WRITE_FAILED, 0, this->sck);
     }
 
+    this->total_sent += res;
     std::size_t result_len = static_cast<std::size_t>(res);
 
-    if (result_len < len) {
-        this->async_buffers.emplace_back(buffer + res, len - result_len);
+    if (REDEMPTION_UNLIKELY(bool(this->verbose & (Verbose::meta | Verbose::dump)))) {
+        socket_transport_log(
+            "SocketTransport::do_send: Sending done", "Sent dumped",
+            this->verbose, {buffer, result_len}, this->name, this->sck
+        );
     }
 
-    this->total_sent += res;
+    if (result_len < len) {
+        LOG_IF(bool(this->verbose & (Verbose::meta | Verbose::dump)), LOG_INFO,
+            "SocketTransport::do_send: %s (%d) bufferize remaining data", this->name, this->sck);
+        this->async_buffers.emplace_back(buffer + res, len - result_len);
+    }
 }
 
 void SocketTransport::send_waiting_data()
 {
     assert(not this->async_buffers.empty());
+
+    LOG_IF(bool(this->verbose & (Verbose::meta | Verbose::dump)), LOG_INFO,
+        "SocketTransport::send_waiting_data: %s (%d) send bufferized data", this->name, this->sck);
 
     auto first = begin(this->async_buffers);
     auto last = end(this->async_buffers);
@@ -350,12 +368,24 @@ void SocketTransport::send_waiting_data()
         }
 
         this->total_sent += res;
+        std::size_t result_len = static_cast<std::size_t>(res);
+
+        if (REDEMPTION_UNLIKELY(bool(this->verbose & (Verbose::meta | Verbose::dump)))) {
+            socket_transport_log(
+                "SocketTransport::send_waiting_data: Sending done", "Sent dumped",
+                this->verbose, {first->p, result_len}, this->name, this->sck
+            );
+        }
 
         if (res != len) {
             first->p += res;
             break;
         }
     }
+
+    LOG_IF(bool(this->verbose & (Verbose::meta | Verbose::dump)), LOG_INFO,
+        "SocketTransport::send_waiting_data: %s (%d) %zu buffers completed",
+        this->name, this->sck, static_cast<std::size_t>(first - begin(this->async_buffers)));
 
     this->async_buffers.erase(begin(this->async_buffers), first);
 }
