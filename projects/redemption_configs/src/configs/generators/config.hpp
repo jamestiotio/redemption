@@ -70,7 +70,6 @@ constexpr auto path_max_as_str = "4096"_av;
 
 constexpr inline std::array conn_policies {
     DestSpecFile::rdp,
-    DestSpecFile::jh,
     DestSpecFile::vnc,
 };
 
@@ -87,7 +86,6 @@ constexpr std::string_view dest_file_to_filename(DestSpecFile dest)
         case DestSpecFile::global_spec: return ""sv;
         case DestSpecFile::rdp: return "rdp"sv;
         case DestSpecFile::vnc: return "vnc"sv;
-        case DestSpecFile::jh: return "rdp-jumphost"sv;
     }
     return ""sv;
 }
@@ -1526,12 +1524,6 @@ ConnectionPolicyValue<minify_type_t<T>> vnc_policy_value(T&& value)
     return {DestSpecFile::vnc, static_cast<T&&>(value), false};
 }
 
-template<class T>
-ConnectionPolicyValue<minify_type_t<T>> jh_policy_value(T&& value)
-{
-    return {DestSpecFile::jh, static_cast<T&&>(value), false};
-}
-
 inline void check_policy(std::initializer_list<DestSpecFile> dest_files)
 {
     auto policy_type = DestSpecFile();
@@ -1547,7 +1539,6 @@ inline void check_policy(std::initializer_list<DestSpecFile> dest_files)
                 case DestSpecFile::global_spec: break;
                 case DestSpecFile::rdp: dest_name = " (rdp)"; break;
                 case DestSpecFile::vnc: dest_name = " (vnc)"; break;
-                case DestSpecFile::jh: dest_name = " (jh)"; break;
             }
             throw std::runtime_error(
                 str_concat("duplicate connection policy value", dest_name)
@@ -2330,7 +2321,6 @@ struct GeneratorConfig
             append_if_true("iniOnly", bool(mem_info.spec.dest & DestSpecFile::ini_only));
             append_if_true("rdp", bool(mem_info.spec.dest & DestSpecFile::rdp));
             append_if_true("vnc", bool(mem_info.spec.dest & DestSpecFile::vnc));
-            append_if_true("jh", bool(mem_info.spec.dest & DestSpecFile::jh));
             append_if_true("aclToProxy", bool(mem_info.spec.acl_io & SesmanIO::acl_to_proxy));
             append_if_true("ProxyToAcl", bool(mem_info.spec.acl_io & SesmanIO::proxy_to_acl));
             append_if_true("logged", bool(mem_info.spec.attributes & SpecAttributes::logged));

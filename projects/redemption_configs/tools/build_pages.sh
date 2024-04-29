@@ -3,7 +3,7 @@
 set -e
 
 if (( $# != 1 )); then
-    echo 'build_pages.sh dirname'
+    echo 'Usage: build_pages.sh dirname'
     exit 1
 fi
 

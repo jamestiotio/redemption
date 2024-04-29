@@ -272,9 +272,8 @@ const titleMapping = {
     g: 'Configuration Option',
     rdp: 'RDP Policy',
     vnc: 'VNC Policy',
-    jh: 'JH Policy',
     ini: 'Ini (dev)',
-    all: 'All without JH or Ini',
+    all: 'All without Ini',
 };
 
 const [setAdvanced, tagFilter] = (() => {
@@ -803,7 +802,6 @@ const mappingDisplayFn = {
   let iniOnlySpec = {};
   let rdpSpec = {};
   let vncSpec = {};
-  let jhSpec = {};
   const historyTransformations = {};
 
   let optionNameMaxLen = 0;
@@ -818,7 +816,6 @@ const mappingDisplayFn = {
     if (option.iniOnly) pushOption(iniOnlySpec, option.section, option);
     if (option.rdp) pushOption(rdpSpec, option.connpolicySection || option.section, option);
     if (option.vnc) pushOption(vncSpec, option.connpolicySection || option.section, option);
-    if (option.jh) pushOption(jhSpec, option.connpolicySection || option.section, option);
 
     const history = [];
     option.history = history;
@@ -831,7 +828,6 @@ const mappingDisplayFn = {
   iniOnlySpec = computeSpecInfo(iniOnlySpec);
   rdpSpec = computeSpecInfo(rdpSpec);
   vncSpec = computeSpecInfo(vncSpec);
-  jhSpec = computeSpecInfo(jhSpec);
 
   const sections = {}
   for (const section of config.sections) {
@@ -875,11 +871,6 @@ const mappingDisplayFn = {
     '<div id="tab-content-vnc" class="tab-content">',
     makeHtmlAdvancedMod('vnc'),
     ...makeHtmlSpec(enumDatas, sections, vncSpec, 'vnc', true),
-    '</div>',
-
-    '<div id="tab-content-jh" class="tab-content">',
-    makeHtmlAdvancedMod('jh'),
-    ...makeHtmlSpec(enumDatas, sections, jhSpec, 'jh', true),
     '</div>',
 
     '<div id="tab-content-ini" class="tab-content">',

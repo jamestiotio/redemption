@@ -63,9 +63,7 @@ Configures `sesman` to send a different default depending on the connection poli
 
 - `rdp_policy_value(value)`: Default value for rdp.spec
 - `vnc_policy_value(value)`: Default value for vnc.spec
-- `jh_policy_value(value)`: Default value for jh.spec
 
-- `rdp/vnc/jh_policy_value(value).always()`: The value is not configurable through `.spec` and is always initialized with the specified value.
 
 
 ## MemberInfo.spec
@@ -123,8 +121,8 @@ Corresponds to the `.spec` file used by wallix bastion to display a GUI.
 
 Corresponds to the `.spec` file used by wallix bastion to display a GUI.
 
-- `spec::connpolicy(vnc | rdp_and_jh | rdp_without_jh, Loggable, attributes = {})`. Outside a bastion, this corresponds to `acl_to_proxy(ResetBackToSelector::No, ...)`.
-- `spec::acl_connpolicy(vnc | rdp_and_jh | rdp_without_jh, attributes = {})`. Value only in `.spec`, not sent to proxy.
+- `spec::connpolicy(vnc | rdp, Loggable, attributes = {})`. Outside a bastion, this corresponds to `acl_to_proxy(ResetBackToSelector::No, ...)`.
+- `spec::acl_connpolicy(vnc | rdp, attributes = {})`. Value only in `.spec`, not sent to proxy.
 
 #### Attributes
 

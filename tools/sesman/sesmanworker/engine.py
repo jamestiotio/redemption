@@ -1650,7 +1650,7 @@ class Engine:
         target = selected_target or self.target_right
         # TODO really possible?
         if not target:
-            return ''
+            return 'RDP'
         try:
             conn_type = target.get('connection_policy_type',
                                    target.get('service_protocol_cn'))

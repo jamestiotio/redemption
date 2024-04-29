@@ -39,7 +39,6 @@
       "description": "Secondary login Transformation rule\n${LOGIN} will be replaced by login\n${DOMAIN} (optional) will be replaced by domain if it exists.\nEmpty value means no transformation rule.",
       "rdp": true,
       "vnc": true,
-      "jh": true,
       "external": true
     },
     {
@@ -50,7 +49,6 @@
       "description": "Account Mapping password retriever\nTransformation to apply to find the correct account.\n${USER} will be replaced by the user's login.\n${DOMAIN} will be replaced by the user's domain (in case of LDAP mapping).\n${USER_DOMAIN} will be replaced by the user's login + \"@\" + user's domain (or just user's login if there's no domain).\n${GROUP} will be replaced by the authorization's user group.\n${DEVICE} will be replaced by the device's name.\nA regular expression is allowed to transform a variable, with the syntax: ${USER:/regex/replacement}, groups can be captured with parentheses and used with \\1, \\2, ...\nFor example to replace leading \"A\" by \"B\" in the username: ${USER:/^A/B}\nEmpty value means no transformation rule.",
       "rdp": true,
       "vnc": true,
-      "jh": true,
       "external": true
     },
     {
@@ -214,7 +212,6 @@
       "connpolicySection": "session",
       "rdp": true,
       "vnc": true,
-      "jh": true,
       "aclToProxy": true,
       "logStategy": "1"
     },
@@ -663,7 +660,6 @@
       "value": 0,
       "description": "This parameter allows you to specify max timeout before a TCP connection is aborted. If the option value is specified as 0, TCP will use the system default.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "advanced": true,
       "logStategy": "1",
@@ -733,7 +729,6 @@
       "description": "This option should only be used if the server or client is showing graphical issues.\nIn general, disabling RDP orders has a negative impact on performance.\n\nDrawing orders that can be disabled:\n   0: DstBlt\n   1: PatBlt\n   2: ScrBlt\n   3: MemBlt\n   4: Mem3Blt\n   9: LineTo\n  15: MultiDstBlt\n  16: MultiPatBlt\n  17: MultiScrBlt\n  18: MultiOpaqueRect\n  22: Polyline\n  25: EllipseSC\n  27: GlyphIndex",
       "tags": ["debug","compatibility"],
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "advanced": true,
       "logStategy": "1",
@@ -766,7 +761,6 @@
       "value": 0,
       "description": "Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "logStategy": "1"
     },
@@ -777,7 +771,6 @@
       "value": 0,
       "description": "Maximal incoming TLS level 0=no restriction, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "logStategy": "1"
     },
@@ -788,7 +781,6 @@
       "value": "ALL",
       "description": "TLSv1.2 and below additional ciphers supported.\nEmpty to apply system-wide configuration (SSL security level 2), ALL for support of all ciphers to ensure highest compatibility with target servers.\nThe format used is described on this page: https://www.openssl.org/docs/man3.1/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "logStategy": "1"
     },
@@ -800,7 +792,6 @@
       "description": "Configure the available TLSv1.3 ciphersuites.\nEmpty to apply system-wide configuration.\nThe format used is described in the third paragraph of this page: https://www.openssl.org/docs/man1.1.1/man3/SSL_CTX_set_ciphersuites.html#DESCRIPTION",
       "displayName": "TLS 1.3 cipher suites",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "logStategy": "1"
     },
@@ -812,7 +803,6 @@
       "description": "Configure the supported key exchange groups.\nEmpty to apply system-wide configuration.\nThe format used is described in this page: https://www.openssl.org/docs/man3.2/man3/SSL_CONF_cmd.html#groups-groups",
       "displayName": "TLS key exchange groups",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "logStategy": "1"
     },
@@ -824,7 +814,6 @@
       "description": "Show in the logs the common cipher list supported by client and server\n⚠ Only for debug purposes",
       "tags": ["debug"],
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "advanced": true,
       "logStategy": "1"
@@ -887,7 +876,6 @@
       "value": "*",
       "description": "List of (comma-separated) enabled dynamic virtual channel. If character '*' is used as a name then enables everything.\nAn explicit name in 'Allowed dynamic channels' and 'Denied dynamic channels' will have higher priority than '*'.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "advanced": true,
       "logStategy": "1"
@@ -899,7 +887,6 @@
       "value": "",
       "description": "List of (comma-separated) disabled dynamic virtual channel. If character '*' is used as a name then disables everything.\nAn explicit name in 'Allowed dynamic channels' and 'Denied dynamic channels' will have higher priority than '*'.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "advanced": true,
       "logStategy": "1"
@@ -1155,7 +1142,6 @@
       "value": true,
       "description": "Adds RDPDR channel metadata to session logs. Disabling this option makes shared disks more responsive, but metadata will no longer be collected.if at least one authorization of RDPDR is missing (Printer, ComPort, SmartCard, Drive), then this option is considered enabled.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "advanced": true,
       "logStategy": "1"
@@ -1244,7 +1230,6 @@
       "value": false,
       "description": "NLA will be disabled.\nTarget must be set for interactive login, otherwise server connection may not be guaranteed.\nSmartcard device must be available on client desktop.\nSmartcard redirection (Proxy option RDP_SMARTCARD) must be enabled on service.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "logStategy": "1"
     },
@@ -1255,7 +1240,6 @@
       "value": true,
       "description": "Enable target connection on ipv6",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "logStategy": "1"
     },
@@ -1278,7 +1262,6 @@
       "value": false,
       "description": "Allows the proxy to automatically reconnect to secondary target when a network error occurs.\nThe server must support reconnection cookie.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "advanced": true,
       "logStategy": "1"
@@ -1314,7 +1297,6 @@
       "value": true,
       "description": "Forward the build number advertised by the client to the server. If forwarding is disabled a default (static) build number will be sent to the server.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "advanced": true,
       "logStategy": "1"
@@ -2027,7 +2009,6 @@
       "value": 0,
       "description": "Warn if check allow connexion to server.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "advanced": true,
       "logStategy": "1",
@@ -2040,7 +2021,6 @@
       "value": 1,
       "description": "Warn that new server certificate file was created.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "advanced": true,
       "logStategy": "1",
@@ -2053,7 +2033,6 @@
       "value": 0,
       "description": "Warn that server certificate file was successfully checked.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "advanced": true,
       "logStategy": "1",
@@ -2066,7 +2045,6 @@
       "value": 1,
       "description": "Warn that server certificate file checking failed.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "advanced": true,
       "logStategy": "1",
@@ -2229,7 +2207,6 @@
       "value": 2,
       "description": "Classification of input data is performed using Session Probe.\nWithout Session Probe, all the texts entered are considered unidentified.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "logStategy": "1",
       "subtype": "KeyboardInputMaskingLevel"
@@ -2358,7 +2335,6 @@
       "value": 0,
       "description": "Disable keyboard log:\n(Please see also \"Keyboard input masking level\" in \"session_log\" section of \"Connection Policy\".)",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "advanced": true,
       "logStategy": "1",
@@ -2638,7 +2614,6 @@
       "value": false,
       "description": "Enable use of ICAP service for file verification on upload.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "logStategy": "1"
     },
@@ -2649,7 +2624,6 @@
       "value": false,
       "description": "Enable use of ICAP service for file verification on download.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "logStategy": "1"
     },
@@ -2660,7 +2634,6 @@
       "value": false,
       "description": "Verify text data via clipboard from client to server.\nFile verification on upload must be enabled via option Enable up.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "logStategy": "1"
     },
@@ -2671,7 +2644,6 @@
       "value": false,
       "description": "Verify text data via clipboard from server to client\nFile verification on download must be enabled via option Enable down.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "logStategy": "1"
     },
@@ -2682,7 +2654,6 @@
       "value": false,
       "description": "Block file transfer from client to server on invalid file verification.\nFile verification on upload must be enabled via option Enable up.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "logStategy": "1"
     },
@@ -2693,7 +2664,6 @@
       "value": false,
       "description": "Block file transfer from server to client on invalid file verification.\nFile verification on download must be enabled via option Enable down.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "logStategy": "1"
     },
@@ -2720,7 +2690,6 @@
       "value": true,
       "description": "Log the files and clipboard texts that are verified and accepted. By default, only those rejected are logged.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "advanced": true,
       "logStategy": "1"
@@ -2732,7 +2701,6 @@
       "value": 256,
       "description": "⚠ This value affects the RAM used by the session.\n\nIf option Block invalid file (up or down) is enabled, automatically reject file with greater filesize.",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "advanced": true,
       "logStategy": "1"
@@ -2752,7 +2720,6 @@
       "value": "never",
       "description": "Enable storage of transferred files (via RDP Clipboard).\n⚠ Saving files can take up a lot of disk space",
       "rdp": true,
-      "jh": true,
       "aclToProxy": true,
       "logStategy": "1",
       "subtype": "RdpStoreFile"

@@ -120,60 +120,6 @@ cp_spec = {
     },
 }, {
 }),
-'rdp-jumphost': ({
-    'session': {
-        ('globals:inactivity_timeout', 'inactivity_timeout', 0),
-    },
-    'all_target_mod': {
-        ('all_target_mod:tcp_user_timeout', 'tcp_user_timeout', 0),
-    },
-    'rdp': {
-        ('mod_rdp:disabled_orders', 'disabled_orders', "27"),
-        ('mod_rdp:tls_min_level', 'tls_min_level', 0),
-        ('mod_rdp:tls_max_level', 'tls_max_level', 0),
-        ('mod_rdp:cipher_string', 'cipher_string', "ALL"),
-        ('mod_rdp:tls_1_3_ciphersuites', 'tls_1_3_ciphersuites', ""),
-        ('mod_rdp:tls_key_exchange_groups', 'tls_key_exchange_groups', ""),
-        ('mod_rdp:show_common_cipher_list', 'show_common_cipher_list', False),
-        ('mod_rdp:allowed_dynamic_channels', 'allowed_dynamic_channels', "*"),
-        ('mod_rdp:denied_dynamic_channels', 'denied_dynamic_channels', ""),
-        ('mod_rdp:enable_rdpdr_data_analysis', 'enable_rdpdr_data_analysis', True),
-        ('mod_rdp:force_smartcard_authentication', 'force_smartcard_authentication', False),
-        ('mod_rdp:enable_ipv6', 'enable_ipv6', True),
-        ('mod_rdp:auto_reconnection_on_losing_target_link', 'auto_reconnection_on_losing_target_link', False),
-        ('mod_rdp:forward_client_build_number', 'forward_client_build_number', True),
-    },
-    'server_cert': {
-        ('server_cert:server_access_allowed_message', 'server_access_allowed_message', 0),
-        ('server_cert:server_cert_create_message', 'server_cert_create_message', 1),
-        ('server_cert:server_cert_success_message', 'server_cert_success_message', 0),
-        ('server_cert:server_cert_failure_message', 'server_cert_failure_message', 1),
-    },
-    'session_log': {
-        ('session_log:keyboard_input_masking_level', 'keyboard_input_masking_level', 2),
-    },
-    'capture': {
-        ('capture:disable_keyboard_log', 'disable_keyboard_log', 0),
-    },
-    'file_verification': {
-        ('file_verification:enable_up', 'enable_up', False),
-        ('file_verification:enable_down', 'enable_down', False),
-        ('file_verification:clipboard_text_up', 'clipboard_text_up', False),
-        ('file_verification:clipboard_text_down', 'clipboard_text_down', False),
-        ('file_verification:block_invalid_file_up', 'block_invalid_file_up', False),
-        ('file_verification:block_invalid_file_down', 'block_invalid_file_down', False),
-        ('file_verification:log_if_accepted', 'log_if_accepted', True),
-        ('file_verification:max_file_size_rejected', 'max_file_size_rejected', 256),
-    },
-    'file_storage': {
-        ('file_storage:store_file', 'store_file', "never"),
-    },
-}, {
-    'mod_rdp:enable_nla': False,
-    'session_probe:enable_session_probe': False,
-    'server_cert:server_cert_store': False,
-    'server_cert:server_cert_check': 3,
-}),
 'vnc': ({
     'session': {
         ('globals:inactivity_timeout', 'inactivity_timeout', 0),

@@ -93,7 +93,6 @@ enum class DestSpecFile : uint8_t
     global_spec  = 1 << 1,
     rdp          = 1 << 2,
     vnc          = 1 << 3,
-    jh           = 1 << 4,
 };
 MK_ENUM_OP(DestSpecFile)
 

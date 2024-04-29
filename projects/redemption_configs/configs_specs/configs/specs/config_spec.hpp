@@ -105,7 +105,6 @@ cfg_generators::ValueFromEnum from_enum{tenums};
 using cfg_generators::value;
 using cfg_generators::rdp_policy_value;
 using cfg_generators::vnc_policy_value;
-using cfg_generators::jh_policy_value;
 using cfg_generators::MemberInfo;
 using spec::proxy_to_acl;
 using spec::acl_to_proxy;
@@ -124,8 +123,7 @@ auto reset_back_to_selector = ResetBackToSelector::Yes;
 auto no_reset_back_to_selector = ResetBackToSelector::No;
 
 auto vnc = DestSpecFile::vnc;
-auto rdp_and_jh = DestSpecFile::rdp | DestSpecFile::jh;
-auto rdp_without_jh = DestSpecFile::rdp;
+auto rdp = DestSpecFile::rdp;
 
 
 // updated by acl
@@ -176,7 +174,7 @@ _.section("general", [&]
     _.member(MemberInfo{
         .name = "transformation_rule",
         .value = value<std::string>(),
-        .spec = spec::acl_connpolicy(rdp_and_jh | vnc),
+        .spec = spec::acl_connpolicy(rdp | vnc),
         .desc =
             "Secondary login Transformation rule\n"
             "${LOGIN} will be replaced by login\n"
@@ -187,7 +185,7 @@ _.section("general", [&]
     _.member(MemberInfo{
         .name = "vault_transformation_rule",
         .value = value<std::string>(),
-        .spec = spec::acl_connpolicy(rdp_and_jh | vnc),
+        .spec = spec::acl_connpolicy(rdp | vnc),
         .desc =
             "Account Mapping password retriever\n"
             "Transformation to apply to find the correct account.\n"
@@ -331,7 +329,7 @@ _.section("globals", [&]
         .name = "inactivity_timeout",
         .connpolicy_section = "session",
         .value = value<std::chrono::seconds>(),
-        .spec = connpolicy(rdp_and_jh | vnc, L),
+        .spec = connpolicy(rdp | vnc, L),
         .desc =
             "No automatic disconnection due to inactivity, timer is set on target session.\n"
             "If value is between 1 and 30, then 30 is used.\n"
@@ -495,7 +493,7 @@ _.section("session_log", [&]
     _.member(MemberInfo{
         .name = "keyboard_input_masking_level",
         .value = from_enum(KeyboardInputMaskingLevel::password_and_unidentified),
-        .spec = connpolicy(rdp_and_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = "Classification of input data is performed using Session Probe.\n"
         "Without Session Probe, all the texts entered are considered unidentified.",
     });
@@ -772,7 +770,7 @@ _.section("all_target_mod", [&]
     _.member(MemberInfo{
         .name = "tcp_user_timeout",
         .value = value<types::range<std::chrono::milliseconds, 0, 3'600'000>>(),
-        .spec = connpolicy(rdp_and_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc = "This parameter allows you to specify max timeout before a TCP connection is aborted. If the option value is specified as 0, TCP will use the system default.",
     });
 });
@@ -850,22 +848,22 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
         .name = "disabled_orders",
         // disable glyph_index / glyph_cache
         .value = value<types::list<types::unsigned_>>("27"),
-        .spec = connpolicy(rdp_and_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .tags = Tag::Debug | Tag::Compatibility,
         .desc = disabled_orders_desc,
     });
 
     _.member(MemberInfo{
         .name = "enable_nla",
-        .value = value<bool>(true, jh_policy_value(false).always()),
-        .spec = connpolicy(rdp_without_jh, L),
+        .value = value<bool>(true),
+        .spec = connpolicy(rdp, L),
         .desc = "Enable NLA authentication in secondary target.",
     });
 
     _.member(MemberInfo{
         .name = "enable_kerberos",
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "If enabled, NLA authentication will try Kerberos before NTLM.\n"
             "(if enable_nla is disabled, this value is ignored)."
@@ -874,14 +872,14 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     _.member(MemberInfo{
         .name = "tls_min_level",
         .value = value<types::u32>(),
-        .spec = connpolicy(rdp_and_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = "Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3",
     });
 
     _.member(MemberInfo{
         .name = "tls_max_level",
         .value = value<types::u32>(),
-        .spec = connpolicy(rdp_and_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = "Maximal incoming TLS level 0=no restriction, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3",
     });
 
@@ -891,7 +889,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     _.member(MemberInfo{
         .name = "cipher_string",
         .value = value<std::string>("ALL"),
-        .spec = connpolicy(rdp_and_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "TLSv1.2 and below additional ciphers supported.\n"
             "Empty to apply system-wide configuration (SSL security level 2), ALL for support of all ciphers to ensure highest compatibility with target servers.\n"
@@ -904,7 +902,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
             .display = "TLS 1.3 cipher suites",
         },
         .value = value<std::string>(""),
-        .spec = connpolicy(rdp_and_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = tls_1_3_ciphersuites_desc,
     });
 
@@ -914,14 +912,14 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
             .display = "TLS key exchange groups",
         },
         .value = value<std::string>(""),
-        .spec = connpolicy(rdp_and_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = tls_key_exchange_groups,
     });
 
     _.member(MemberInfo{
         .name = "show_common_cipher_list",
         .value = value(false),
-        .spec = connpolicy(rdp_and_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .tags = Tag::Debug,
         .desc = "Show in the logs the common cipher list supported by client and server\n"
         "⚠ Only for debug purposes",
@@ -971,7 +969,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     _.member(MemberInfo{
         .name = "allowed_dynamic_channels",
         .value = value<std::string>("*"),
-        .spec = connpolicy(rdp_and_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "List of (comma-separated) enabled dynamic virtual channel. If character '*' is used as a name then enables everything.\n"
             "An explicit name in 'Allowed dynamic channels' and 'Denied dynamic channels' will have higher priority than '*'."
@@ -980,7 +978,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     _.member(MemberInfo{
         .name = "denied_dynamic_channels",
         .value = value<std::string>(),
-        .spec = connpolicy(rdp_and_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "List of (comma-separated) disabled dynamic virtual channel. If character '*' is used as a name then disables everything.\n"
             "An explicit name in 'Allowed dynamic channels' and 'Denied dynamic channels' will have higher priority than '*'."
@@ -1002,14 +1000,14 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
             .display = "Enable Server Redirection Support",
         },
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = "The secondary target connection can be redirected to a specific session on another RDP server.",
     });
 
     _.member(MemberInfo{
         .name = "load_balance_info",
         .value = value<std::string>(),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "Load balancing information.\n"
             "For example 'tsv://MS Terminal Services Plugin.1.Sessions' where 'Sessions' is the name of the targeted RD Collection which works fine."
@@ -1070,21 +1068,21 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     _.member(MemberInfo{
         .name = "use_client_provided_alternate_shell",
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = "As far as possible, use client-provided initial program (Alternate Shell)",
     });
 
     _.member(MemberInfo{
         .name = "use_client_provided_remoteapp",
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = "As far as possible, use client-provided remote program (RemoteApp)",
     });
 
     _.member(MemberInfo{
         .name = "use_native_remoteapp_capability",
         .value = value(true),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = "As far as possible, use native RemoteApp capability",
     });
 
@@ -1168,7 +1166,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     _.member(MemberInfo{
         .name = "enable_rdpdr_data_analysis",
         .value = value(true),
-        .spec = connpolicy(rdp_and_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "Adds RDPDR channel metadata to session logs. Disabling this option makes shared disks more responsive, but metadata will no longer be collected."
             "if at least one authorization of RDPDR is missing (Printer, ComPort, SmartCard, Drive), then this option is considered enabled."
@@ -1212,7 +1210,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
             .display = "Enable translated RemoteApp with AM",
         },
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "Actives conversion of RemoteApp target session to desktop session.\n"
             "Otherwise, Alternate Shell will be used.\n"
@@ -1233,7 +1231,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     _.member(MemberInfo{
         .name = "enable_remotefx",
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .tags = Tag::Compatibility,
         .desc = "Enables support of the remoteFX codec on target connection.",
     });
@@ -1241,7 +1239,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     _.member(MemberInfo{
         .name = "enable_restricted_admin_mode",
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "Connect to the server in Restricted Admin mode.\n"
             "This mode must be supported by the server (available from Windows Server 2012 R2), otherwise, connection will fail.\n"
@@ -1251,7 +1249,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     _.member(MemberInfo{
         .name = "force_smartcard_authentication",
         .value = value(false),
-        .spec = connpolicy(rdp_and_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "NLA will be disabled.\n"
             "Target must be set for interactive login, otherwise server connection may not be guaranteed.\n"
@@ -1262,7 +1260,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     _.member(MemberInfo{
         .name = "enable_ipv6",
         .value = value(true),
-        .spec = connpolicy(rdp_and_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = "Enable target connection on ipv6",
     });
 
@@ -1272,14 +1270,14 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
             .display = "Console mode"
         },
         .value = enum_as_string(RdpModeConsole::allow),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = "Console mode management for targets on Windows Server 2003 (requested with /console or /admin mstsc option)",
     });
 
     _.member(MemberInfo{
         .name = "auto_reconnection_on_losing_target_link",
         .value = value(false),
-        .spec = connpolicy(rdp_and_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "Allows the proxy to automatically reconnect to secondary target when a network error occurs.\n"
             "The server must support reconnection cookie.",
@@ -1288,7 +1286,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     _.member(MemberInfo{
         .name = "allow_session_reconnection_by_shortcut",
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .tags = Tag::Workaround,
         .desc =
             "If the feature is enabled, the end user can trigger a session disconnection/reconnection with the shortcut Ctrl+F12.\n"
@@ -1299,14 +1297,14 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     _.member(MemberInfo{
         .name = "session_reconnection_delay",
         .value = value<types::range<std::chrono::milliseconds, 0, 15000>>(0),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc = "The delay between a session disconnection and the automatic reconnection that follows.",
     });
 
     _.member(MemberInfo{
         .name = "forward_client_build_number",
         .value = value(true),
-        .spec = connpolicy(rdp_and_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "Forward the build number advertised by the client to the server. "
             "If forwarding is disabled a default (static) build number will be sent to the server."
@@ -1315,14 +1313,14 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     _.member(MemberInfo{
         .name = "bogus_monitor_layout_treatment",
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = "To resolve the session freeze issue with Windows 7/Windows Server 2008 target.",
     });
 
     _.member(MemberInfo{
         .name = "krb_armoring_account",
         .value = value<std::string>(),
-        .spec = acl_connpolicy(rdp_without_jh, spec::advanced),
+        .spec = acl_connpolicy(rdp, spec::advanced),
         .desc =
             "Account to be used for armoring Kerberos tickets. "
             "Must be in the form 'account_name@domain_name[@device_name]'. "
@@ -1333,21 +1331,21 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     _.member(MemberInfo{
         .name = "krb_armoring_realm",
         .value = value<std::string>(),
-        .spec = acl_connpolicy(rdp_without_jh, spec::advanced),
+        .spec = acl_connpolicy(rdp, spec::advanced),
         .desc = "Realm to be used for armoring Kerberos tickets.",
     });
 
     _.member(MemberInfo{
         .name = "krb_armoring_fallback_user",
         .value = value<std::string>(),
-        .spec = acl_connpolicy(rdp_without_jh, spec::advanced),
+        .spec = acl_connpolicy(rdp, spec::advanced),
         .desc = "Fallback username to be used for armoring Kerberos tickets.",
     });
 
     _.member(MemberInfo{
         .name = "krb_armoring_fallback_password",
         .value = value<std::string>(),
-        .spec = acl_connpolicy(rdp_without_jh, spec::advanced),
+        .spec = acl_connpolicy(rdp, spec::advanced),
         .desc = "Fallback password to be used for armoring Kerberos tickets.",
     });
 
@@ -1368,14 +1366,14 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     _.member(MemberInfo{
         .name = "remote_programs_disconnect_message_delay",
         .value = value<types::range<std::chrono::milliseconds, 3000, 120000>>(3000),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc = "Delay before showing disconnect message after the last RemoteApp window is closed.",
     });
 
     _.member(MemberInfo{
         .name = "use_session_probe_to_launch_remote_program",
         .value = value(true),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "This option only has an effect in RemoteApp sessions (RDS meaning).\n"
             "If enabled, the RDP Proxy relies on the Session Probe to launch the remote programs.\n"
@@ -1386,7 +1384,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     _.member(MemberInfo{
         .name = "replace_null_pointer_by_default_pointer",
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .tags = Tag::Workaround,
         .desc = "Replace an empty mouse pointer with normal pointer.",
     });
@@ -1397,7 +1395,7 @@ _.section("protocol", [&]
     _.member(MemberInfo{
         .name = "save_session_info_pdu",
         .value = from_enum(RdpSaveSessionInfoPDU::UnsupportedOrUnknown),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
     });
 });
 
@@ -1406,9 +1404,8 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "enable_session_probe",
         .value = value<bool>(false,
-            jh_policy_value(false).always(),
             rdp_policy_value(true)),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
     });
 
     _.member(MemberInfo{
@@ -1426,7 +1423,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "use_smart_launcher",
         .value = value(true),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "This parameter only has an effect in Desktop sessions.\n"
             "It allows you to choose between Smart launcher and Legacy launcher to launch the Session Probe.\n"
@@ -1436,7 +1433,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "enable_launch_mask",
         .value = value(true),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "This parameter enables or disables the Session Probe’s launch mask.\n"
             "The Launch mask hides the Session Probe launch steps from the end-users.\n"
@@ -1446,14 +1443,14 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "on_launch_failure",
         .value = from_enum(SessionProbeOnLaunchFailure::disconnect_user),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = "It is recommended to use option 1 (disconnect user).",
     });
 
     _.member(MemberInfo{
         .name = "launch_timeout",
         .value = value<types::range<std::chrono::milliseconds, 0, 300000>>(40000),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "This parameter is used if 'On launch failure' is 1 (disconnect user).\n"
             "0 to disable timeout."
@@ -1462,7 +1459,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "launch_fallback_timeout",
         .value = value<types::range<std::chrono::milliseconds, 0, 300000>>(40000),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "This parameter is used if 'On launch failure' is 0 (ignore failure and continue) or 2 (retry without Session Probe).\n"
             "0 to disable timeout."
@@ -1471,14 +1468,14 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "start_launch_timeout_timer_only_after_logon",
         .value = value(true),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = "If enabled, the Launch timeout countdown timer will be started only after user logged in Windows. Otherwise, the countdown timer will be started immediately after RDP protocol connexion.",
     });
 
     _.member(MemberInfo{
         .name = "keepalive_timeout",
         .value = value<types::range<std::chrono::milliseconds, 0, 60000>>(5000),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "The amount of time that RDP Proxy waits for a reply from the Session Probe to the KeepAlive message before adopting the behavior defined by 'On keepalive timeout'.\n"
             "If our local network is subject to congestion, or if the Windows lacks responsiveness, it is possible to increase the value of the timeout to minimize disturbances related to the behavior defined by 'On keepalive timeout'.\n"
@@ -1489,14 +1486,14 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "on_keepalive_timeout",
         .value = from_enum(SessionProbeOnKeepaliveTimeout::freeze_connection_and_wait),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = "This parameter allows us to choose the behavior of the RDP Proxy in case of losing the connection with Session Probe.",
     });
 
     _.member(MemberInfo{
         .name = "end_disconnected_session",
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "The behavior of this parameter is different between the Desktop session and the RemoteApp session (RDS meaning). But in each case, the purpose of enabling this parameter is to not leave disconnected sessions in a state unusable by the RDP proxy.\n"
             "If enabled, Session Probe will automatically end the disconnected Desktop session. Otherwise, the RDP session and the applications it contains will remain active after user disconnection (unless a parameter defined at the RDS-level decides otherwise).\n"
@@ -1508,14 +1505,14 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "enable_autodeployed_appdriver_affinity",
         .value = value(true),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = "If enabled, disconnected auto-deployed Application Driver session will automatically terminate by Session Probe."
     });
 
     _.member(MemberInfo{
         .name = "enable_log",
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "This parameter allows you to enable the Windows-side logging of Session Probe.\n"
             "The generated files are located in the Windows user's temporary directory. These files can only be analyzed by the WALLIX team."
@@ -1524,7 +1521,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "enable_log_rotation",
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "This parameter enables or disables the Log files rotation for Windows-side logging of Session Probe.\n"
             "The Log files rotation helps reduce disk space consumption caused by logging. But the interesting information may be lost if the corresponding file is not retrieved in time."
@@ -1533,7 +1530,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "log_level",
         .value = from_enum(SessionProbeLogLevel::Debug),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .tags = Tag::Debug,
         .desc = "Defines logging severity levels.",
     });
@@ -1541,7 +1538,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "disconnected_application_limit",
         .value = value<types::range<std::chrono::milliseconds, 0, 172'800'000>>(),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "(Deprecated!)\n"
             "The period above which the disconnected Application session will be automatically closed by the Session Probe.\n"
@@ -1551,7 +1548,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "disconnected_session_limit",
         .value = value<types::range<std::chrono::milliseconds, 0, 172'800'000>>(),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "The period above which the disconnected Desktop session will be automatically closed by the Session Probe.\n"
             "0 to disable timeout."
@@ -1560,7 +1557,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "idle_session_limit",
         .value = value<types::range<std::chrono::milliseconds, 0, 172'800'000>>(),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "The period of user inactivity above which the session will be locked by the Session Probe.\n"
             "0 to disable timeout."
@@ -1569,7 +1566,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "smart_launcher_clipboard_initialization_delay",
         .value = value<std::chrono::milliseconds>(2000),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "The additional period given to the device to make Clipboard redirection available.\n"
             "This parameter is effective only if the Smart launcher is used.\n"
@@ -1579,7 +1576,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "smart_launcher_start_delay",
         .value = value<std::chrono::milliseconds>(),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "For under-performing devices.\n"
             "The extra time given to the device before starting the Session Probe launch sequence.\n"
@@ -1590,7 +1587,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "smart_launcher_long_delay",
         .value = value<std::chrono::milliseconds>(500),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "The delay between two simulated keystrokes during the Session Probe launch sequence execution.\n"
             "This parameter is effective only if the Smart launcher is used.\n"
@@ -1601,7 +1598,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "smart_launcher_short_delay",
         .value = value<std::chrono::milliseconds>(50),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "The delay between two steps of the same simulated keystrokes during the Session Probe launch sequence execution.\n"
             "This parameter is effective only if the Smart launcher is used.\n"
@@ -1615,7 +1612,7 @@ _.section("session_probe", [&]
             .display = "Enable Smart launcher with AM affinity",
         },
         .value = value(true),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "Allow sufficient time for the RDP client (Access Manager) to respond to the Clipboard virtual channel initialization message. Otherwise, the time granted to the RDP client (Access Manager or another) for Clipboard virtual channel initialization will be defined by the 'Smart launcher clipboard initialization delay' parameter.\n"
             "This parameter is effective only if the Smart launcher is used and the RDP client is Access Manager."
@@ -1624,7 +1621,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "launcher_abort_delay",
         .value = value<types::range<std::chrono::milliseconds, 0, 300000>>(2000),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "The time interval between the detection of an error (example: a refusal by the target of the redirected drive) and the actual abandonment of the Session Probe launch.\n"
             "The purpose of this parameter is to give the target time to gracefully stop some ongoing processing.\n"
@@ -1634,7 +1631,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "enable_crash_dump",
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .tags = Tag::Debug,
         .desc =
             "This parameter enables or disables the crash dump generation when the Session Probe encounters a fatal error.\n"
@@ -1646,7 +1643,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "handle_usage_limit",
         .value = value<types::range<types::u32, 0, 1000>>(),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "Use only if you see unusually high consumption of system object handles by the Session Probe.\n"
             "The Session Probe will sabotage and then restart it-self if it consumes more handles than what is defined by this parameter.\n"
@@ -1658,7 +1655,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "memory_usage_limit",
         .value = value<types::range<types::u32, 0, 200'000'000>>(),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "Use only if you see unusually high consumption of memory by the Session Probe.\n"
             "The Session Probe will sabotage and then restart it-self if it consumes more memory than what is defined by this parameter.\n"
@@ -1670,7 +1667,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "cpu_usage_alarm_threshold",
         .value = value<types::range<types::u32, 0, 10000>>(),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "This debugging feature was created to determine the cause of high CPU consumption by Session Probe in certain environments.\n"
             "As a percentage, the effective alarm threshold is calculated in relation to the reference consumption determined at the start of the program execution. The alarm is deactivated if this value of parameter is less than 200 (200%% of reference consumption).\n"
@@ -1680,14 +1677,14 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "cpu_usage_alarm_action",
         .value = from_enum(SessionProbeCPUUsageAlarmAction::Restart),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc = "Additional behavior when CPU consumption exceeds what is allowed. Please refer to the 'Cpu usage alarm threshold' parameter.",
     });
 
     _.member(MemberInfo{
         .name = "end_of_session_check_delay_time",
         .value = value<types::range<std::chrono::milliseconds, 0, 60000>>(),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "For application session only.\n"
             "The delay between the launch of the application and the start of End of session check.\n"
@@ -1698,7 +1695,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "ignore_ui_less_processes_during_end_of_session_check",
         .value = value(true),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "For application session only.\n"
             "If enabled, during the End of session check, the processes that do not have a visible window will not be counted as active processes of the session. Without active processes, the application session will be logged off by the Session Probe."
@@ -1707,7 +1704,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "extra_system_processes",
         .value = value<std::string>(),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "This parameter is used to provide the list of (comma-separated) system processes that can be run in the session.\n"
             "Ex.: dllhos.exe,TSTheme.exe\n"
@@ -1717,7 +1714,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "childless_window_as_unidentified_input_field",
         .value = value(true),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "This parameter concerns the functionality of the Password field detection performed by the Session Probe. This detection is necessary to avoid logging the text entered in the password fields as metadata of session (also known as Session log).\n"
             "Unfortunately, the detection does not work with applications developed in Java, Flash, etc. In order to work around the problem, we will treat the windows of these applications as input fields of unknown type. Therefore, the text entered in these will not be included in the session’s metadata.\n"
@@ -1728,7 +1725,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "windows_of_these_applications_as_unidentified_input_field",
         .value = value<std::string>(),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "Comma-separated process names. (Ex.: chrome.exe,ngf.exe)\n"
             "This parameter concerns the functionality of the Password field detection performed by the Session Probe. This detection is necessary to avoid logging the text entered in the password fields as metadata of session (also known as Session log).\n"
@@ -1740,7 +1737,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "update_disabled_features",
         .value = value(true),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "This parameter is used when resuming a session hosting a existing Session Probe.\n"
             "If enabled, the Session Probe will activate or deactivate features according to the value of 'Disabled features' parameter received when resuming its host session. Otherwise, the Session Probe will keep the same set of features that were used during the previous connection.\n"
@@ -1753,7 +1750,7 @@ _.section("session_probe", [&]
             SessionProbeDisabledFeature::chrome_inspection
           | SessionProbeDisabledFeature::firefox_inspection
           | SessionProbeDisabledFeature::group_membership),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "This parameter was created to work around some compatibility issues and to limit the CPU load that the Session Probe process causes.\n"
             "If 'Java Acccess Bridge' feature is disabled, data entered in the password field of Java applications may be visible in the metadata. "
@@ -1765,7 +1762,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "enable_bestsafe_interaction",
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "This parameter has no effect on the device without BestSafe.\n"
             "Is enabled, Session Probe relies on BestSafe to perform the detection of application launches and the detection of outgoing connections.\n"
@@ -1776,7 +1773,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "on_account_manipulation",
         .value = from_enum(SessionProbeOnAccountManipulation::allow),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "This parameter has no effect on the device without BestSafe.\n"
             "BestSafe interaction must be enabled. Please refer to 'Enable bestsafe interaction' parameter.\n"
@@ -1787,7 +1784,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "alternate_directory_environment_variable",
         .value = value<types::fixed_string<3>>(),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "This parameter is used to indicate the name of an environment variable, to be set on the Windows device, and pointed to a directory (on the device) that can be used to store and start the Session Probe. The environment variable must be available in the Windows user session.\n"
             "The environment variable name is limited to 3 characters or less.\n"
@@ -1798,7 +1795,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "public_session",
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "If enabled, the session, once disconnected, can be resumed by another Bastion user.\n"
             "Except in special cases, this is usually a security problem.\n"
@@ -1808,7 +1805,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "outbound_connection_monitoring_rules",
         .value = value<std::string>(),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "This parameter is used to provide the list of (comma-separated) rules used to monitor outgoing connections created in the session.\n"
             "(Ex. IPv4 addresses: $deny:192.168.0.0/24:5900,$allow:192.168.0.110:21)\n"
@@ -1821,7 +1818,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "process_monitoring_rules",
         .value = value<std::string>(),
-        .spec = connpolicy(rdp_without_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "This parameter is used to provide the list of (comma-separated) rules used to monitor the execution of processes in the session.\n"
             "(Ex.: $deny:taskmgr.exe)\n"
@@ -1875,13 +1872,13 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "process_command_line_retrieve_method",
         .value = from_enum(SessionProbeProcessCommandLineRetrieveMethod::both),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
     });
 
     _.member(MemberInfo{
         .name = "periodic_task_run_interval",
         .value = value<types::range<std::chrono::milliseconds, 300, 2000>>(500),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "Time between two polling performed by Session Probe.\n"
             "The parameter is created to adapt the CPU consumption to the performance of the Windows device.\n"
@@ -1891,7 +1888,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "pause_if_session_is_disconnected",
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "If enabled, Session Probe activity will be minimized when the user is disconnected from the session. No metadata will be collected during this time.\n"
             "The purpose of this behavior is to optimize CPU consumption."
@@ -1900,7 +1897,7 @@ _.section("session_probe", [&]
     _.member(MemberInfo{
         .name = "monitor_own_resources_consumption",
         .value = value(false),
-        .spec = connpolicy(rdp_without_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "If enabled, Session Probe will monitor its own system resource consumption.\n"
             "This feature increases CPU consumption."
@@ -1911,16 +1908,15 @@ _.section(names{"server_cert"}, [&]
 {
     _.member(MemberInfo{
         .name = "server_cert_store",
-        .value = value<bool>(true, jh_policy_value(false).always()),
-        .spec = connpolicy(rdp_without_jh, L),
+        .value = value<bool>(true),
+        .spec = connpolicy(rdp, L),
         .desc = "Keep known server certificates on Bastion",
     });
 
     _.member(MemberInfo{
         .name = "server_cert_check",
-        .value = from_enum(ServerCertCheck::fails_if_no_match_and_succeed_if_no_know,
-            jh_policy_value(ServerCertCheck::always_succeed).always()),
-        .spec = connpolicy(rdp_without_jh, L),
+        .value = from_enum(ServerCertCheck::fails_if_no_match_and_succeed_if_no_know),
+        .spec = connpolicy(rdp, L),
     });
 
     auto cert_notification_log = from_enum(ServerNotification::SIEM);
@@ -1936,7 +1932,7 @@ _.section(names{"server_cert"}, [&]
         _.member(MemberInfo{
             .name = p.name,
             .value = p.value,
-            .spec = connpolicy(rdp_and_jh, L, spec::advanced),
+            .spec = connpolicy(rdp, L, spec::advanced),
             .desc = p.desc,
         });
     }
@@ -2122,21 +2118,21 @@ _.section("file_verification", [&]
     _.member(MemberInfo{
         .name = "enable_up",
         .value = value(false),
-        .spec = connpolicy(rdp_and_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = "Enable use of ICAP service for file verification on upload.",
     });
 
     _.member(MemberInfo{
         .name = "enable_down",
         .value = value(false),
-        .spec = connpolicy(rdp_and_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc = "Enable use of ICAP service for file verification on download.",
     });
 
     _.member(MemberInfo{
         .name = "clipboard_text_up",
         .value = value(false),
-        .spec = connpolicy(rdp_and_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "Verify text data via clipboard from client to server.\n"
             "File verification on upload must be enabled via option Enable up."
@@ -2145,7 +2141,7 @@ _.section("file_verification", [&]
     _.member(MemberInfo{
         .name = "clipboard_text_down",
         .value = value(false),
-        .spec = connpolicy(rdp_and_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "Verify text data via clipboard from server to client\n"
             "File verification on download must be enabled via option Enable down."
@@ -2154,7 +2150,7 @@ _.section("file_verification", [&]
     _.member(MemberInfo{
         .name = "block_invalid_file_up",
         .value = value(false),
-        .spec = connpolicy(rdp_and_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "Block file transfer from client to server on invalid file verification.\n"
             "File verification on upload must be enabled via option Enable up."
@@ -2163,7 +2159,7 @@ _.section("file_verification", [&]
     _.member(MemberInfo{
         .name = "block_invalid_file_down",
         .value = value(false),
-        .spec = connpolicy(rdp_and_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "Block file transfer from server to client on invalid file verification.\n"
             "File verification on download must be enabled via option Enable down."
@@ -2190,14 +2186,14 @@ _.section("file_verification", [&]
     _.member(MemberInfo{
         .name = "log_if_accepted",
         .value = value(true),
-        .spec = connpolicy(rdp_and_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc = "Log the files and clipboard texts that are verified and accepted. By default, only those rejected are logged.",
     });
 
     _.member(MemberInfo{
         .name = "max_file_size_rejected",
         .value = value<types::mebibytes<types::u32>>(256),
-        .spec = connpolicy(rdp_and_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "⚠ This value affects the RAM used by the session.\n\n"
             "If option Block invalid file (up or down) is enabled, automatically reject file with greater filesize."
@@ -2216,7 +2212,7 @@ _.section("file_storage", [&]
     _.member(MemberInfo{
         .name = "store_file",
         .value = enum_as_string(RdpStoreFile::never),
-        .spec = connpolicy(rdp_and_jh, L),
+        .spec = connpolicy(rdp, L),
         .desc =
             "Enable storage of transferred files (via RDP Clipboard).\n"
             "⚠ Saving files can take up a lot of disk space"
@@ -2397,7 +2393,7 @@ _.section("capture", [&]
     _.member(MemberInfo{
         .name = "disable_keyboard_log",
         .value = from_enum(KeyboardLogFlags::none),
-        .spec = connpolicy(rdp_and_jh, L, spec::advanced),
+        .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "Disable keyboard log:\n"
             "(Please see also \"Keyboard input masking level\" in \"session_log\" section of \"Connection Policy\".)"
