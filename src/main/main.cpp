@@ -155,13 +155,11 @@ static int shutdown()
             return ;
         }
 
-        // auto path = "/proc/%d/cmdline"_static_fmt(pid);
-        char path[256];
-        std::sprintf(path, "/proc/%d/cmdline", pid);
-        fd = unique_fd(open(path, O_RDONLY));
+        char const* cmdline_filename = "/proc/self/cmdline";
+        fd = unique_fd(open(cmdline_filename, O_RDONLY));
         if (!fd.is_open()) {
             int err = errno;
-            std::cerr << path << ": " << strerror(err) << "\n";
+            std::cerr << cmdline_filename << ": " << strerror(err) << "\n";
             return ;
         }
 
