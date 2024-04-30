@@ -460,7 +460,7 @@ _.section("globals", [&]
         .value = value(true),
         .spec = global_spec(no_acl, spec::advanced),
         .desc =
-            "⚠ Service need to be manually restarted to take changes into account\n\n"
+            "⚠ Service redemption needs to be manually restarted to take changes into account\n\n"
             "Enable primary connection on ipv6."
     });
 
@@ -531,7 +531,7 @@ _.section("client", [&]
         .tags = Tag::Compatibility,
         .desc =
             "Sends Scale & Layout configuration to the server.\n"
-            "On Windows 11, this corresponds to options Sclale, Display Resolution and Display Orientation of Settings > System > Display.\n"
+            "On Windows 11, this corresponds to options Scale, Display Resolution and Display Orientation of Settings > System > Display.\n"
             "⚠ Title bar detection via OCR will no longer work.\n"
     });
 
@@ -797,7 +797,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
         .desc =
             "It specifies a list of (comma-separated) RDP server desktop features to enable or disable in the session (with the goal of optimizing bandwidth usage).\n"
             "\n"
-            "If a feature is preceded by a \"-\" sign, it is disabled; if it is preceded by a \"+\" sign or no sign, it is enabled. Unconfigured features can be controlled by the RPD client.\n"
+            "If a feature is preceded by a \"-\" sign, it is disabled; if it is preceded by a \"+\" sign or no sign, it is enabled. Unconfigured features can be controlled by the RDP client.\n"
             "\n"
             "Available features:\n"
             "  - wallpaper\n"

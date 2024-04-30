@@ -361,7 +361,7 @@
       "name": "enable_ipv6",
       "type": "bool",
       "value": true,
-      "description": "⚠ Service need to be manually restarted to take changes into account\n\nEnable primary connection on ipv6.",
+      "description": "⚠ Service redemption needs to be manually restarted to take changes into account\n\nEnable primary connection on ipv6.",
       "globalSpec": true,
       "advanced": true
     },
@@ -404,7 +404,7 @@
       "name": "allow_scale_factor",
       "type": "bool",
       "value": false,
-      "description": "Sends Scale & Layout configuration to the server.\nOn Windows 11, this corresponds to options Sclale, Display Resolution and Display Orientation of Settings > System > Display.\n⚠ Title bar detection via OCR will no longer work.",
+      "description": "Sends Scale & Layout configuration to the server.\nOn Windows 11, this corresponds to options Scale, Display Resolution and Display Orientation of Settings > System > Display.\n⚠ Title bar detection via OCR will no longer work.",
       "tags": ["compatibility"],
       "globalSpec": true
     },
@@ -678,7 +678,7 @@
       "name": "force_performance_flags",
       "type": "PerformanceFlags",
       "value": "-mouse_cursor_shadows,-theme,-menu_animations",
-      "description": "It specifies a list of (comma-separated) RDP server desktop features to enable or disable in the session (with the goal of optimizing bandwidth usage).\n\nIf a feature is preceded by a \"-\" sign, it is disabled; if it is preceded by a \"+\" sign or no sign, it is enabled. Unconfigured features can be controlled by the RPD client.\n\nAvailable features:\n  - wallpaper\n  - full_window_drag\n  - menu_animations\n  - theme\n  - mouse_cursor_shadows\n  - cursor_blinking\n  - font_smoothing\n  - desktop_composition",
+      "description": "It specifies a list of (comma-separated) RDP server desktop features to enable or disable in the session (with the goal of optimizing bandwidth usage).\n\nIf a feature is preceded by a \"-\" sign, it is disabled; if it is preceded by a \"+\" sign or no sign, it is enabled. Unconfigured features can be controlled by the RDP client.\n\nAvailable features:\n  - wallpaper\n  - full_window_drag\n  - menu_animations\n  - theme\n  - mouse_cursor_shadows\n  - cursor_blinking\n  - font_smoothing\n  - desktop_composition",
       "tags": ["perf","compatibility"],
       "globalSpec": true,
       "advanced": true

@@ -96,7 +96,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # (in milliseconds)
 #rdp_keepalive_connection_interval = 0
 
-# ⚠ Service need to be manually restarted to take changes into account
+# ⚠ Service redemption needs to be manually restarted to take changes into account
 # 
 # Enable primary connection on ipv6.
 # (type: boolean (0/no/false or 1/yes/true))
@@ -120,7 +120,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 #allow_using_multiple_monitors = 1
 
 # Sends Scale & Layout configuration to the server.
-# On Windows 11, this corresponds to options Sclale, Display Resolution and Display Orientation of Settings > System > Display.
+# On Windows 11, this corresponds to options Scale, Display Resolution and Display Orientation of Settings > System > Display.
 # ⚠ Title bar detection via OCR will no longer work.
 # (type: boolean (0/no/false or 1/yes/true))
 #allow_scale_factor = 0
@@ -296,7 +296,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 
 # It specifies a list of (comma-separated) RDP server desktop features to enable or disable in the session (with the goal of optimizing bandwidth usage).
 # 
-# If a feature is preceded by a "-" sign, it is disabled; if it is preceded by a "+" sign or no sign, it is enabled. Unconfigured features can be controlled by the RPD client.
+# If a feature is preceded by a "-" sign, it is disabled; if it is preceded by a "+" sign or no sign, it is enabled. Unconfigured features can be controlled by the RDP client.
 # 
 # Available features:
 #   - wallpaper

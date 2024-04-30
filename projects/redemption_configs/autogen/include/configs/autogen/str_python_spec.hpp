@@ -53,7 +53,7 @@ show_target_user_in_f12_message = boolean(default=False)
 # (in milliseconds)
 rdp_keepalive_connection_interval = integer(min=0, default=0)
 
-# ⚠ Service need to be manually restarted to take changes into account<br/>
+# ⚠ Service redemption needs to be manually restarted to take changes into account<br/>
 # Enable primary connection on ipv6.
 #_advanced
 enable_ipv6 = boolean(default=True)
@@ -69,7 +69,7 @@ ignore_logon_password = boolean(default=False)
 allow_using_multiple_monitors = boolean(default=True)
 
 # Sends Scale &amp; Layout configuration to the server.
-# On Windows 11, this corresponds to options Sclale, Display Resolution and Display Orientation of Settings > System > Display.
+# On Windows 11, this corresponds to options Scale, Display Resolution and Display Orientation of Settings > System > Display.
 # ⚠ Title bar detection via OCR will no longer work.
 allow_scale_factor = boolean(default=False)
 
@@ -195,7 +195,7 @@ allow_resize_hosted_desktop = boolean(default=True)
 [mod_rdp]
 
 # It specifies a list of (comma-separated) RDP server desktop features to enable or disable in the session (with the goal of optimizing bandwidth usage).<br/>
-# If a feature is preceded by a "-" sign, it is disabled; if it is preceded by a "+" sign or no sign, it is enabled. Unconfigured features can be controlled by the RPD client.<br/>
+# If a feature is preceded by a "-" sign, it is disabled; if it is preceded by a "+" sign or no sign, it is enabled. Unconfigured features can be controlled by the RDP client.<br/>
 # Available features:
 # &nbsp; &nbsp;   - wallpaper
 # &nbsp; &nbsp;   - full_window_drag

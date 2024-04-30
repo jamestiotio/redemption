@@ -413,7 +413,7 @@ namespace cfg
         using mapped_type = std::chrono::milliseconds;
         type value {  };
     };
-    /// ⚠ Service need to be manually restarted to take changes into account <br/>
+    /// ⚠ Service redemption needs to be manually restarted to take changes into account <br/>
     ///  <br/>
     /// Enable primary connection on ipv6. <br/>
     /// type: bool <br/>
@@ -467,7 +467,7 @@ namespace cfg
         type value { true };
     };
     /// Sends Scale & Layout configuration to the server. <br/>
-    /// On Windows 11, this corresponds to options Sclale, Display Resolution and Display Orientation of Settings > System > Display. <br/>
+    /// On Windows 11, this corresponds to options Scale, Display Resolution and Display Orientation of Settings > System > Display. <br/>
     /// ⚠ Title bar detection via OCR will no longer work. <br/>
     /// type: bool <br/>
     /// default: false <br/>
@@ -786,7 +786,7 @@ namespace cfg
 
     /// It specifies a list of (comma-separated) RDP server desktop features to enable or disable in the session (with the goal of optimizing bandwidth usage). <br/>
     ///  <br/>
-    /// If a feature is preceded by a "-" sign, it is disabled; if it is preceded by a "+" sign or no sign, it is enabled. Unconfigured features can be controlled by the RPD client. <br/>
+    /// If a feature is preceded by a "-" sign, it is disabled; if it is preceded by a "+" sign or no sign, it is enabled. Unconfigured features can be controlled by the RDP client. <br/>
     ///  <br/>
     /// Available features: <br/>
     ///   - wallpaper <br/>
