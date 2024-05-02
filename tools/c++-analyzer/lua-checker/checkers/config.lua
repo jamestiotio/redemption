@@ -16,11 +16,11 @@ do
       * ' {\n        static constexpr unsigned acl_proxy_communication_flags = ' * C(peg.Until(';'))
     ))^0)
 
-    patternVarSearch = Ct(After( Ct(C(P'get_mutable_ref' + 'get' + 'set_acl' + 'set' + 'ask' + 'send')
-                                    * '<cfg::' * C(Ident) * S'>')
-                               + (P'to_bgr' + 'has_field')
-                                    * '(cfg::' * C(Ident) * (P'()' + '{}') * ')'
-                               )^0)
+    patternVarSearch = Ct(After(
+        Ct(C(P'get_mutable_ref' + 'get' + 'set_acl' + 'set' + 'update_acl' + 'update' + 'ask' + 'send')
+        * '<cfg::' * C(Ident) * S'>')
+      + (P'to_bgr' + 'has_field') * '(cfg::' * C(Ident) * (P'()' + '{}') * ')'
+    )^0)
 
     patternType = Ct((After('.enumeration_') * After('"') * C(peg.Until('"')))^0)
     patternTypeSearch = Ct(After((1-peg.wordchars) * C((R'AZ' * R('AZ','az')^1)))^0)
