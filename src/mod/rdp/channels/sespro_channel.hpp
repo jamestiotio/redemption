@@ -1231,7 +1231,7 @@ public:
                             "Session Probe failed to run startup application: "
                             "raw_result=%.*s  raw_result_message=%.*s",
                             int(parameters_[1].size()), parameters_[1].data(),
-                            result_message.size(), result_message.data());
+                            int(result_message.size()), result_message.data());
 
                         this->session_log.report(
                             "SESSION_PROBE_RUN_STARTUP_APPLICATION_FAILED"_av, result_message);
