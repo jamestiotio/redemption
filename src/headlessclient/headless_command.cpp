@@ -91,10 +91,11 @@ using headlessclient::MouseFlagPair;
 
 namespace paramlists
 {
-    ParameterList<ScancodePair> scancodes_en {headlessclient::names_scancodes_en};
-    ParameterList<ScancodePair> scancodes_fr {headlessclient::names_scancodes_fr};
-    ParameterList<KeyLockFlagPair> mods {headlessclient::names_lock_flags};
-    ParameterList<MouseFlagPair> mouses {headlessclient::names_mouse_flags};
+    // should be constexpr in C++23
+    const ParameterList<ScancodePair> scancodes_en {headlessclient::names_scancodes_en};
+    const ParameterList<ScancodePair> scancodes_fr {headlessclient::names_scancodes_fr};
+    const ParameterList<KeyLockFlagPair> mods {headlessclient::names_lock_flags};
+    const ParameterList<MouseFlagPair> mouses {headlessclient::names_mouse_flags};
 }
 
 template<class T>
