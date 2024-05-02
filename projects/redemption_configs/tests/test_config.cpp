@@ -1592,9 +1592,9 @@ RED_AUTO_TEST_CASE(TestContextSetValue)
     RED_CHECK_EQUAL(true, ini.get<cfg::context::authentication_challenge>());
 }
 
-RED_AUTO_TEST_CASE(TestConfigSet)
+RED_AUTO_TEST_CASE(TestConfigSetAndUpdate)
 {
-    Inifile             ini;
+    Inifile ini;
 
     cfg::crypto::encryption_key::type akey{{}};
     RED_CHECK(ini.get<cfg::crypto::encryption_key>() != akey);
@@ -1612,11 +1612,18 @@ RED_AUTO_TEST_CASE(TestConfigSet)
     akey[2] = 1;
     ini.set<cfg::crypto::encryption_key>(akey);
     RED_CHECK(ini.get<cfg::crypto::encryption_key>() == akey);
+
+    ini.update<cfg::crypto::encryption_key>([](auto& key){
+        key[3] = 1;
+    });
+    RED_CHECK(ini.get<cfg::crypto::encryption_key>() != akey);
+    akey[3] = 1;
+    RED_CHECK(ini.get<cfg::crypto::encryption_key>() == akey);
 }
 
 RED_AUTO_TEST_CASE(TestConfigNotifications)
 {
-    Inifile             ini;
+    Inifile ini;
 
     ini.clear_acl_fields_changed();
     RED_CHECK(ini.get_acl_fields_changed().size() == 0);
@@ -1636,7 +1643,9 @@ RED_AUTO_TEST_CASE(TestConfigNotifications)
     ini.set_acl<cfg::globals::auth_user>("someuser");
     ini.set_acl<cfg::globals::host>("35.53.0.1");
     ini.set_acl<cfg::context::opt_height>(602u);
-    ini.set_acl<cfg::globals::target>("35.53.0.2");
+    ini.update_acl<cfg::globals::target>([](std::string& s){
+        s = "35.53.0.2";
+    });
 
     auto list = ini.get_acl_fields_changed();
     RED_CHECK_EQUAL(4, list.size());
@@ -1651,6 +1660,11 @@ RED_AUTO_TEST_CASE(TestConfigNotifications)
     }
     ini.clear_acl_fields_changed();
     RED_CHECK(ini.get_acl_fields_changed().size() == 0);
+
+    RED_CHECK(ini.get<cfg::globals::auth_user>() == "someuser"_av);
+    RED_CHECK(ini.get<cfg::globals::host>() == "35.53.0.1"_av);
+    RED_CHECK(ini.get<cfg::context::opt_height>() == 602u);
+    RED_CHECK(ini.get<cfg::globals::target>() == "35.53.0.2"_av);
 }
 
 RED_AUTO_TEST_CASE(TestConfigThemeDefault)

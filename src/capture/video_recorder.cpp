@@ -82,7 +82,7 @@ namespace
     {
         if (errnum == ENOSPC) {
             if (acl_report){
-                acl_report->report("FILESYSTEM_FULL", "100|unknown");
+                acl_report->report("FILESYSTEM_FULL"_av, "100|unknown"_av);
             }
             else {
                 LOG(LOG_ERR, "FILESYSTEM_FULL:100|unknown");

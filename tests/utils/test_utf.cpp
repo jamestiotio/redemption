@@ -26,7 +26,6 @@
 #include "test_only/test_framework/redemption_unit_tests.hpp"
 
 #include "utils/utf.hpp"
-#include "utils/strutils.hpp"
 #include "utils/sugar/cast.hpp"
 #include "utils/sugar/int_to_chars.hpp"
 #include <string_view>

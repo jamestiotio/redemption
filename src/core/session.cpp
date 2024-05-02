@@ -76,12 +76,12 @@ class Session
     {
         AclReport(Inifile& ini) : ini(ini) {}
 
-        void report(const char * reason, const char * message) override
+        void report(chars_view reason, chars_view message) override
         {
-            char report[1024];
-            snprintf(report, sizeof(report), "%s:%s:%s", reason,
-                this->ini.get<cfg::globals::target_device>().c_str(), message);
-            this->ini.set_acl<cfg::context::reporting>(report);
+            chars_view target_device = this->ini.get<cfg::globals::target_device>();
+            this->ini.update_acl<cfg::context::reporting>([&](std::string& s){
+                str_append(s, reason, ':', target_device, ':', message);
+            });
         }
 
     private:
@@ -109,7 +109,7 @@ class Session
             [&ini](Error const& error){
                 if (error.errnum == ENOSPC) {
                     // error.id = ERR_TRANSPORT_WRITE_NO_ROOM;
-                    AclReport{ini}.report("FILESYSTEM_FULL", "100|unknown");
+                    AclReport{ini}.report("FILESYSTEM_FULL"_av, "100|unknown"_av);
                 }
             })
         {
@@ -177,7 +177,7 @@ class Session
             return *this;
         }
 
-        void report(const char * reason, const char * message) override
+        void report(chars_view reason, chars_view message) override
         {
             AclReport{this->ini}.report(reason, message);
         }
@@ -270,15 +270,6 @@ class Session
         bool want_write = false;
         fd_set rfds;
         fd_set wfds;
-    };
-
-    struct NullAclReport final : AclReportApi
-    {
-        void report(const char * reason, const char * message) override
-        {
-            (void)reason;
-            (void)message;
-        }
     };
 
     struct SessionFront final : Front
@@ -1408,7 +1399,7 @@ private:
                         LOG(LOG_INFO, "SrvRedir: Change target host to '%s'", host);
                         ini.set_acl<cfg::context::target_host>(host);
                         auto message = str_concat(change_user, '@', host);
-                        secondary_session.report("SERVER_REDIRECTION", message.c_str());
+                        secondary_session.report("SERVER_REDIRECTION"_av, message);
                     }
                     [[fallthrough]];
 

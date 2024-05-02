@@ -26,7 +26,7 @@ Author(s): Proxies Team
 
 struct SessionLogTest : SessionLogApi
 {
-    void report(const char * reason, const char * message) override;
+    void report(chars_view reason, chars_view message) override;
 
     void log6(LogId id, KVLogList kv_list) override;
 

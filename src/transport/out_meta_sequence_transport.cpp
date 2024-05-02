@@ -80,7 +80,7 @@ namespace
         return [acl_report](const Error & error){
             if (acl_report && error.errnum == ENOSPC) {
                 // error.id = ERR_TRANSPORT_WRITE_NO_ROOM;
-                acl_report->report("FILESYSTEM_FULL", "100|unknown");
+                acl_report->report("FILESYSTEM_FULL"_av, "100|unknown"_av);
             }
         };
     }

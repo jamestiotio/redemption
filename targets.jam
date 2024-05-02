@@ -3114,14 +3114,12 @@ test-run tests/mod/internal/widget/test_group_box :
   <library>src/gdi/draw_utils.o
   <library>src/gdi/graphic_api.o
   <library>src/gdi/text_metrics.o
-  <library>src/keyboard/keylayouts.o
   <library>src/keyboard/keymap.o
   <library>src/mod/internal/copy_paste.o
   <library>src/mod/internal/widget/button.o
   <library>src/mod/internal/widget/composite.o
   <library>src/mod/internal/widget/group_box.o
   <library>src/mod/internal/widget/label.o
-  <library>src/mod/internal/widget/language_button.o
   <library>src/utils/bitmap.o
   <library>src/utils/bitmap_data_allocator.o
   <library>src/utils/bitmap_from_file.o
@@ -3647,7 +3645,6 @@ test-run tests/mod/internal/widget/test_wait :
   <library>src/gdi/draw_utils.o
   <library>src/gdi/graphic_api.o
   <library>src/gdi/text_metrics.o
-  <library>src/keyboard/keylayouts.o
   <library>src/keyboard/keymap.o
   <library>src/mod/internal/copy_paste.o
   <library>src/mod/internal/widget/button.o
@@ -3656,7 +3653,6 @@ test-run tests/mod/internal/widget/test_wait :
   <library>src/mod/internal/widget/form.o
   <library>src/mod/internal/widget/group_box.o
   <library>src/mod/internal/widget/label.o
-  <library>src/mod/internal/widget/language_button.o
   <library>src/mod/internal/widget/multiline.o
   <library>src/mod/internal/widget/wait.o
   <library>src/system/linux/system/i18n/message_translator_gettext.o
@@ -4899,6 +4895,10 @@ test-run tests/utils/test_scaled_image24 :
   <library>tests/includes/test_only/transport/test_transport.o
   $(BOOST_STACKTRACE_LINKFLAGS)
 ;
+test-run tests/utils/test_snprintf_av :
+  $(REDEMPTION_TEST_PATH)/utils/test_snprintf_av.cpp
+:
+;
 test-run tests/utils/test_static_fmt :
   $(REDEMPTION_TEST_PATH)/utils/test_static_fmt.cpp
 :
@@ -5444,6 +5444,7 @@ alias test_redirection_info : tests/utils/test_redirection_info ;
 alias test_region : tests/utils/test_region ;
 alias test_rle : tests/utils/test_rle ;
 alias test_scaled_image24 : tests/utils/test_scaled_image24 ;
+alias test_snprintf_av : tests/utils/test_snprintf_av ;
 alias test_static_fmt : tests/utils/test_static_fmt ;
 alias test_static_string : tests/utils/test_static_string ;
 alias test_stream : tests/utils/test_stream ;
@@ -5843,6 +5844,7 @@ alias tests/utils.norec :
   tests/utils/test_region
   tests/utils/test_rle
   tests/utils/test_scaled_image24
+  tests/utils/test_snprintf_av
   tests/utils/test_static_fmt
   tests/utils/test_static_string
   tests/utils/test_stream
@@ -6549,6 +6551,7 @@ explicit
   test_region
   test_rle
   test_scaled_image24
+  test_snprintf_av
   test_static_fmt
   test_static_string
   test_stream

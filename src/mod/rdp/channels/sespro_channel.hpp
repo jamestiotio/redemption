@@ -49,6 +49,7 @@
 #include "utils/translation.hpp"
 #include "utils/sugar/chars_to_int.hpp"
 #include "utils/ascii.hpp"
+#include "utils/snprintf_av.hpp"
 
 #include <chrono>
 #include <memory>
@@ -431,7 +432,7 @@ private:
 
                 if (SessionProbeOnKeepaliveTimeout::disconnect_user ==
                     this->sespro_params.on_keepalive_timeout) {
-                    this->session_log.report("SESSION_PROBE_KEEPALIVE_MISSED", "");
+                    this->session_log.report("SESSION_PROBE_KEEPALIVE_MISSED"_av, ""_av);
                 }
                 else if (SessionProbeOnKeepaliveTimeout::freeze_connection_and_wait ==
                             this->sespro_params.on_keepalive_timeout) {
@@ -572,7 +573,7 @@ public:
 
                     if (!this->sespro_params.allow_multiple_handshake &&
                         (this->reconnection_cookie != remote_reconnection_cookie)) {
-                        this->session_log.report("SESSION_PROBE_RECONNECTION", "");
+                        this->session_log.report("SESSION_PROBE_RECONNECTION"_av, ""_av);
                     }
                 }
                 else {
@@ -1232,7 +1233,7 @@ public:
                             has_raw_result ? parameters_[2].data() : nullptr);
 
                         this->session_log.report(
-                            "SESSION_PROBE_RUN_STARTUP_APPLICATION_FAILED", "");
+                            "SESSION_PROBE_RUN_STARTUP_APPLICATION_FAILED"_av, ""_av);
                     }
                     else {
                         message_format_invalid = true;
@@ -1280,21 +1281,19 @@ public:
                                 KVLog("dst_port"_av,     parameters_[4]),
                             });
 
-                            {
-                                char message[4096];
-
+                            this->session_log.report(
+                                deny
+                                    ? "FINDCONNECTION_DENY"_av
+                                    : "FINDCONNECTION_NOTIFY"_av,
                                 // rule, app_name, app_cmd_line, dst_addr, dst_port
-                                snprintf(message, sizeof(message), "%.*s|%.*s|%.*s|%.*s|%.*s",
+                                SNPrintf<4096>("%.*s|%.*s|%.*s|%.*s|%.*s",
                                     int(rule->description().size()), rule->description().data(),
                                     int(parameters_[1].size()), parameters_[1].data(),
                                     int(parameters_[2].size()), parameters_[2].data(),
                                     int(parameters_[3].size()), parameters_[3].data(),
-                                    int(parameters_[4].size()), parameters_[4].data());
-
-                                this->session_log.report(
-                                    (deny ? "FINDCONNECTION_DENY" : "FINDCONNECTION_NOTIFY"),
-                                    message);
-                            }
+                                    int(parameters_[4].size()), parameters_[4].data()
+                                )
+                            );
 
                             if (deny) {
                                 unsigned long pid = unchecked_decimal_chars_to_int(parameters_[5]);
@@ -1302,7 +1301,7 @@ public:
                                     LOG(LOG_ERR,
                                         "Session Probe failed to block outbound connection!");
                                     this->session_log.report(
-                                        "SESSION_PROBE_OUTBOUND_CONNECTION_BLOCKING_FAILED", "");
+                                        "SESSION_PROBE_OUTBOUND_CONNECTION_BLOCKING_FAILED"_av, ""_av);
                                 }
                                 else {
                                     char message[4096];
@@ -1338,19 +1337,17 @@ public:
                                 KVLog("app_cmd_line"_av, parameters_[2]),
                             });
 
-                            {
-                                char message[4096];
-
+                            this->session_log.report(
+                                deny
+                                    ? "FINDPROCESS_DENY"_av
+                                    : "FINDPROCESS_NOTIFY"_av,
                                 // rule, app_name, app_cmd_line
-                                snprintf(message, sizeof(message), "%.*s|%.*s|%.*s",
+                                SNPrintf<4096>("%.*s|%.*s|%.*s",
                                     int(rule->description().size()), rule->description().data(),
                                     int(parameters_[1].size()), parameters_[1].data(),
-                                    int(parameters_[2].size()), parameters_[2].data());
-
-                                this->session_log.report(
-                                    (deny ? "FINDPROCESS_DENY" : "FINDPROCESS_NOTIFY"),
-                                    message);
-                            }
+                                    int(parameters_[2].size()), parameters_[2].data()
+                                )
+                            );
 
                             if (deny) {
                                 unsigned long pid = unchecked_decimal_chars_to_int(parameters_[3]);
@@ -1358,7 +1355,7 @@ public:
                                     LOG(LOG_ERR,
                                         "Session Probe failed to block process!");
                                     this->session_log.report(
-                                        "SESSION_PROBE_PROCESS_BLOCKING_FAILED", "");
+                                        "SESSION_PROBE_PROCESS_BLOCKING_FAILED"_av, ""_av);
                                 }
                                 else {
                                     char message[4096];
@@ -1391,22 +1388,20 @@ public:
                             KVLog("app_cmd_line"_av, parameters_[5]),
                         });
 
-                        {
-                            char message[4096];
-
+                        this->session_log.report(
+                            deny
+                                ? "ACCOUNTMANIPULATION_DENY"_av
+                                : "ACCOUNTMANIPULATION_NOTIFY"_av,
                             // operation, server_name, group_name, account_name, app_name, app_cmd_line
-                            snprintf(message, sizeof(message), "%.*s|%.*s|%.*s|%.*s|%.*s|%.*s",
+                            SNPrintf<4096>("%.*s|%.*s|%.*s|%.*s|%.*s|%.*s",
                                 int(parameters_[0].size()), parameters_[0].data(),
                                 int(parameters_[1].size()), parameters_[1].data(),
                                 int(parameters_[2].size()), parameters_[2].data(),
                                 int(parameters_[3].size()), parameters_[3].data(),
                                 int(parameters_[4].size()), parameters_[4].data(),
-                                int(parameters_[5].size()), parameters_[5].data());
-
-                            this->session_log.report(
-                                (deny ? "ACCOUNTMANIPULATION_DENY" : "ACCOUNTMANIPULATION_NOTIFY"),
-                                message);
-                        }
+                                int(parameters_[5].size()), parameters_[5].data()
+                            )
+                        );
 
                         if (deny) {
                             char message[4096];

@@ -24,7 +24,7 @@ Author(s): Proxies Team
 #include "core/log_id.hpp"
 
 
-void SessionLogTest::report(const char * reason, const char * message)
+void SessionLogTest::report(chars_view reason, chars_view message)
 {
     str_append(messages, reason, ": ", message, '\n');
 }

@@ -44,14 +44,14 @@ struct KVLogList : array_view<KVLog>
 
 struct AclReportApi : noncopyable
 {
-    virtual void report(const char * reason, const char * message) = 0;
+    virtual void report(chars_view reason, chars_view message) = 0;
 
     virtual ~AclReportApi() = default;
 };
 
 struct NullAclReport final : AclReportApi
 {
-    void report(const char * reason, const char * message) override
+    void report(chars_view reason, chars_view message) override
     {
         (void)reason;
         (void)message;
@@ -67,7 +67,7 @@ struct SessionLogApi : AclReportApi
 
 struct NullSessionLog : SessionLogApi
 {
-    void report(const char * /* reason */, const char * /* message */) override {}
+    void report(chars_view /* reason */, chars_view /* message */) override {}
     void log6(LogId /*id*/, KVLogList /*kv_list*/) override {}
     void set_control_owner_ctx(chars_view /*name*/) override {}
 };

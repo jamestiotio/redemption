@@ -48,6 +48,7 @@
 #include "utils/tm_to_chars.hpp"
 #include "utils/ascii.hpp"
 #include "utils/out_param.hpp"
+#include "utils/snprintf_av.hpp"
 
 #include "transport/file_transport.hpp"
 #include "transport/out_filename_sequence_transport.hpp"
@@ -189,7 +190,7 @@ struct FilesystemFullReporter
     void operator()(const Error & error) const
     {
         if (session_log && error.errnum == ENOSPC) {
-            session_log->report("FILESYSTEM_FULL", "100|unknown");
+            session_log->report("FILESYSTEM_FULL"_av, "100|unknown"_av);
         }
     }
 };
@@ -198,18 +199,18 @@ void report_pattern(
     char const* type, SessionLogApi& session_log,
     PatternSearcher::PatternFound found, chars_view data)
 {
-    char message[4096];
-    snprintf(message, sizeof(message), "$%s:%.*s|%.*s",
+    SNPrintf<4096> message(
+        "$%s:%.*s|%.*s",
         type,
         static_cast<int>(found.pattern.size()), found.pattern.data(),
-        static_cast<int>(data.size()), data.data());
-    utils::back(message) = '\0';
+        static_cast<int>(data.size()), data.data()
+    );
 
     session_log.log6(
         found.is_pattern_kill ? LogId::KILL_PATTERN_DETECTED : LogId::NOTIFY_PATTERN_DETECTED,
-        {KVLog("pattern"_av, std::string_view{message})});
+        {KVLog("pattern"_av, message)});
     session_log.report(
-        found.is_pattern_kill ? "FINDPATTERN_KILL" : "FINDPATTERN_NOTIFY",
+        found.is_pattern_kill ? "FINDPATTERN_KILL"_av : "FINDPATTERN_NOTIFY"_av,
         message);
 }
 
@@ -1098,7 +1099,7 @@ public:
             if (capture_params.session_log && error.errnum == ENOSPC) {
                 error.id = ERR_TRANSPORT_WRITE_NO_ROOM;
                 // ReportMessageReporter
-                capture_params.session_log->report("FILESYSTEM_FULL", "100|unknown");
+                capture_params.session_log->report("FILESYSTEM_FULL"_av, "100|unknown"_av);
             }
             throw error; /* NOLINT */
         }

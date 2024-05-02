@@ -83,15 +83,33 @@ public:
     template<class T, class... Args>
     void set(Args && ... args)
     {
-        static_assert(!(T::acl_proxy_communication_flags & configs::proxy_to_acl_mask), "T is writable, use set_acl<T>() instead.");
+        static_assert(!(T::acl_proxy_communication_flags & configs::proxy_to_acl_mask),
+            "T is writable, use set_acl<T>() instead.");
         this->set_value<T>(static_cast<Args&&>(args)...);
     }
 
     template<class T, class... Args>
     void set_acl(Args && ... args)
     {
-        static_assert(T::acl_proxy_communication_flags & configs::proxy_to_acl_mask, "T isn't writable, use set<T>() instead.");
+        static_assert(T::acl_proxy_communication_flags & configs::proxy_to_acl_mask,
+            "T isn't writable, use set<T>() instead.");
         this->set_value<T>(static_cast<Args&&>(args)...);
+    }
+
+    template<class T, class F>
+    void update(F&& f)
+    {
+        static_assert(!(T::acl_proxy_communication_flags & configs::proxy_to_acl_mask),
+            "T is writable, use update_acl<T>() instead.");
+        this->update_value<T>(static_cast<F&&>(f));
+    }
+
+    template<class T, class F>
+    void update_acl(F&& f)
+    {
+        static_assert(T::acl_proxy_communication_flags & configs::proxy_to_acl_mask,
+            "T isn't writable, use update<T>() instead.");
+        this->update_value<T>(static_cast<F&&>(f));
     }
 
     template<class T>
@@ -540,7 +558,20 @@ private:
         auto& value = static_cast<T&>(this->variables).value;
         set_value_impl<std::remove_reference_t<decltype(value)>, typename T::mapped_type>
             ::impl(value, static_cast<Args&&>(args)...);
+        this->update_state<T>();
+    }
 
+    template<class T, class F>
+    void update_value(F&& f)
+    {
+        auto& value = static_cast<T&>(this->variables).value;
+        static_cast<F&&>(f)(value);
+        this->update_state<T>();
+    }
+
+    template<class T>
+    void update_state()
+    {
         if constexpr (T::acl_proxy_communication_flags & configs::proxy_to_acl_mask) {
             this->to_send_index.insert(T::index);
         }
