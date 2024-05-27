@@ -596,6 +596,9 @@ ModPack create_mod_rdp(
     mod_rdp_params.enable_nla = mod_rdp_params.target_password[0]
                              && ini.get<cfg::mod_rdp::enable_nla>();
     mod_rdp_params.enable_krb                          = ini.get<cfg::mod_rdp::enable_kerberos>();
+    mod_rdp_params.allow_nla_ntlm = ini.get<cfg::mod_rdp::allow_nla_ntlm_fallback>();
+    mod_rdp_params.allow_tls_only = ini.get<cfg::mod_rdp::allow_tls_only_fallback>();
+    mod_rdp_params.allow_rdp_legacy = ini.get<cfg::mod_rdp::allow_rdp_legacy_fallback>();
     mod_rdp_params.enable_fastpath                     = ini.get<cfg::mod_rdp::fast_path>();
 
     mod_rdp_params.session_probe_params = get_session_probe_params(ini);

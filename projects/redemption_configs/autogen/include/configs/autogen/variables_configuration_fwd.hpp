@@ -93,6 +93,9 @@ namespace cfg
         struct disabled_orders;
         struct enable_nla;
         struct enable_kerberos;
+        struct allow_nla_ntlm_fallback;
+        struct allow_tls_only_fallback;
+        struct allow_rdp_legacy_fallback;
         struct tls_min_level;
         struct tls_max_level;
         struct cipher_string;

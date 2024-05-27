@@ -51,6 +51,9 @@ public:
 
     const bool tls;
     const bool nla;
+    const bool nla_ntlm_fallback;
+    const bool tls_only_fallback;
+    const bool rdp_legacy_fallback;
 
 private:
     bool krb;
@@ -116,8 +119,10 @@ public:
     void set_lb_info(uint8_t * lb_info, size_t lb_info_length);
 
     RdpNego(
-        const bool tls, std::string_view username, bool nla, bool admin_mode,
-        const char * target_host, const bool krb, Random & rand, const TimeBase & time_base,
+        std::string_view username, const char * target_host,
+        bool nla, const bool krb, const bool nla_ntlm,
+        const bool tls_only, const bool rdp_legacy, bool admin_mode,
+        Random & rand, const TimeBase & time_base,
         std::string& extra_message, Language lang, TlsConfig const& tls_config,
         const Verbose verbose);
 

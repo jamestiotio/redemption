@@ -220,9 +220,12 @@ RdpNegociation::RdpNegociation(
         mod_rdp_params.verbose
     )
     , nego(
-        mod_rdp_params.enable_tls, mod_rdp_params.target_user,
-        mod_rdp_params.enable_nla, mod_rdp_params.enable_restricted_admin_mode,
-        mod_rdp_params.target_host, mod_rdp_params.enable_krb, gen, time_base,
+        mod_rdp_params.target_user, mod_rdp_params.target_host,
+        mod_rdp_params.enable_nla, mod_rdp_params.enable_krb,
+        mod_rdp_params.allow_nla_ntlm,
+        mod_rdp_params.allow_tls_only, mod_rdp_params.allow_rdp_legacy,
+        mod_rdp_params.enable_restricted_admin_mode,
+        gen, time_base,
         mod_rdp_params.close_box_extra_message_ref, mod_rdp_params.lang,
         tls_config,
         RdpNego::Verbose(mod_rdp_params.verbose)

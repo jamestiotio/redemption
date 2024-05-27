@@ -66,6 +66,18 @@ enable_nla = boolean(default=True)
 # (if enable_nla is disabled, this value is ignored).
 enable_kerberos = boolean(default=False)
 
+# Allow NTLM fallback if Kerberos authentication fail.
+# (if enable_kerberos is disabled, this value is ignored).
+allow_nla_ntlm_fallback = boolean(default=True)
+
+# Allow TLS only fallback if NLA authentication fail.
+# (if enable_nla is disabled, this value is ignored).
+allow_tls_only_fallback = boolean(default=True)
+
+# Allow Standard RDP Security (Legacy) fallback if TLS connection fail.
+#_advanced
+allow_rdp_legacy_fallback = boolean(default=True)
+
 # Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3
 tls_min_level = integer(min=0, default=0)
 

@@ -114,8 +114,14 @@ RED_AUTO_TEST_CASE(TestNego)
     std::string extra_message;
     Language lang = Language::en;
     RdpNego nego(
-        true, "test", true, false, "127.0.0.1", false, rand, time_base,
-        extra_message, lang, TlsConfig{}, RdpNego::Verbose());
+        "test", "127.0.0.1",
+        true,  // enable nla
+        false,  // enable krb
+        false,  // allow nla ntlm fallback
+        false, // allow tls only fallback
+        false,  // allow rdp legacy fallback
+        false,  // admin mode
+        rand, time_base, extra_message, lang, TlsConfig{}, RdpNego::Verbose());
     nego.set_identity(user, pass, domain, host);
 
     TpduBuffer buf;

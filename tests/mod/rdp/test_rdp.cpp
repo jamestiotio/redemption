@@ -136,7 +136,7 @@ RED_AUTO_TEST_CASE(TestModRDPWin2008Server)
                                , RDPVerbose{}
                                );
     mod_rdp_params.device_id                       = "device_id";
-    mod_rdp_params.enable_tls                      = true;
+    mod_rdp_params.allow_tls_only                  = true;
     mod_rdp_params.enable_nla                      = false;
     //mod_rdp_params.enable_krb                      = false;
     //mod_rdp_params.enable_clipboard                = true;
@@ -202,4 +202,3 @@ RED_AUTO_TEST_CASE(TestModRDPWin2008Server)
     }
 #endif
 }
-

@@ -370,6 +370,24 @@ R"gen_config_ini(## Config file for RDP proxy.
 # (acl config: proxy ⇐ mod_rdp:enable_kerberos)
 #enable_kerberos = 0
 
+# Allow NTLM fallback if Kerberos authentication fail.
+# (if enable_kerberos is disabled, this value is ignored).
+# (type: boolean (0/no/false or 1/yes/true))
+# (acl config: proxy ⇐ mod_rdp:allow_nla_ntlm_fallback)
+#allow_nla_ntlm_fallback = 1
+
+# Allow TLS only fallback if NLA authentication fail.
+# (if enable_nla is disabled, this value is ignored).
+# (type: boolean (0/no/false or 1/yes/true))
+# (acl config: proxy ⇐ mod_rdp:allow_tls_only_fallback)
+#allow_tls_only_fallback = 1
+
+# Allow Standard RDP Security (Legacy) fallback if TLS connection fail.
+# (type: boolean (0/no/false or 1/yes/true))
+#_advanced
+# (acl config: proxy ⇐ mod_rdp:allow_rdp_legacy_fallback)
+#allow_rdp_legacy_fallback = 1
+
 # Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3
 # (min = 0)
 # (acl config: proxy ⇐ mod_rdp:tls_min_level)

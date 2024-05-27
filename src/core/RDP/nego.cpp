@@ -47,12 +47,17 @@ struct RdpNegoProtocols
 };
 
 RdpNego::RdpNego(
-    const bool tls, std::string_view username, bool nla, bool admin_mode,
-    const char * target_host, const bool krb, Random & rand, const TimeBase & time_base,
+    std::string_view username, const char * target_host,
+    bool nla, const bool krb, const bool nla_ntlm,
+    const bool tls_only, const bool rdp_legacy, bool admin_mode,
+    Random & rand, const TimeBase & time_base,
     std::string& extra_message, Language lang, TlsConfig const& tls_config,
     const Verbose verbose)
-: tls(nla || tls)
+: tls(true)
 , nla(nla)
+, nla_ntlm_fallback(nla_ntlm)
+, tls_only_fallback(tls_only)
+, rdp_legacy_fallback(rdp_legacy)
 , krb(nla && krb)
 , restricted_admin_mode(admin_mode)
 , selected_protocol(RdpNegoProtocols::Rdp)
@@ -353,6 +358,11 @@ RdpNego::State RdpNego::recv_connection_confirm(OutTransport trans, InStream x22
 
         if (x224.rdp_neg_code == X224::SSL_NOT_ALLOWED_BY_SERVER
             || x224.rdp_neg_code == X224::SSL_CERT_NOT_ON_SERVER) {
+            if (!this->rdp_legacy_fallback) {
+                LOG(LOG_ERR, "Can't activate SSL. RDP Legacy only not allowed");
+                throw Error(ERR_NEGO_SSL_REQUIRED);
+            }
+
             LOG(LOG_INFO, "Can't activate SSL, falling back to RDP legacy encryption");
 
             trans.disconnect();
@@ -423,6 +433,10 @@ RdpNego::State RdpNego::activate_ssl_hybrid(OutTransport trans, ServerNotifier& 
             );
         }
         catch (const Error &) {
+            if (!nla_ntlm_fallback) {
+                LOG(LOG_INFO, "CREDSSP Kerberos Authentication Failed, NTLM not allowed");
+                throw;
+            }
             LOG(LOG_INFO, "CREDSSP Kerberos Authentication Failed, fallback to NTLM");
             this->krb = false;
         }
@@ -519,6 +533,10 @@ RdpNego::State RdpNego::fallback_to_tls(OutTransport trans)
     }
     else {
         LOG(LOG_INFO, "Can't activate NLA");
+        if (!this->tls_only_fallback) {
+            LOG(LOG_ERR, "NLA failed. TLS only not allowed");
+            throw Error(ERR_NEGO_NLA_REQUIRED);
+        }
         LOG(LOG_INFO, "falling back to SSL only");
         this->enabled_protocols = RdpNegoProtocols::Tls | RdpNegoProtocols::Rdp;
         this->send_negotiation_request(trans);

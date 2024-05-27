@@ -756,6 +756,37 @@
     },
     {
       "section": "mod_rdp",
+      "name": "allow_nla_ntlm_fallback",
+      "type": "bool",
+      "value": true,
+      "description": "Allow NTLM fallback if Kerberos authentication fail.\n(if enable_kerberos is disabled, this value is ignored).",
+      "rdp": true,
+      "aclToProxy": true,
+      "logStategy": "1"
+    },
+    {
+      "section": "mod_rdp",
+      "name": "allow_tls_only_fallback",
+      "type": "bool",
+      "value": true,
+      "description": "Allow TLS only fallback if NLA authentication fail.\n(if enable_nla is disabled, this value is ignored).",
+      "rdp": true,
+      "aclToProxy": true,
+      "logStategy": "1"
+    },
+    {
+      "section": "mod_rdp",
+      "name": "allow_rdp_legacy_fallback",
+      "type": "bool",
+      "value": true,
+      "description": "Allow Standard RDP Security (Legacy) fallback if TLS connection fail.",
+      "rdp": true,
+      "aclToProxy": true,
+      "advanced": true,
+      "logStategy": "1"
+    },
+    {
+      "section": "mod_rdp",
       "name": "tls_min_level",
       "type": "u32",
       "value": 0,

@@ -41,9 +41,9 @@ public:
         bool enable_kerberos, const TlsConfig & tls_config, RdpNego::Verbose verbosity
     )
     : trans(trans)
-    , nego(true, target_user, is_nla, is_admin_mode, host, enable_kerberos,
-        this->random, time_base, this->extra_message, Language::en,
-        tls_config, verbosity)
+    , nego(target_user, host, is_nla, enable_kerberos, true, true, true,
+        is_admin_mode, this->random, time_base, this->extra_message,
+        Language::en, tls_config, verbosity)
     {
         auto [username, domain] = extract_user_domain(target_user);
         nego.set_identity(username, password, domain, "ProxyRecorder"_av);
@@ -61,4 +61,3 @@ public:
         return this->nego.recv_next_data(tpdu_buffer, this->trans, notifier);
     }
 };
-

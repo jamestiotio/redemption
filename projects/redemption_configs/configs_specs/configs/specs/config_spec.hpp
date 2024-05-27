@@ -870,6 +870,29 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     });
 
     _.member(MemberInfo{
+        .name = "allow_nla_ntlm_fallback",
+        .value = value<bool>(true),
+        .spec = connpolicy(rdp, L),
+        .desc = "Allow NTLM fallback if Kerberos authentication fail.\n"
+        "(if enable_kerberos is disabled, this value is ignored).",
+    });
+
+    _.member(MemberInfo{
+        .name = "allow_tls_only_fallback",
+        .value = value<bool>(true),
+        .spec = connpolicy(rdp, L),
+        .desc = "Allow TLS only fallback if NLA authentication fail.\n"
+        "(if enable_nla is disabled, this value is ignored).",
+    });
+
+    _.member(MemberInfo{
+        .name = "allow_rdp_legacy_fallback",
+        .value = value<bool>(true),
+        .spec = connpolicy(rdp, L, spec::advanced),
+        .desc = "Allow Standard RDP Security (Legacy) fallback if TLS connection fail.",
+    });
+
+    _.member(MemberInfo{
         .name = "tls_min_level",
         .value = value<types::u32>(),
         .spec = connpolicy(rdp, L),
