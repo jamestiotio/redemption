@@ -40,6 +40,7 @@
 struct RdpNegoProtocols
 {
     enum {
+        None = 0x00000000,
         Rdp = 0x00000001,
         Tls = 0x00000002,
         Nla = 0x00000004
@@ -60,8 +61,9 @@ RdpNego::RdpNego(
 , rdp_legacy_fallback(rdp_legacy)
 , krb(nla && krb)
 , restricted_admin_mode(admin_mode)
-, selected_protocol(RdpNegoProtocols::Rdp)
-, enabled_protocols(RdpNegoProtocols::Rdp
+, selected_protocol(RdpNegoProtocols::None)
+, enabled_protocols(
+      (this->rdp_legacy_fallback ? RdpNegoProtocols::Rdp : 0)
     | (this->tls ? RdpNegoProtocols::Tls : 0)
     | (this->nla ? RdpNegoProtocols::Nla : 0))
 , username(username)
@@ -76,9 +78,10 @@ RdpNego::RdpNego(
 , tls_config(tls_config)
 , verbose(verbose)
 {
-    LOG(LOG_INFO, "RdpNego: TLS=%s NLA=%s adminMode=%s",
+    LOG(LOG_INFO, "RdpNego: TLS=%s NLA=%s Legacy=%s adminMode=%s",
         ((this->enabled_protocols & RdpNegoProtocols::Tls) ? "Enabled" : "Disabled"),
         ((this->enabled_protocols & RdpNegoProtocols::Nla) ? "Enabled" : "Disabled"),
+        ((this->enabled_protocols & RdpNegoProtocols::Rdp) ? "Enabled" : "Disabled"),
         (this->restricted_admin_mode ? "Enabled" : "Disabled")
         );
 
