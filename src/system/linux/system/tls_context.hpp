@@ -604,39 +604,40 @@ public:
             }
         );
         SSL_CTX_set_default_passwd_cb_userdata(ctx, const_cast<char*>(certificate_password)); /*NOLINT*/
-        if(!SSL_CTX_use_PrivateKey_file(ctx, app_path(AppPath::CfgKey), SSL_FILETYPE_PEM))
-        {
+
+        if (!SSL_CTX_use_PrivateKey_file(ctx, app_path(AppPath::CfgKey), SSL_FILETYPE_PEM)) {
             return tls_ctx_print_error("enable_server_tls", "Can't read key file");
         }
 
         BIO* bio = BIO_new_file(app_path(AppPath::CfgDhPem), "r");
-        if (bio == nullptr){
+        if (!bio){
             return tls_ctx_print_error("enable_server_tls", "Couldn't open DH file");
         }
 
-        DH* ret = PEM_read_bio_DHparams(bio, nullptr, nullptr, nullptr);
+#if defined(OPENSSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER >= 3
+        auto dh_read = [](BIO* bio){ return PEM_read_bio_Parameters(bio, nullptr); };
+        auto dh_free = [](EVP_PKEY* pkey){ EVP_PKEY_free(pkey); };
+        auto dh_use = [](EVP_PKEY* /*pkey*/){ };
+        auto set_dh = [](SSL_CTX* ctx, EVP_PKEY* pkey){ return SSL_CTX_set0_tmp_dh_pkey(ctx, pkey); };
+#else
+        auto dh_read = [](BIO* bio){ return PEM_read_bio_DHparams(bio, nullptr, nullptr, nullptr); };
+        auto dh_free = [](DH* dh){ DH_free(dh); };
+        auto dh_use = [](DH* dh){ DH_free(dh); };
+        auto set_dh = [](SSL_CTX* ctx, DH* dh){ return SSL_CTX_set_tmp_dh(ctx, dh); /*NOLINT*/ };
+#endif
+        auto* dh = dh_read(bio);
         BIO_free(bio);
-        if(ret == nullptr)
-        {
+        if (!dh) {
             return tls_ctx_print_error("enable_server_tls", "Can't read DH parameters");
         }
 
-        if(SSL_CTX_set_tmp_dh(ctx, ret) < 0) /*NOLINT*/
-        {
-            DH_free(ret);
+        if (!set_dh(ctx, dh)) {
+            dh_free(dh);
             return tls_ctx_print_error("enable_server_tls", "Couldn't set DH parameters");
         }
-        DH_free(ret);
-        // SSL_new() creates a new SSL structure which is needed to hold the data for a TLS/SSL
-        // connection. The new structure inherits the settings of the underlying context ctx:
-        // - connection method (SSLv2/v3/TLSv1),
-        // - options,
-        // - verification settings,
-        // - timeout settings.
+        dh_use(dh);
 
-        // return value: nullptr: The creation of a new SSL structure failed. Check the error stack
-        // to find out the reason.
-        // TODO add error management
+
         BIO* sbio = BIO_new_socket(sck, BIO_NOCLOSE);
         if (bio == nullptr){
             return tls_ctx_print_error("enable_server_tls", "Couldn't open socket");
