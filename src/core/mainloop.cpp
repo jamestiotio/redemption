@@ -60,7 +60,7 @@ namespace {
 void shutdown(int sig)
 {
     LOG(LOG_INFO, "shutting down : signal %d pid=%d", sig, getpid());
-    exit(1);
+    exit(sig == SIGTERM ? 0 : 1);
 }
 
 /*****************************************************************************/
