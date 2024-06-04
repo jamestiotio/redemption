@@ -207,8 +207,6 @@ public:
             return tls_ctx_print_error("enable_client_tls", "SSL_CTX_new returned NULL");
         }
 
-        // reference doc: https://www.openssl.org/docs/man1.1.1/man3/SSL_CTX_config.html
-
         this->allocated_ctx = ctx;
         SSL_CTX_set_mode(ctx, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER/* | SSL_MODE_ENABLE_PARTIAL_WRITE*/);
 
@@ -231,8 +229,6 @@ public:
         if (tls_config.show_common_cipher_list){
             log_cipher_list(this->allocated_ssl, "Client");
         }
-
-        LOG(LOG_INFO, "SSL_connect()");
 
         return true;
     }
@@ -407,177 +403,19 @@ public:
         return Transport::TlsResult::Fail;
     }
 
-    bool enable_server_tls(int sck, const char * certificate_password, TlsConfig const& tls_config)
+    bool enable_server_tls_start(int sck, const char * certificate_password, TlsConfig const& tls_config)
     {
-        LOG(LOG_INFO, "Enable server TLS");
-        // reference doc: https://www.openssl.org/docs/man1.1.1/man3/SSL_CTX_new.html
-
         SSL_CTX* ctx = SSL_CTX_new(TLS_server_method());
+
+        if (!ctx) {
+            return tls_ctx_print_error("enable_server_tls", "SSL_CTX_new returned NULL");
+        }
+
         this->allocated_ctx = ctx;
         SSL_CTX_set_mode(ctx, SSL_MODE_ACCEPT_MOVING_WRITE_BUFFER/* | SSL_MODE_ENABLE_PARTIAL_WRITE*/);
 
-        /*
-         * This is necessary, because the Microsoft TLS implementation is not perfect.
-         * SSL_OP_ALL enables a couple of workarounds for buggy TLS implementations,
-         * but the most important workaround being SSL_OP_TLS_BLOCK_PADDING_BUG.
-         * As the size of the encrypted payload may give hints about its contents,
-         * block padding is normally used, but the Microsoft TLS implementation
-         * won't recognize it and will disconnect you after sending a TLS alert.
-         */
-
-        // SSL_CTX_set_options() adds the options set via bitmask in options to ctx.
-        // Options already set before are not cleared!
-
-         // During a handshake, the option settings of the SSL object are used. When
-         // a new SSL object is created from a context using SSL_new(), the current
-         // option setting is copied. Changes to ctx do not affect already created
-         // SSL objects. SSL_clear() does not affect the settings.
-
-         // The following bug workaround options are available:
-
-         // SSL_OP_MICROSOFT_SESS_ID_BUG
-
-         // www.microsoft.com - when talking SSLv2, if session-id reuse is performed,
-         // the session-id passed back in the server-finished message is different
-         // from the one decided upon.
-
-         // SSL_OP_NETSCAPE_CHALLENGE_BUG
-
-         // Netscape-Commerce/1.12, when talking SSLv2, accepts a 32 byte challenge
-         // but then appears to only use 16 bytes when generating the encryption keys.
-         // Using 16 bytes is ok but it should be ok to use 32. According to the SSLv3
-         // spec, one should use 32 bytes for the challenge when operating in SSLv2/v3
-         // compatibility mode, but as mentioned above, this breaks this server so
-         // 16 bytes is the way to go.
-
-         // SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG
-
-         // As of OpenSSL 0.9.8q and 1.0.0c, this option has no effect.
-
-        // SSL_OP_SSLREF2_REUSE_CERT_TYPE_BUG
-
-        //  ...
-
-        // SSL_OP_MICROSOFT_BIG_SSLV3_BUFFER
-
-        // ...
-
-        // SSL_OP_MSIE_SSLV2_RSA_PADDING
-
-        // As of OpenSSL 0.9.7h and 0.9.8a, this option has no effect.
-
-        // SSL_OP_SSLEAY_080_CLIENT_DH_BUG
-        // ...
-
-        // SSL_OP_TLS_D5_BUG
-        //    ...
-
-        // SSL_OP_TLS_BLOCK_PADDING_BUG
-        //   ...
-
-        // SSL_OP_DONT_INSERT_EMPTY_FRAGMENTS
-
-        // Disables a countermeasure against a SSL 3.0/TLS 1.0 protocol vulnerability
-        // affecting CBC ciphers, which cannot be handled by some broken SSL implementations.
-        // This option has no effect for connections using other ciphers.
-
-        // SSL_OP_ALL
-        // All of the above bug workarounds.
-
-        // It is usually safe to use SSL_OP_ALL to enable the bug workaround options if
-        // compatibility with somewhat broken implementations is desired.
-
-        // The following modifying options are available:
-
-        // SSL_OP_TLS_ROLLBACK_BUG
-
-        // Disable version rollback attack detection.
-
-        // During the client key exchange, the client must send the same information about
-        // acceptable SSL/TLS protocol levels as during the first hello. Some clients violate
-        // this rule by adapting to the server's answer. (Example: the client sends a SSLv2
-        // hello and accepts up to SSLv3.1=TLSv1, the server only understands up to SSLv3.
-        // In this case the client must still use the same SSLv3.1=TLSv1 announcement. Some
-        // clients step down to SSLv3 with respect to the server's answer and violate the
-        // version rollback protection.)
-
-        // SSL_OP_SINGLE_DH_USE
-
-        // Always create a new key when using temporary/ephemeral DH parameters (see
-        // SSL_CTX_set_tmp_dh_callback(3)). This option must be used to prevent small subgroup
-        // attacks, when the DH parameters were not generated using ``strong'' primes (e.g.
-        // when using DSA-parameters, see dhparam(1)). If ``strong'' primes were used, it is
-        // not strictly necessary to generate a new DH key during each handshake but it is
-        // also recommended. SSL_OP_SINGLE_DH_USE should therefore be enabled whenever
-        // temporary/ephemeral DH parameters are used.
-
-        // SSL_OP_EPHEMERAL_RSA
-
-        // Always use ephemeral (temporary) RSA key when doing RSA operations (see
-        // SSL_CTX_set_tmp_rsa_callback(3)). According to the specifications this is only done,
-        // when a RSA key can only be used for signature operations (namely under export ciphers
-        // with restricted RSA keylength). By setting this option, ephemeral RSA keys are always
-        // used. This option breaks compatibility with the SSL/TLS specifications and may lead
-        // to interoperability problems with clients and should therefore never be used. Ciphers
-        // with EDH (ephemeral Diffie-Hellman) key exchange should be used instead.
-
-        // SSL_OP_CIPHER_SERVER_PREFERENCE
-
-        // When choosing a cipher, use the server's preferences instead of the client preferences.
-        // When not set, the SSL server will always follow the clients preferences. When set, the
-        // SSLv3/TLSv1 server will choose following its own preferences. Because of the different
-        // protocol, for SSLv2 the server will send its list of preferences to the client and the
-        // client chooses.
-
-        // SSL_OP_PKCS1_CHECK_1
-        //  ...
-
-        // SSL_OP_PKCS1_CHECK_2
-        //  ...
-
-        // SSL_OP_NETSCAPE_CA_DN_BUG
-        // If we accept a netscape connection, demand a client cert, have a non-this-signed CA
-        // which does not have its CA in netscape, and the browser has a cert, it will crash/hang.
-        // Works for 3.x and 4.xbeta
-
-        // SSL_OP_NETSCAPE_DEMO_CIPHER_CHANGE_BUG
-        //    ...
-
-        // SSL_OP_NO_SSLv2
-        // Do not use the SSLv2 protocol.
-
-        // SSL_OP_NO_SSLv3
-        // Do not use the SSLv3 protocol.
-
-        // SSL_OP_NO_TLSv1
-
-        // Do not use the TLSv1 protocol.
-        // SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION
-
-        // When performing renegotiation as a server, always start a new session (i.e., session
-        // resumption requests are only accepted in the initial handshake). This option is not
-        // needed for clients.
-
-        // SSL_OP_NO_TICKET
-        // Normally clients and servers will, where possible, transparently make use of RFC4507bis
-        // tickets for stateless session resumption.
-
-        // If this option is set this functionality is disabled and tickets will not be used by
-        // clients or servers.
-
-        // SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION
-
-        // Allow legacy insecure renegotiation between OpenSSL and unpatched clients or servers.
-        // See the SECURE RENEGOTIATION section for more details.
-
-        // SSL_OP_LEGACY_SERVER_CONNECT
-        // Allow legacy insecure renegotiation between OpenSSL and unpatched servers only: this option
-        // is currently set by default. See the SECURE RENEGOTIATION section for more details.
-
-        LOG(LOG_INFO, "TLSContext::enable_server_tls() set SSL options");
-
         if (auto* funcname = apply_tls_config(ctx, tls_config, verbose, "enable_server_tls")) {
-            return tls_ctx_print_error("enable_client_tls", funcname);
+            return tls_ctx_print_error("enable_server_tls", funcname);
         }
 
         // -------- End of system wide SSL_Ctx option ----------------------------------
@@ -585,7 +423,7 @@ public:
         // --------Start of session specific init code ---------------------------------
 
         /* Load our keys and certificates*/
-        if(!SSL_CTX_use_certificate_chain_file(ctx, app_path(AppPath::CfgCrt))) {
+        if (!SSL_CTX_use_certificate_chain_file(ctx, app_path(AppPath::CfgCrt))) {
             return tls_ctx_print_error("enable_server_tls", "Can't read certificate file");
         }
 
@@ -594,8 +432,10 @@ public:
                 (void)rwflag;
                 const char * pass = static_cast<const char*>(userdata);
                 size_t pass_len = strlen(pass);
+
+                // buffer too small, password is ignored
                 if(num < static_cast<int>(pass_len+1u)) {
-                    return 0;
+                    pass_len = 0;
                 }
 
                 memcpy(buf, pass, pass_len);
@@ -653,21 +493,53 @@ public:
 
         SSL_set_bio(this->allocated_ssl, sbio, sbio);
 
+        return true;
+    }
+
+    Transport::TlsResult enable_server_tls_loop(bool show_common_cipher_list)
+    {
         int r = SSL_accept(this->allocated_ssl);
         if(r <= 0) {
-            return tls_ctx_print_error("enable_server_tls", "SSL accept error");
+            char const* error_msg;
+            int errnum = 0;
+            switch (SSL_get_error(this->allocated_ssl, r))
+            {
+                case SSL_ERROR_WANT_READ:
+                case SSL_ERROR_WANT_WRITE:
+                    return Transport::TlsResult::Want;
+                case SSL_ERROR_ZERO_RETURN:
+                    error_msg = "Client closed TLS connection";
+                    break;
+                case SSL_ERROR_SYSCALL:
+                    error_msg = "I/O error";
+                    errnum = errno;
+                    break;
+                case SSL_ERROR_SSL:
+                    error_msg = "Failure in SSL library (protocol error?)";
+                    break;
+                default:
+                    error_msg = "Unknown error";
+                    break;
+            }
+            tls_ctx_print_error("enable_server_tls", error_msg);
+            if (errnum) {
+                LOG(LOG_ERR, "TLSContext::enable_client_tls errno=%d %s",
+                    errnum, strerror(errnum));
+            }
+            return Transport::TlsResult::Fail;
         }
+
         this->io = this->allocated_ssl;
 
         LOG(LOG_INFO, "Incoming connection to Bastion using TLS version %s", SSL_get_version(this->allocated_ssl));
 
-        if (tls_config.show_common_cipher_list) {
+        if (show_common_cipher_list) {
             log_cipher_list(this->allocated_ssl, "Server");
         }
 
         LOG(LOG_INFO, "TLSContext::Negociated cipher used %s", SSL_CIPHER_get_name(SSL_get_current_cipher(this->allocated_ssl)));
 
-        return true;
+        return Transport::TlsResult::Ok;
     }
 
     ssize_t privpartial_recv_tls(uint8_t * data, size_t len)

@@ -108,22 +108,54 @@ u8_array_view SocketTransport::get_public_key() const
     return this->tls ? this->tls->get_public_key() : nullptr;
 }
 
-void SocketTransport::enable_server_tls(const char * certificate_password, TlsConfig const& tls_config)
+Transport::TlsResult SocketTransport::enable_server_tls(const char * certificate_password, TlsConfig const& tls_config)
 {
-    if (this->tls != nullptr) {
-        // TODO this should be an error, no need to commute two times to TLS
-        return;
-    }
-    this->tls = std::make_unique<TLSContext>(bool(this->verbose & Verbose::basic));
+    auto process = [&, this] () -> TlsResult {
+        switch (this->tls_state) {
+            case TLSState::Uninit:
+                if (this->has_data_to_write()) {
+                    return TlsResult::Want;
+                }
+                LOG(LOG_INFO, "SocketTransport::enable_server_tls() start (%s)", this->name);
+                this->tls = std::make_unique<TLSContext>(bool(this->verbose & Verbose::basic));
+                if (!this->tls->enable_server_tls_start(this->sck, certificate_password, tls_config)) {
+                    return TlsResult::Fail;
+                }
+                this->tls_state = TLSState::Want;
+                [[fallthrough]];
+            case TLSState::Want: {
+                TlsResult ret = this->tls->enable_server_tls_loop(tls_config.show_common_cipher_list);
+                if (ret == TlsResult::Ok) {
+                    LOG(LOG_INFO, "SocketTransport::enable_server_tls() done (%s)", this->name);
+                    this->tls_state = TLSState::Ok;
+                }
+                return ret;
+            }
+            case TLSState::Ok:
+            case TLSState::WaitCertCb:
+                return TlsResult::Fail;
+        }
+        REDEMPTION_UNREACHABLE();
+    };
 
-    LOG(LOG_INFO, "SocketTransport::enable_server_tls() start (%s)", this->name);
-
-    if (!this->tls->enable_server_tls(this->sck, certificate_password, tls_config)) {
+    auto reset_tls = [this]{
+        this->tls_state = TLSState::Uninit;
+        // Disconnect tls if needed
         this->tls.reset();
-        throw Error(ERR_TRANSPORT_TLS_SERVER);
-    }
+        LOG(LOG_ERR, "SocketTransport::enable_server_tls() failed");
+    };
 
-    LOG(LOG_INFO, "SocketTransport::enable_server_tls() done (%s)", this->name);
+    try {
+        auto res = process();
+        if (res == TlsResult::Fail) {
+            reset_tls();
+        }
+        return res;
+    }
+    catch (...) {
+        reset_tls();
+        throw;
+    }
 }
 
 Transport::TlsResult SocketTransport::enable_client_tls(ServerNotifier & server_notifier, TlsConfig const& tls_config, AnonymousTls anonymous_tls)
@@ -131,8 +163,11 @@ Transport::TlsResult SocketTransport::enable_client_tls(ServerNotifier & server_
     auto process = [&, this] () -> TlsResult {
         switch (this->tls_state) {
             case TLSState::Uninit:
-                LOG(LOG_INFO, "Client TLS start");
-                this->tls = std::make_unique<TLSContext>();
+                if (this->has_data_to_write()) {
+                    return TlsResult::Want;
+                }
+                LOG(LOG_INFO, "SocketTransport::enable_client_tls() start (%s)", this->name);
+                this->tls = std::make_unique<TLSContext>(bool(this->verbose & Verbose::basic));
                 if (!this->tls->enable_client_tls_start(this->sck, tls_config)) {
                     return TlsResult::Fail;
                 }
@@ -140,28 +175,20 @@ Transport::TlsResult SocketTransport::enable_client_tls(ServerNotifier & server_
                 [[fallthrough]];
             case TLSState::Want: {
                 TlsResult ret = this->tls->enable_client_tls_loop();
-                switch (ret) {
-                    case TlsResult::Fail:
-                        this->tls.reset();
-                        break;
-                    case TlsResult::Want:
-                    case TlsResult::WaitExternalEvent:
-                        break;
-                    case TlsResult::Ok: {
-                        ret = this->tls->check_certificate(
-                            server_notifier,
-                            this->ip_address, this->port, bool(anonymous_tls));
-                        switch (ret) {
-                            case TlsResult::Ok:
-                                LOG(LOG_INFO, "Socketenable_client_tls() done");
-                                this->tls_state = TLSState::Ok;
-                                break;
-                            case TlsResult::Want:
-                            case TlsResult::Fail:
-                                return TlsResult::Fail;
-                            case TlsResult::WaitExternalEvent:
-                                this->tls_state = TLSState::WaitCertCb;
-                        }
+                if (ret == TlsResult::Ok) {
+                    ret = this->tls->check_certificate(
+                        server_notifier,
+                        this->ip_address, this->port, bool(anonymous_tls));
+                    switch (ret) {
+                        case TlsResult::Ok:
+                            LOG(LOG_INFO, "SocketTransport::enable_client_tls() done");
+                            this->tls_state = TLSState::Ok;
+                            break;
+                        case TlsResult::Want:
+                        case TlsResult::Fail:
+                            return TlsResult::Fail;
+                        case TlsResult::WaitExternalEvent:
+                            this->tls_state = TLSState::WaitCertCb;
                     }
                 }
                 return ret;
@@ -173,7 +200,7 @@ Transport::TlsResult SocketTransport::enable_client_tls(ServerNotifier & server_
                     server_notifier, this->ip_address, this->port
                 )) {
                     case TlsResult::Ok:
-                        LOG(LOG_INFO, "Socketenable_client_tls() done");
+                        LOG(LOG_INFO, "SocketTransport::enable_client_tls() done");
                         this->tls_state = TLSState::Ok;
                         return TlsResult::Ok;
                     case TlsResult::Fail:

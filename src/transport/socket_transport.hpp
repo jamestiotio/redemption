@@ -105,7 +105,7 @@ public:
 
     [[nodiscard]] u8_array_view get_public_key() const override;
 
-    void enable_server_tls(const char * certificate_password, TlsConfig const& tls_config) override;
+    Transport::TlsResult enable_server_tls(const char * certificate_password, TlsConfig const& tls_config) override;
 
     TlsResult enable_client_tls(ServerNotifier & server_notifier, TlsConfig const& tls_config, AnonymousTls anonymous_tls) override;
 

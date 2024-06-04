@@ -85,8 +85,10 @@ void ProxyRecorder::front_step1(Transport & frontConn)
     frontConn.send(front_x224_stream.get_produced_bytes());
 
     if ((this->front_CR_TPDU.rdp_neg_requestedProtocols & X224::PROTOCOL_TLS)
-    || (this->front_CR_TPDU.rdp_neg_requestedProtocols & X224::PROTOCOL_HYBRID)) {
-        frontConn.enable_server_tls("inquisition", TlsConfig{
+     || (this->front_CR_TPDU.rdp_neg_requestedProtocols & X224::PROTOCOL_HYBRID)
+    ) {
+        // TODO fix result check and asynchronous call
+        (void)frontConn.enable_server_tls("inquisition", TlsConfig{
             .cipher_list = {},
             .tls_1_3_ciphersuites = {},
             .key_exchange_groups = {},

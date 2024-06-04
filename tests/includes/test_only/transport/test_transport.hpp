@@ -234,6 +234,11 @@ struct TestTransport
     {
         Impl(bytes_view indata, bytes_view outdata);
 
+        TlsResult enable_server_tls(const char * /*certificate_password*/, const TlsConfig & /*tls_config*/) override
+        {
+            return TlsResult::Ok;
+        }
+
         [[nodiscard]] u8_array_view get_public_key() const override;
 
     protected:

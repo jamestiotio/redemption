@@ -72,9 +72,14 @@ size_t WsTransport::do_partial_read(uint8_t * buffer, size_t len)
     case State::StartTls: {
         // if enable_server_tls throw an exception, state = error
         this->state = State::Error;
-        SocketTransport::enable_server_tls(
+
+        // TODO FIXME: asynchronous call
+        auto oldfl = fcntl(get_fd(), F_GETFL);
+        fcntl(get_fd(), F_SETFL, oldfl & ~O_NONBLOCK);
+        (void)SocketTransport::enable_server_tls(
             this->tls_options.certificate_password.c_str(),
             this->tls_options.tls_config);
+        fcntl(get_fd(), F_SETFL, oldfl);
 
         this->state = State::HttpHeader;
         return 0;

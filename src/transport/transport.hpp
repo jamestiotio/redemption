@@ -54,11 +54,12 @@ public:
         return TlsResult::Fail;
     }
 
-    virtual void enable_server_tls(const char * certificate_password, TlsConfig const& tls_config)
+    virtual Transport::TlsResult enable_server_tls(const char * certificate_password, TlsConfig const& tls_config)
     {
         // default enable_tls do nothing
         (void)certificate_password;
         (void)tls_config;
+        return TlsResult::Fail;
     }
 
     [[nodiscard]] virtual u8_array_view get_public_key() const
@@ -218,9 +219,9 @@ struct InTransport
         return this->t.enable_client_tls(server_notifier, tls_config, anonymous_tls);
     }
 
-    void enable_server_tls(const char * certificate_password, TlsConfig const& tls_config)
+    Transport::TlsResult enable_server_tls(const char * certificate_password, TlsConfig const& tls_config)
     {
-        this->t.enable_server_tls(certificate_password, tls_config);
+        return this->t.enable_server_tls(certificate_password, tls_config);
     }
 
     [[nodiscard]]
@@ -271,9 +272,9 @@ struct OutTransport
         return this->t.enable_client_tls(server_notifier, tls_config, anonymous_tls);
     }
 
-    void enable_server_tls(const char * certificate_password, TlsConfig const& tls_config)
+    Transport::TlsResult enable_server_tls(const char * certificate_password, TlsConfig const& tls_config)
     {
-        this->t.enable_server_tls(certificate_password, tls_config);
+        return this->t.enable_server_tls(certificate_password, tls_config);
     }
 
     [[nodiscard]]

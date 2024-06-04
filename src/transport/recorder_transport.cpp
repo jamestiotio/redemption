@@ -79,10 +79,13 @@ Transport::TlsResult RecorderTransport::enable_client_tls(ServerNotifier& server
     return r;
 }
 
-void RecorderTransport::enable_server_tls(const char * certificate_password, TlsConfig const& tls_config)
+Transport::TlsResult RecorderTransport::enable_server_tls(const char * certificate_password, TlsConfig const& tls_config)
 {
-    this->trans.enable_server_tls(certificate_password, tls_config);
-    this->out.write_packet(RecorderFile::PacketType::ServerCert, this->trans.get_public_key());
+    auto r = this->trans.enable_server_tls(certificate_password, tls_config);
+    if (r == TlsResult::Ok) {
+        this->out.write_packet(RecorderFile::PacketType::ServerCert, this->trans.get_public_key());
+    }
+    return r;
 }
 
 u8_array_view RecorderTransport::get_public_key() const

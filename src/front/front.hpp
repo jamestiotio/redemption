@@ -674,6 +674,7 @@ private:
 
     enum : char {
         CONNECTION_INITIATION,
+        TLS_CONNECTION_INITIATION,
         PRIMARY_AUTH_NLA,
         BASIC_SETTINGS_EXCHANGE,
         CHANNEL_ATTACH_USER,
@@ -1601,26 +1602,6 @@ public:
             this->trans.send(stream.get_produced_bytes());
         }
 
-        if (this->tls_client_active) {
-            this->trans.enable_server_tls(
-                this->ini.get<cfg::globals::certificate_password>(),
-                TlsConfig{
-                     .min_level = this->ini.get<cfg::client::tls_min_level>(),
-                     .max_level = this->ini.get<cfg::client::tls_max_level>(),
-                     .cipher_list = this->ini.get<cfg::client::ssl_cipher_list>(),
-                     .tls_1_3_ciphersuites = this->ini.get<cfg::client::tls_1_3_ciphersuites>(),
-                     .key_exchange_groups = this->ini.get<cfg::client::tls_key_exchange_groups>(),
-                     .show_common_cipher_list = this->ini.get<cfg::client::show_common_cipher_list>(),
-                }
-            );
-
-            if (enable_nla && this->clientRequestedProtocols & X224::PROTOCOL_HYBRID) {
-                this->nego_server = std::make_unique<NegoServer>(
-                    this->trans.get_public_key(), this->events_guard.get_time_base(),
-                    bool(this->verbose & Verbose::basic_trace));
-            }
-        }
-
         // 2.2.10.2 Early User Authorization Result PDU
         // ============================================
 
@@ -1638,6 +1619,38 @@ public:
         // +---------------------------------+--------------------------------------------------------+
         // | AUTHZ_ACCESS_DENIED 0x0000052E | The user does not have permission to access the server.|
         // +---------------------------------+--------------------------------------------------------+
+    }
+
+    bool tls_connection_initiation(bool enable_nla)
+    {
+        auto r = this->trans.enable_server_tls(
+            this->ini.get<cfg::globals::certificate_password>(),
+            TlsConfig{
+                    .min_level = this->ini.get<cfg::client::tls_min_level>(),
+                    .max_level = this->ini.get<cfg::client::tls_max_level>(),
+                    .cipher_list = this->ini.get<cfg::client::ssl_cipher_list>(),
+                    .tls_1_3_ciphersuites = this->ini.get<cfg::client::tls_1_3_ciphersuites>(),
+                    .key_exchange_groups = this->ini.get<cfg::client::tls_key_exchange_groups>(),
+                    .show_common_cipher_list = this->ini.get<cfg::client::show_common_cipher_list>(),
+            }
+        );
+
+        switch (r) {
+            case Transport::TlsResult::Fail:
+                throw Error(ERR_TRANSPORT_TLS_SERVER);
+            case Transport::TlsResult::Ok:
+                if (enable_nla && this->clientRequestedProtocols & X224::PROTOCOL_HYBRID) {
+                    this->nego_server = std::make_unique<NegoServer>(
+                        this->trans.get_public_key(), this->events_guard.get_time_base(),
+                        bool(this->verbose & Verbose::basic_trace));
+                }
+                return true;
+            case Transport::TlsResult::Want:
+            case Transport::TlsResult::WaitExternalEvent:
+                break;
+        }
+
+        return false;
     }
 
     void basic_settings_exchange(bytes_view tpdu)
@@ -2941,6 +2954,13 @@ public:
     {
         LOG_IF(bool(this->verbose & Verbose::basic_trace3), LOG_INFO, "Front::incoming");
 
+        if (this->state == TLS_CONNECTION_INITIATION) {
+            if (this->tls_connection_initiation(this->ini.get<cfg::client::enable_nla>())) {
+                this->state = this->nego_server ? PRIMARY_AUTH_NLA : BASIC_SETTINGS_EXCHANGE;
+            }
+            return;
+        }
+
         this->buf.load_data(this->trans);
         while (buf.next(TpduBuffer::PDU))
         {
@@ -2952,14 +2972,19 @@ public:
             {
                 bool enable_nla = this->ini.get<cfg::client::enable_nla>();
                 this->connection_initiation(tpdu, enable_nla);
-                if (enable_nla){
-                    this->state = PRIMARY_AUTH_NLA;
-                }
-                else {
+                if (!this->tls_client_active) {
                     this->state = BASIC_SETTINGS_EXCHANGE;
+                    break;
                 }
+                this->state = TLS_CONNECTION_INITIATION;
+                [[fallthrough]];
             }
-            break;
+            case TLS_CONNECTION_INITIATION: {
+                if (this->tls_connection_initiation(this->ini.get<cfg::client::enable_nla>())) {
+                    this->state = this->nego_server ? PRIMARY_AUTH_NLA : BASIC_SETTINGS_EXCHANGE;
+                }
+                return;
+            }
             case PRIMARY_AUTH_NLA:
                 if (this->nego_server->credssp.ntlm_state != NTLM_STATE_WAIT_PASSWORD){
                     this->front_nla(this->trans, tpdu);

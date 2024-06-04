@@ -242,7 +242,6 @@ class Session
         bool is_set_for_reading(int fd) const
         {
             bool ret = io_fd_isset(fd, this->rfds);
-            assert(!this->want_write || !ret);
             return ret;
         }
 
@@ -1631,6 +1630,8 @@ void session_start_sck(
     PidFile& pid_file, Font const& font, bool prevent_early_log,
     Args&&... args)
 {
+    fcntl(sck.fd(), F_SETFL, fcntl(sck.fd(), F_GETFL) | O_NONBLOCK);
+
     auto const watchdog_verbosity = prevent_early_log
         ? SocketTransport::Verbose::watchdog
         : SocketTransport::Verbose();
