@@ -15,9 +15,9 @@ cp_spec = {
     'rdp': {
         ('mod_rdp:disabled_orders', 'disabled_orders', "27"),
         ('mod_rdp:enable_nla', 'enable_nla', True),
-        ('mod_rdp:enable_kerberos', 'enable_kerberos', False),
-        ('mod_rdp:allow_nla_ntlm_fallback', 'allow_nla_ntlm_fallback', True),
-        ('mod_rdp:allow_tls_only_fallback', 'allow_tls_only_fallback', True),
+        ('mod_rdp:enable_kerberos', 'enable_kerberos', True),
+        ('mod_rdp:allow_nla_ntlm_fallback', 'allow_nla_ntlm_fallback', False),
+        ('mod_rdp:allow_tls_only_fallback', 'allow_tls_only_fallback', False),
         ('mod_rdp:allow_rdp_legacy_fallback', 'allow_rdp_legacy_fallback', False),
         ('mod_rdp:tls_min_level', 'tls_min_level', 0),
         ('mod_rdp:tls_max_level', 'tls_max_level', 0),

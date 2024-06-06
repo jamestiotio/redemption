@@ -893,7 +893,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:enable_kerberos <br/>
-    /// default: false <br/>
+    /// default: true <br/>
     struct mod_rdp::enable_kerberos {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
         // for old cppcheck
@@ -901,14 +901,14 @@ namespace cfg
         static constexpr ::configs::authid_t index { ::configs::cfg_indexes::section5 + 2};
         using type = bool;
         using mapped_type = bool;
-        type value { false };
+        type value { true };
     };
     /// Allow NTLM fallback if Kerberos authentication fail. <br/>
     /// (if enable_kerberos is disabled, this value is ignored). <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:allow_nla_ntlm_fallback <br/>
-    /// default: true <br/>
+    /// default: false <br/>
     struct mod_rdp::allow_nla_ntlm_fallback {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
         // for old cppcheck
@@ -916,14 +916,14 @@ namespace cfg
         static constexpr ::configs::authid_t index { ::configs::cfg_indexes::section5 + 3};
         using type = bool;
         using mapped_type = bool;
-        type value { true };
+        type value { false };
     };
     /// Allow TLS only fallback if NLA authentication fail. <br/>
     /// (if enable_nla is disabled, this value is ignored). <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:allow_tls_only_fallback <br/>
-    /// default: true <br/>
+    /// default: false <br/>
     struct mod_rdp::allow_tls_only_fallback {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
         // for old cppcheck
@@ -931,7 +931,7 @@ namespace cfg
         static constexpr ::configs::authid_t index { ::configs::cfg_indexes::section5 + 4};
         using type = bool;
         using mapped_type = bool;
-        type value { true };
+        type value { false };
     };
     /// Allow Standard RDP Security (Legacy) fallback if TLS connection fail. <br/>
     /// type: bool <br/>

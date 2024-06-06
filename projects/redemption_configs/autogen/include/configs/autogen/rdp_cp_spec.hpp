@@ -64,15 +64,15 @@ enable_nla = boolean(default=True)
 
 # If enabled, NLA authentication will try Kerberos before NTLM.
 # (if enable_nla is disabled, this value is ignored).
-enable_kerberos = boolean(default=False)
+enable_kerberos = boolean(default=True)
 
 # Allow NTLM fallback if Kerberos authentication fail.
 # (if enable_kerberos is disabled, this value is ignored).
-allow_nla_ntlm_fallback = boolean(default=True)
+allow_nla_ntlm_fallback = boolean(default=False)
 
 # Allow TLS only fallback if NLA authentication fail.
 # (if enable_nla is disabled, this value is ignored).
-allow_tls_only_fallback = boolean(default=True)
+allow_tls_only_fallback = boolean(default=False)
 
 # Allow Standard RDP Security (Legacy) fallback if TLS connection fail.
 #_advanced

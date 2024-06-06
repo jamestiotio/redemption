@@ -862,7 +862,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
 
     _.member(MemberInfo{
         .name = "enable_kerberos",
-        .value = value(false),
+        .value = value(true),
         .spec = connpolicy(rdp, L),
         .desc =
             "If enabled, NLA authentication will try Kerberos before NTLM.\n"
@@ -871,7 +871,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
 
     _.member(MemberInfo{
         .name = "allow_nla_ntlm_fallback",
-        .value = value<bool>(true),
+        .value = value<bool>(false),
         .spec = connpolicy(rdp, L),
         .desc = "Allow NTLM fallback if Kerberos authentication fail.\n"
         "(if enable_kerberos is disabled, this value is ignored).",
@@ -879,7 +879,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
 
     _.member(MemberInfo{
         .name = "allow_tls_only_fallback",
-        .value = value<bool>(true),
+        .value = value<bool>(false),
         .spec = connpolicy(rdp, L),
         .desc = "Allow TLS only fallback if NLA authentication fail.\n"
         "(if enable_nla is disabled, this value is ignored).",
