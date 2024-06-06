@@ -937,7 +937,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:allow_rdp_legacy_fallback <br/>
-    /// default: true <br/>
+    /// default: false <br/>
     struct mod_rdp::allow_rdp_legacy_fallback {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
         // for old cppcheck
@@ -945,7 +945,7 @@ namespace cfg
         static constexpr ::configs::authid_t index { ::configs::cfg_indexes::section5 + 5};
         using type = bool;
         using mapped_type = bool;
-        type value { true };
+        type value { false };
     };
     /// Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3 <br/>
     /// type: uint32_t <br/>

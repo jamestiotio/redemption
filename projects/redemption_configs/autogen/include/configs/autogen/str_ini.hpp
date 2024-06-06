@@ -386,7 +386,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
 # (acl config: proxy ⇐ mod_rdp:allow_rdp_legacy_fallback)
-#allow_rdp_legacy_fallback = 1
+#allow_rdp_legacy_fallback = 0
 
 # Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3
 # (min = 0)

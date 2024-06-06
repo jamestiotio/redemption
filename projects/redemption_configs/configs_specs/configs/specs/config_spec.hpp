@@ -887,7 +887,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
 
     _.member(MemberInfo{
         .name = "allow_rdp_legacy_fallback",
-        .value = value<bool>(true),
+        .value = value<bool>(false),
         .spec = connpolicy(rdp, L, spec::advanced),
         .desc = "Allow Standard RDP Security (Legacy) fallback if TLS connection fail.",
     });

@@ -76,7 +76,7 @@ allow_tls_only_fallback = boolean(default=True)
 
 # Allow Standard RDP Security (Legacy) fallback if TLS connection fail.
 #_advanced
-allow_rdp_legacy_fallback = boolean(default=True)
+allow_rdp_legacy_fallback = boolean(default=False)
 
 # Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3
 tls_min_level = integer(min=0, default=0)

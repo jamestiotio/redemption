@@ -778,7 +778,7 @@
       "section": "mod_rdp",
       "name": "allow_rdp_legacy_fallback",
       "type": "bool",
-      "value": true,
+      "value": false,
       "description": "Allow Standard RDP Security (Legacy) fallback if TLS connection fail.",
       "rdp": true,
       "aclToProxy": true,
