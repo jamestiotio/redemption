@@ -56,7 +56,8 @@ public:
     const bool rdp_legacy_fallback;
 
 private:
-    bool krb;
+    const bool krb;
+    bool krb_state = krb;
 public:
     const bool restricted_admin_mode;
 

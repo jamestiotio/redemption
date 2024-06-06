@@ -137,6 +137,7 @@
     f(ERR_NEGO_INCONSISTENT_FLAGS)                           \
     f(ERR_NEGO_HYBRID_REQUIRED_BY_SERVER)                    \
     f(ERR_NEGO_NLA_REQUIRED_BY_RESTRICTED_ADMIN_MODE)        \
+    f(ERR_NEGO_KRB_REQUIRED)                                 \
     f(ERR_NEGO_NLA_REQUIRED)                                 \
     f(ERR_NEGO_SSL_REQUIRED)                                 \
                                                              \

@@ -66,6 +66,18 @@ LocalErrMsg LocalErrMsg::from_error(Error const& error) noexcept
     case ERR_RDP_NEGOTIATION:
         return {&trkeys::err_rdp_negotiation};
 
+    case ERR_NEGO_NLA_REQUIRED_BY_RESTRICTED_ADMIN_MODE:
+        return {&trkeys::err_rdp_nego_nla_restricted_admin};
+
+    case ERR_NEGO_KRB_REQUIRED:
+        return {&trkeys::err_rdp_nego_krb_required};
+
+    case ERR_NEGO_NLA_REQUIRED:
+        return {&trkeys::err_rdp_nego_nla_required};
+
+    case ERR_NEGO_SSL_REQUIRED:
+        return {&trkeys::err_rdp_nego_ssl_required};
+
     case ERR_LIC:
         return {&trkeys::err_lic};
 

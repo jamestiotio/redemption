@@ -135,6 +135,10 @@ namespace trkeys
     TR_KV(err_vnc_connection_error, "VNC connection error.");
     TR_KV(err_rdp_unsupported_monitor_layout, "Unsupported client display monitor layout.");
     TR_KV(err_rdp_negotiation, "RDP negotiation phase failure.");
+    TR_KV(err_rdp_nego_krb_required, "CREDSSP Kerberos Authentication Failed, NTLM not allowed.");
+    TR_KV(err_rdp_nego_nla_required, "NLA failed. TLS only not allowed.");
+    TR_KV(err_rdp_nego_nla_restricted_admin, "NLA failed. NLA required by restricted admin mode.");
+    TR_KV(err_rdp_nego_ssl_required, "Can't activate SSL. RDP Legacy only not allowed");
     TR_KV(err_lic, "An error occurred during the licensing protocol.");
     TR_KV(err_rail_client_execute, "The RemoteApp program did not start on the remote computer.");
     TR_KV(err_rail_starting_program, "Cannot start the RemoteApp program.");

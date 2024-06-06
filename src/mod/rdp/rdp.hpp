@@ -2202,6 +2202,10 @@ private:
                     case ERR_TRANSPORT_TLS_CERTIFICATE_CORRUPTED:
                     case ERR_TRANSPORT_TLS_CERTIFICATE_INACCESSIBLE:
                     case ERR_NLA_AUTHENTICATION_FAILED:
+                    case ERR_NEGO_NLA_REQUIRED_BY_RESTRICTED_ADMIN_MODE:
+                    case ERR_NEGO_KRB_REQUIRED:
+                    case ERR_NEGO_NLA_REQUIRED:
+                    case ERR_NEGO_SSL_REQUIRED:
                         throw error;
                     default: break;
                     }

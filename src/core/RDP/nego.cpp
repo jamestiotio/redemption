@@ -362,7 +362,7 @@ RdpNego::State RdpNego::recv_connection_confirm(OutTransport trans, InStream x22
         if (x224.rdp_neg_code == X224::SSL_NOT_ALLOWED_BY_SERVER
             || x224.rdp_neg_code == X224::SSL_CERT_NOT_ON_SERVER) {
             if (!this->rdp_legacy_fallback) {
-                LOG(LOG_ERR, "Can't activate SSL. RDP Legacy only not allowed");
+                LOG(LOG_ERR, "Can't activate SSL. RDP Legacy only not allowed.");
                 throw Error(ERR_NEGO_SSL_REQUIRED);
             }
 
@@ -421,7 +421,7 @@ RdpNego::State RdpNego::activate_ssl_hybrid(OutTransport trans, ServerNotifier& 
     this->nla_tried = true;
 
     LOG(LOG_INFO, "activating CREDSSP");
-    if (this->krb) {
+    if (this->krb_state) {
         #ifndef __EMSCRIPTEN__
         try {
             this->credsspKerberos = std::make_unique<rdpCredsspClientKerberos>(
@@ -438,18 +438,18 @@ RdpNego::State RdpNego::activate_ssl_hybrid(OutTransport trans, ServerNotifier& 
         catch (const Error &) {
             if (!nla_ntlm_fallback) {
                 LOG(LOG_INFO, "CREDSSP Kerberos Authentication Failed, NTLM not allowed");
-                throw;
+                return this->fallback_to_tls(trans);
             }
             LOG(LOG_INFO, "CREDSSP Kerberos Authentication Failed, fallback to NTLM");
-            this->krb = false;
+            this->krb_state = false;
         }
         #else
-        this->krb = false;
+        this->krb_state = false;
         LOG(LOG_ERR, "Unsupported kerberos: fallback to NTLM");
         #endif
     }
 
-    if (!this->krb) {
+    if (!this->krb_state) {
         try {
             this->NTLM = std::make_unique<rdpClientNTLM>(
                 this->user, this->domain,
@@ -465,8 +465,7 @@ RdpNego::State RdpNego::activate_ssl_hybrid(OutTransport trans, ServerNotifier& 
         }
         catch (const Error &){
             LOG(LOG_INFO, "NLA/CREDSSP NTLM Authentication Failed (1)");
-            (void)this->fallback_to_tls(trans);
-            return State::Negociate;
+            return this->fallback_to_tls(trans);
         }
     }
 
@@ -477,7 +476,7 @@ RdpNego::State RdpNego::recv_credssp(OutTransport trans, bytes_view data)
 {
     LOG_IF(bool(this->verbose & Verbose::negotiation), LOG_INFO, "RdpNego::recv_credssp");
 
-    if (this->krb) {
+    if (this->krb_state) {
         #ifndef __EMSCRIPTEN__
         switch (this->credsspKerberos->authenticate_next(data))
         {
@@ -492,7 +491,7 @@ RdpNego::State RdpNego::recv_credssp(OutTransport trans, bytes_view data)
         }
         #else
             LOG(LOG_ERR, "Unsupported kerberos");
-            assert(!this->krb);
+            assert(!this->krb_state);
         #endif
     }
     else {
@@ -532,12 +531,16 @@ RdpNego::State RdpNego::fallback_to_tls(OutTransport trans)
 
     if (*this->current_password) {
         LOG(LOG_INFO, "try next password");
+        this->krb_state = this->krb;
         this->send_negotiation_request(trans);
     }
     else {
         LOG(LOG_INFO, "Can't activate NLA");
         if (!this->tls_only_fallback) {
             LOG(LOG_ERR, "NLA failed. TLS only not allowed");
+            if (this->krb_state) {
+                throw Error(ERR_NEGO_KRB_REQUIRED);
+            }
             throw Error(ERR_NEGO_NLA_REQUIRED);
         }
         LOG(LOG_INFO, "falling back to SSL only");
@@ -545,7 +548,7 @@ RdpNego::State RdpNego::fallback_to_tls(OutTransport trans)
         this->send_negotiation_request(trans);
         return State::Negociate;
     }
-    return State::Credssp;
+    return State::Negociate;
 }
 
 
