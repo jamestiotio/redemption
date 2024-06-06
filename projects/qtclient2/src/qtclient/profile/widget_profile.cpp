@@ -198,7 +198,7 @@ struct KbdWidget
         select.addItem(QStringLiteral("Unknown"), QVariant(uint32_t(0)));
         for (auto&& layout : keylayouts()) {
             auto text = static_str_concat<128>(
-                truncated_bounded_array_view<64>(layout.name),
+                truncatable_bounded_array_view<64>(layout.name),
                 " (0x"_sized_av, to_hex(layout.kbdid), ')');
             select.addItem(to_qstring(text), QVariant(safe_cast<uint32_t>(layout.kbdid)));
         }

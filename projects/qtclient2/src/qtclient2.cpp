@@ -185,7 +185,8 @@ int main(int argc, char** argv)
     );
 
     mod_rdp_params.device_id          = "device_id";
-    mod_rdp_params.enable_tls         = profile.enable_tls;
+    mod_rdp_params.allow_tls_only     = profile.enable_tls;
+    mod_rdp_params.allow_nla_ntlm     = profile.enable_nla;
     mod_rdp_params.enable_nla         = profile.enable_nla;
     mod_rdp_params.enable_fastpath    = true;
     mod_rdp_params.enable_remotefx    = false;

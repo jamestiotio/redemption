@@ -178,7 +178,7 @@ class File:
         self.root = root
         self.path = path
         self.type = type
-        #self.user_includes = set()
+        self.user_includes = set()
         #self.unknown_user_includes = set()
         #self.system_includes = set()
         #self.source_deps = set()

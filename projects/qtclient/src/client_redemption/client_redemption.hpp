@@ -395,7 +395,8 @@ public:
                 );
 
                 mod_rdp_params.device_id          = "device_id";
-                mod_rdp_params.enable_tls         = this->config.modRDPParamsData.enable_tls;
+                mod_rdp_params.allow_tls_only     = this->config.modRDPParamsData.enable_tls;
+                mod_rdp_params.allow_nla_ntlm     = this->config.modRDPParamsData.enable_nla;
                 mod_rdp_params.enable_nla         = this->config.modRDPParamsData.enable_nla;
                 mod_rdp_params.enable_fastpath    = true;
                 mod_rdp_params.enable_remotefx    = this->config.enable_remotefx;

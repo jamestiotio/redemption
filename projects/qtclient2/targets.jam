@@ -44,6 +44,7 @@ exe qtclient2 :
   <library>src/core/error.o
   <library>src/core/font.o
   <library>src/gdi/clip_from_cmd.o
+  <library>src/gdi/draw_utils.o
   <library>src/gdi/graphic_api.o
   <library>src/gdi/protected_graphics.o
   <library>src/gdi/screen_functions.o
@@ -172,6 +173,7 @@ obj src/core/dynamic_channels_authorizations.o : $(REDEMPTION_SRC_PATH)/core/dyn
 obj src/core/error.o : $(REDEMPTION_SRC_PATH)/core/error.cpp : $(BOOST_STACKTRACE_CXXFLAGS) ;
 obj src/core/font.o : $(REDEMPTION_SRC_PATH)/core/font.cpp ;
 obj src/gdi/clip_from_cmd.o : $(REDEMPTION_SRC_PATH)/gdi/clip_from_cmd.cpp ;
+obj src/gdi/draw_utils.o : $(REDEMPTION_SRC_PATH)/gdi/draw_utils.cpp ;
 obj src/gdi/graphic_api.o : $(REDEMPTION_SRC_PATH)/gdi/graphic_api.cpp ;
 obj src/gdi/protected_graphics.o : $(REDEMPTION_SRC_PATH)/gdi/protected_graphics.cpp ;
 obj src/gdi/screen_functions.o : $(REDEMPTION_SRC_PATH)/gdi/screen_functions.cpp ;
@@ -279,6 +281,7 @@ explicit
   src/core/error.o
   src/core/font.o
   src/gdi/clip_from_cmd.o
+  src/gdi/draw_utils.o
   src/gdi/graphic_api.o
   src/gdi/protected_graphics.o
   src/gdi/screen_functions.o

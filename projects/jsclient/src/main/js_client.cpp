@@ -379,7 +379,9 @@ public:
         rdp_params.cache_verbose = get_or(config, "cacheVerbose", BmpCache::Verbose(0));
 
         rdp_params.device_id           = "device_id"; // for certificate path only
-        rdp_params.enable_tls          = false;
+        rdp_params.allow_nla_ntlm      = false;
+        rdp_params.allow_tls_only      = false;
+        rdp_params.allow_rdp_legacy    = true;
         rdp_params.enable_nla          = false;
         rdp_params.server_cert_check   = ServerCertCheck::always_succeed;
         rdp_params.ignore_auth_channel = true;
