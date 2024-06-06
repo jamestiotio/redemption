@@ -134,7 +134,7 @@ ModPack create_mod_vnc(
             ini.get<cfg::mod_vnc::enable_ipv6>(),
             ini.get<cfg::all_target_mod::connection_establishment_timeout>(),
             ini.get<cfg::all_target_mod::tcp_user_timeout>())
-        : addr_connect_blocking(
+        : addr_connect(
             ini.get<cfg::context::tunneling_target_host>().c_str(),
             std::chrono::seconds(1), false);
 

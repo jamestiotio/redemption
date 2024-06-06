@@ -846,7 +846,7 @@ ModPack create_mod_rdp(
             ini.get<cfg::all_target_mod::connection_establishment_timeout>(),
             ini.get<cfg::all_target_mod::tcp_user_timeout>(),
             mod_rdp_params.application_params.shadow_invite_time)
-        : addr_connect_blocking(
+        : addr_connect(
             ini.get<cfg::context::tunneling_target_host>().c_str(),
             std::chrono::seconds(1), false);
     mod_rdp_params.session_probe_params.vc_params.target_ip = ini.get<cfg::context::ip_target>();
