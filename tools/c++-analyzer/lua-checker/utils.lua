@@ -26,7 +26,7 @@ local remove_comments = peg.Cs(((singleLineComment + multiLineComment) / '' + 1)
 
 local format = string.format
 
-local print_error = function(s) io.stderr:write(s) end
+local print_error = function(s) io.stderr:write('\27[31m', s, '\27[m') end
 
 local content_by_file = {}
 
