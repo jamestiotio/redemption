@@ -329,7 +329,7 @@ template<class ChFn, class ChErrorFn, class TruncatedFn>
 bytes_view utf8_for_each(bytes_view utf8, ChFn&& ch_fn, ChErrorFn&& err_fn, TruncatedFn&& truncated_fn)
 {
     auto source = utf8.begin();
-    auto last = utf8.end();
+    const auto last = utf8.end();
 
 #define UTF8_FOR_EACH_PROCESS(fn, ...) do {                              \
     using result_type = decltype(fn(__VA_ARGS__));                       \
@@ -350,115 +350,58 @@ bytes_view utf8_for_each(bytes_view utf8, ChFn&& ch_fn, ChErrorFn&& err_fn, Trun
     }                                                                    \
 } while (0)
 
-#define UTF8_FOR_EACH_TRUNCATED_PROCESS() do {                                     \
-    auto truncated_av = bytes_view{source, last};                                  \
-    using result_type = decltype(truncated_fn(utf8_char_truncated{truncated_av})); \
-    if constexpr (std::is_same_v<utf8_decode_new_offset, result_type>) {           \
-        auto new_offset = truncated_fn(utf8_char_truncated{truncated_av});         \
-        assert(source <= new_offset.p && new_offset.p <= last                      \
-            && "invalid pointer");                                                 \
-        source = new_offset.p;                                                     \
-    }                                                                              \
-    else {                                                                         \
-        truncated_fn(utf8_char_truncated{truncated_av});                           \
-    }                                                                              \
-} while (0)
-
-    // fast loop with unchecked size
-    if (utf8.size() >= 4) {
-        while (source <= last - 4) {
-            switch (*source >> 4) {
-                [[likely]]
-                case 0:
-                case 1: case 2: case 3:
-                case 4: case 5: case 6: case 7:
-                    UTF8_FOR_EACH_PROCESS(ch_fn, utf8_char_1byte{source});
-                    source += 1;
-                    break;
-
-                /* handle U+0080..U+07FF inline : 2 bytes sequences */
-                case 0xC: case 0xD:
-                    UTF8_FOR_EACH_PROCESS(ch_fn, utf8_char_2bytes{source});
-                    source += 2;
-                    break;
-
-                /* handle U+8FFF..U+FFFF inline : 3 bytes sequences */
-                case 0xE:
-                    UTF8_FOR_EACH_PROCESS(ch_fn, utf8_char_3bytes{source});
-                    source += 3;
-                    break;
-
-                case 0xF:
-                    UTF8_FOR_EACH_PROCESS(ch_fn, utf8_char_4bytes{source});
-                    source += 4;
-                    break;
-
-                // these should never happen on valid UTF8
-                [[unlikely]]
-                case 8: case 9: case 0xA: case 0xB:
-                    UTF8_FOR_EACH_PROCESS(err_fn, utf8_char_invalid{{source, last}});
-                    source += 1;
-                    break;
-
-                default:
-                    REDEMPTION_UNREACHABLE();
-            }
-        }
-    }
-
-    // last loops with checked size
     while (source < last) {
-        switch (*source >> 4) {
-            [[likely]]
-            case 0:
-            case 1: case 2: case 3:
-            case 4: case 5: case 6: case 7:
-                UTF8_FOR_EACH_PROCESS(ch_fn, utf8_char_1byte{source});
-                source += 1;
-                break;
-
-            /* handle U+0080..U+07FF inline : 2 bytes sequences */
-            case 0xC: case 0xD:
-                if (last - source >= 2) [[likely]] {
-                    UTF8_FOR_EACH_PROCESS(ch_fn, utf8_char_2bytes{source});
-                    source += 2;
-                }
-                else {
-                    UTF8_FOR_EACH_TRUNCATED_PROCESS();
-                    return {source, last};
-                }
-                break;
-                /* handle U+8FFF..U+FFFF inline : 3 bytes sequences */
-
-            case 0xE:
-                if (last - source >= 3) [[likely]] {
-                    UTF8_FOR_EACH_PROCESS(ch_fn, utf8_char_3bytes{source});
-                    source += 3;
-                }
-                else {
-                    UTF8_FOR_EACH_TRUNCATED_PROCESS();
-                    return {source, last};
-                }
-                break;
-
-            case 0xF:
-                UTF8_FOR_EACH_TRUNCATED_PROCESS();
-                return {source, last};
-
-            // these should never happen on valid UTF8
-            [[unlikely]]
-            case 8: case 9: case 0xA: case 0xB:
+        if (*source <= 0x7f) {
+            UTF8_FOR_EACH_PROCESS(ch_fn, utf8_char_1byte{source});
+            source += 1;
+            continue;
+        }
+        /* handle U+0080..U+07FF inline : 2 bytes sequences */
+        else if (*source <= 0xDF) {
+            if (*source <= 0xBF) [[unlikely]] {
                 UTF8_FOR_EACH_PROCESS(err_fn, utf8_char_invalid{{source, last}});
                 source += 1;
-                break;
-
-            default:
-                REDEMPTION_UNREACHABLE();
+                continue;
+            }
+            else if (last - source >= 2) [[likely]] {
+                UTF8_FOR_EACH_PROCESS(ch_fn, utf8_char_2bytes{source});
+                source += 2;
+                continue;
+            }
         }
+        /* handle U+8FFF..U+FFFF inline : 3 bytes sequences */
+        else if (*source <= 0xEF) {
+            if (last - source >= 3) [[likely]] {
+                UTF8_FOR_EACH_PROCESS(ch_fn, utf8_char_3bytes{source});
+                source += 3;
+                continue;
+            }
+        }
+        else /*if (*source <= 0xFF)*/ {
+            if (last - source >= 4) [[likely]] {
+                UTF8_FOR_EACH_PROCESS(ch_fn, utf8_char_4bytes{source});
+                source += 4;
+                continue;
+            }
+        }
+
+        auto truncated_av = bytes_view{source, last};
+        using result_type = decltype(truncated_fn(utf8_char_truncated{truncated_av}));
+        if constexpr (std::is_same_v<utf8_decode_new_offset, result_type>) {
+            auto new_offset = truncated_fn(utf8_char_truncated{truncated_av});
+            assert(source <= new_offset.p && new_offset.p <= last
+                && "invalid pointer");
+            source = new_offset.p;
+        }
+        else {
+            truncated_fn(utf8_char_truncated{truncated_av});
+        }
+        break;
     }
 
     return {source, last};
 
+#undef UTF8_FOR_EACH_TRUNCATED_PROCESS
 #undef UTF8_FOR_EACH_PROCESS
 }
 
@@ -494,40 +437,35 @@ decltype(auto) utf8_read_one_char(
 
     auto source = utf8.begin();
 
-    switch (*source >> 4) {
-        [[likely]]
-        case 0:
-        case 1: case 2: case 3:
-        case 4: case 5: case 6: case 7:
-            return ch_fn(utf8_char_1byte{source});
+    if (*source <= 0x7f) {
+        return ch_fn(utf8_char_1byte{source});
+    }
 
-        /* handle U+0080..U+07FF inline : 2 bytes sequences */
-        case 0xC: case 0xD:
-            if (utf8.size() >= 2) [[likely]] {
-                return ch_fn(utf8_char_2bytes{source});
-            }
-            return truncated_fn(utf8_char_truncated{utf8});
-            /* handle U+8FFF..U+FFFF inline : 3 bytes sequences */
-
-        case 0xE:
-            if (utf8.size() >= 3) [[likely]] {
-                return ch_fn(utf8_char_3bytes{source});
-            }
-            return truncated_fn(utf8_char_truncated{utf8});
-
-        case 0xF:
-            if (utf8.size() >= 4) [[likely]] {
-                return ch_fn(utf8_char_4bytes{source});
-            }
-            return truncated_fn(utf8_char_truncated{utf8});
-
-        // these should never happen on valid UTF8
-        [[unlikely]]
-        case 8: case 9: case 0xA: case 0xB:
+    /* handle U+0080..U+07FF inline : 2 bytes sequences */
+    if (*source <= 0xDF) {
+        if (*source <= 0xBF) [[unlikely]] {
             return err_fn(utf8_char_invalid{utf8});
+        }
 
-        default:
-            REDEMPTION_UNREACHABLE();
+        if (utf8.size() >= 2) [[likely]] {
+            return ch_fn(utf8_char_2bytes{source});
+        }
+        return truncated_fn(utf8_char_truncated{utf8});
+    }
+
+    /* handle U+8FFF..U+FFFF inline : 3 bytes sequences */
+    if (*source <= 0xEF) {
+        if (utf8.size() >= 3) [[likely]] {
+            return ch_fn(utf8_char_3bytes{source});
+        }
+        return truncated_fn(utf8_char_truncated{utf8});
+    }
+
+    /*if (*source <= 0xFF)*/ {
+        if (utf8.size() >= 4) [[likely]] {
+            return ch_fn(utf8_char_4bytes{source});
+        }
+        return truncated_fn(utf8_char_truncated{utf8});
     }
 }
 
