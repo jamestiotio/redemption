@@ -52,6 +52,13 @@ public:
 
     TlsResult enable_client_tls(ServerNotifier & server_notifier, TlsConfig const& tls_config, AnonymousTls anonymous_tls) override;
 
+    TlsResult enable_server_tls(const char * certificate_password, TlsConfig const& tls_config)
+    {
+        (void)certificate_password;
+        (void)tls_config;
+        return TlsResult::Ok;
+    }
+
     bool disconnect() override;
     bool connect() override;
 
