@@ -54,7 +54,7 @@ public:
         return TlsResult::Fail;
     }
 
-    virtual Transport::TlsResult enable_server_tls(const char * certificate_password, TlsConfig const& tls_config)
+    virtual TlsResult enable_server_tls(const char * certificate_password, TlsConfig const& tls_config)
     {
         // default enable_tls do nothing
         (void)certificate_password;
