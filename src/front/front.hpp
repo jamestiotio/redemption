@@ -2950,7 +2950,7 @@ public:
         }
     }
 
-    void incoming(Callback & cb) /*NOLINT*/
+    void incoming(Callback & cb)
     {
         LOG_IF(bool(this->verbose & Verbose::basic_trace3), LOG_INFO, "Front::incoming");
 
