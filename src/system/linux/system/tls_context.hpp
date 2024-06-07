@@ -523,7 +523,7 @@ public:
             }
             tls_ctx_print_error("enable_server_tls", error_msg);
             if (errnum) {
-                LOG(LOG_ERR, "TLSContext::enable_client_tls errno=%d %s",
+                LOG(LOG_ERR, "TLSContext::enable_server_tls errno=%d %s",
                     errnum, strerror(errnum));
             }
             return Transport::TlsResult::Fail;
