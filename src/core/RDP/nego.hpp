@@ -97,14 +97,14 @@ private:
 
     enum class [[nodiscard]] State
     {
-        Negociate,
+        Negotiate,
         SslHybrid,
         Tls,
         Credssp,
         Final,
     };
 
-    State state = State::Negociate;
+    State state = State::Negotiate;
 
 public:
     TlsConfig tls_config;

@@ -537,7 +537,7 @@ public:
             log_cipher_list(this->allocated_ssl, "Server");
         }
 
-        LOG(LOG_INFO, "TLSContext::Negociated cipher used %s", SSL_CIPHER_get_name(SSL_get_current_cipher(this->allocated_ssl)));
+        LOG(LOG_INFO, "TLSContext::Negotiated cipher used %s", SSL_CIPHER_get_name(SSL_get_current_cipher(this->allocated_ssl)));
 
         return Transport::TlsResult::Ok;
     }

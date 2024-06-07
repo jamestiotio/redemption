@@ -246,20 +246,20 @@ void RdpNego::set_lb_info(uint8_t * lb_info, size_t lb_info_length)
 bool RdpNego::recv_next_data(TpduBuffer& tpdubuf, Transport& trans, ServerNotifier& notifier)
 {
     switch (this->state) {
-        case State::Negociate:
-            LOG_IF(bool(this->verbose & Verbose::negotiation), LOG_INFO, "RdpNego::recv_next_data::Negociate");
+        case State::Negotiate:
+            LOG_IF(bool(this->verbose & Verbose::negotiation), LOG_INFO, "RdpNego::recv_next_data::Negotiate");
             tpdubuf.load_data(trans);
             if (!tpdubuf.next(TpduBuffer::PDU)) {
                 return true;
             }
             do {
-                LOG_IF(bool(this->verbose & Verbose::negotiation), LOG_INFO, "nego->state=RdpNego::NEGO_STATE_NEGOCIATE");
+                LOG_IF(bool(this->verbose & Verbose::negotiation), LOG_INFO, "nego->state=RdpNego::NEGO_STATE_NEGOTIATE");
                 LOG(LOG_INFO, "RdpNego::NEGO_STATE_%s",
                                     (this->nla) ? "NLA" :
                                     (this->tls) ? "TLS" :
                                                   "RDP");
                 this->state = this->recv_connection_confirm(trans, InStream(tpdubuf.current_pdu_buffer()), notifier);
-            } while (this->state == State::Negociate && tpdubuf.next(TpduBuffer::PDU));
+            } while (this->state == State::Negotiate && tpdubuf.next(TpduBuffer::PDU));
             return (this->state != State::Final);
 
         case State::SslHybrid:
@@ -286,7 +286,7 @@ bool RdpNego::recv_next_data(TpduBuffer& tpdubuf, Transport& trans, ServerNotifi
                 this->state = this->recv_credssp(trans, tpdubuf.current_pdu_buffer());
             }
 
-            while (this->state == State::Negociate && tpdubuf.next(TpduBuffer::PDU)) {
+            while (this->state == State::Negotiate && tpdubuf.next(TpduBuffer::PDU)) {
                 this->state = this->recv_connection_confirm(trans, InStream(tpdubuf.current_pdu_buffer()), notifier);
             }
             return (this->state != State::Final);
@@ -374,7 +374,7 @@ RdpNego::State RdpNego::recv_connection_confirm(OutTransport trans, InStream x22
             }
             this->enabled_protocols = RdpNegoProtocols::Rdp;
             this->send_negotiation_request(trans);
-            return State::Negociate;
+            return State::Negotiate;
         }
     }
 
@@ -546,9 +546,9 @@ RdpNego::State RdpNego::fallback_to_tls(OutTransport trans)
         LOG(LOG_INFO, "falling back to SSL only");
         this->enabled_protocols = RdpNegoProtocols::Tls | RdpNegoProtocols::Rdp;
         this->send_negotiation_request(trans);
-        return State::Negociate;
+        return State::Negotiate;
     }
-    return State::Negociate;
+    return State::Negotiate;
 }
 
 

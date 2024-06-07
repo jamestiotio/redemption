@@ -1629,7 +1629,7 @@ struct DeviceWriteRequest {
         stream.in_skip_bytes(20);
 
         // TODO: improve Length check: should take care of fragmentation
-        // also 1600 is really a negociated value and we should use actual value
+        // also 1600 is really a negotiated value and we should use actual value
 
         // {
         //     int exp = this->Length;
