@@ -1055,7 +1055,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # This parameter allows you to choose the behavior of the RDP Proxy in case of detection of Windows account manipulation.
 # Detectable account manipulations are the creation, deletion of a Windows account, and the addition and deletion of an account from a Windows user group.
 #   0: allow: User action will be accepted
-#   1: notify: (Same thing as 'allow') 
+#   1: notify: (Same thing as 'allow')
 #   2: deny: User action will be rejected
 # (acl config: proxy ⇐ session_probe:on_account_manipulation)
 #on_account_manipulation = 0

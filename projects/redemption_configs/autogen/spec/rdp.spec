@@ -489,7 +489,7 @@ enable_bestsafe_interaction = boolean(default=False)
 # This parameter allows you to choose the behavior of the RDP Proxy in case of detection of Windows account manipulation.
 # Detectable account manipulations are the creation, deletion of a Windows account, and the addition and deletion of an account from a Windows user group.
 # &nbsp; &nbsp;   0: allow: User action will be accepted
-# &nbsp; &nbsp;   1: notify: (Same thing as 'allow') 
+# &nbsp; &nbsp;   1: notify: (Same thing as 'allow')
 # &nbsp; &nbsp;   2: deny: User action will be rejected
 on_account_manipulation = option(0, 1, 2, default=0)
 

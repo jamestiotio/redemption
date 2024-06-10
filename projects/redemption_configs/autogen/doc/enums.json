@@ -555,7 +555,7 @@
     }, {
       "name": "notify",
       "value": 1,
-      "description": "(Same thing as 'allow') "
+      "description": "(Same thing as 'allow')"
     }, {
       "name": "deny",
       "value": 2,

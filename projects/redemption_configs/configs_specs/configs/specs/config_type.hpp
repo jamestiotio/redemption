@@ -208,7 +208,7 @@ inline void config_type_definition(type_enumerations & e)
 
     e.enumeration_list("SessionProbeOnAccountManipulation", withNameWhenDescription, "For targets running WALLIX BestSafe only.")
       .value("allow",  "User action will be accepted")
-      .value("notify", "(Same thing as 'allow') ")
+      .value("notify", "(Same thing as 'allow')")
       .value("deny",   "User action will be rejected")
     ;
 

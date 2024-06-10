@@ -575,7 +575,7 @@ enum class SessionProbeOnAccountManipulation : uint8_t
 {
     // User action will be accepted
     allow = 0,
-    // (Same thing as 'allow') 
+    // (Same thing as 'allow')
     notify = 1,
     // User action will be rejected
     deny = 2,
