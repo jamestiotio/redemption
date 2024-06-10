@@ -2652,80 +2652,7 @@ struct GeneratorConfigWrapper
 
         // compute display name there is a word replacement
         if (mem_info.name.display.empty() && (has_ini || has_connpolicy)) {
-            auto const& replacements = display_name_word_replacement_table;
-
-            auto& name = mem_info.name.all;
-
-            auto find_replacement_at_start = [&](std::string_view str) -> WordReplacement const* {
-                for (auto& rep : replacements) {
-                    if (utils::starts_with(str, rep.word)
-                    && (str.size() == rep.word.size() || str[rep.word.size()] == '_')
-                    ) {
-                        return &rep;
-                    }
-                }
-                return nullptr;
-            };
-
-            auto replace = [&](auto f, auto repf){
-                char const* p = name.data();
-                while (p < name.end()) {
-                    auto str_size = static_cast<std::size_t>(name.end() - p);
-                    auto str = std::string_view{p, str_size};
-                    if (auto* rep = find_replacement_at_start(str)) {
-                        repf(*rep);
-                        str = rep->replacement;
-                        p += rep->word.size();
-                        if (str_size != rep->word.size()) {
-                            ++p;
-                        }
-                    }
-                    else {
-                        p = static_cast<char const*>(memchr(p, '_', str_size));
-                        if (p) {
-                            str_size = static_cast<std::size_t>(p - str.data());
-                            ++p;
-                        }
-                        else {
-                            p = name.end();
-                        }
-                        str = {str.data(), str_size};
-                    }
-
-                    f(str);
-                }
-            };
-
-            std::size_t replacement_size = 0;
-            // init rep_size
-            replace(
-                [](std::string_view /*str*/){},
-                [&](WordReplacement const& word_rep) {
-                    replacement_size += word_rep.replacement.size();
-                }
-            );
-
-            if (replacement_size) {
-                char* buf = display_names.emplace_back(std::make_unique<char[]>(
-                    replacement_size + name.size() + 1)
-                ).get();
-                char* p = buf;
-
-                replace(
-                    [&](std::string_view str){
-                        memcpy(p, str.data(), str.size());
-                        p += str.size();
-                        *p++ = ' ';
-                    },
-                    [&](WordReplacement const& /*word_rep*/) {}
-                );
-
-                // remove last space
-                --p;
-                // upper for first letter
-                *buf = ('a' <= *buf && *buf <= 'z') ? *buf + 'A' - 'a' : *buf;
-                mem_info.name.display = {buf, static_cast<std::size_t>(p-buf)};
-            }
+            compute_display_name_with_replacement(mem_info.name);
         }
 
         current_members->emplace_back(std::move(mem_info));
@@ -2761,6 +2688,94 @@ private:
         }
 
         return *section;
+    }
+
+    void compute_display_name_with_replacement(cfg_generators::MemberNames& names)
+    {
+        auto const& replacements = display_name_word_replacement_table;
+
+        auto& name = names.all;
+
+        auto find_replacement_at_start = [&](std::string_view str) -> WordReplacement const* {
+            for (auto& rep : replacements) {
+                if (utils::starts_with(str, rep.word)
+                && (str.size() == rep.word.size() || str[rep.word.size()] == '_')
+                ) {
+                    return &rep;
+                }
+            }
+            return nullptr;
+        };
+
+        auto replace = [&](auto f, auto repf){
+            char const* p = name.data();
+            while (p < name.end()) {
+                auto str_size = static_cast<std::size_t>(name.end() - p);
+                auto str = std::string_view{p, str_size};
+                if (auto* rep = find_replacement_at_start(str)) {
+                    repf(*rep);
+                    str = rep->replacement;
+                    p += rep->word.size();
+                    if (str_size != rep->word.size()) {
+                        ++p;
+                    }
+                }
+                else {
+                    p = static_cast<char const*>(memchr(p, '_', str_size));
+                    if (p) {
+                        str_size = static_cast<std::size_t>(p - str.data());
+                        ++p;
+                    }
+                    else {
+                        p = name.end();
+                    }
+                    str = {str.data(), str_size};
+                }
+
+                f(str);
+            }
+        };
+
+        std::size_t replacement_size = 0;
+        // init rep_size
+        replace(
+            [](std::string_view /*str*/){},
+            [&](WordReplacement const& word_rep) {
+                replacement_size += word_rep.replacement.size();
+            }
+        );
+
+        if (replacement_size) {
+            char* buf = display_names.emplace_back(std::make_unique<char[]>(
+                replacement_size + name.size() + 1)
+            ).get();
+            char* p = buf;
+            int first_word_is_replaced = 2;
+
+            replace(
+                [&](std::string_view str){
+                    memcpy(p, str.data(), str.size());
+                    p += str.size();
+                    *p++ = ' ';
+                    if (first_word_is_replaced != 1) {
+                        first_word_is_replaced = 0;
+                    }
+                },
+                [&](WordReplacement const& /*word_rep*/) {
+                    if (first_word_is_replaced == 2) {
+                        first_word_is_replaced = 1;
+                    }
+                }
+            );
+
+            // remove last space
+            --p;
+            // upper for first letter
+            if (first_word_is_replaced != 1) {
+                *buf = ('a' <= *buf && *buf <= 'z') ? *buf + 'A' - 'a' : *buf;
+            }
+            names.display = {buf, static_cast<std::size_t>(p-buf)};
+        }
     }
 
 public:
