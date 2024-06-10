@@ -365,7 +365,7 @@ namespace cpp_enumeration_writer
                 "{\n  \"name\": \""_av, e.name, "\""
                 ",\n  \"category\": \""_av, cat_s[int(e.cat)], "\""
                 ",\n  \"nameWhenDescription\": "_av,
-                    (e.display_name_option == type_enumeration::DisplayNameOption::WithNameWhenDdescription) ? "true"_av : "false"_av
+                    (e.display_name_option == type_enumeration::DisplayNameOption::WithNameWhenDescription) ? "true"_av : "false"_av
             );
             append_quoted_if_not_empty("description"_av, e.desc);
             append_quoted_if_not_empty("info"_av, e.info);

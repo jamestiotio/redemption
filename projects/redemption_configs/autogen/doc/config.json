@@ -293,6 +293,7 @@
       "type": "bool",
       "value": true,
       "description": "Displays a reminder box at the top of the session when a session is limited in time (timeframe or approval).\nThe reminder is displayed successively 30min, 10min, 5min and 1min before the session is closed.",
+      "displayName": "Enable end time warning OSD",
       "globalSpec": true,
       "advanced": true
     },
@@ -302,6 +303,7 @@
       "type": "bool",
       "value": true,
       "description": "Allow to show target device name with F12 during the session",
+      "displayName": "Enable OSD display remote target",
       "globalSpec": true,
       "aclToProxy": true,
       "advanced": true,
@@ -354,6 +356,7 @@
       "type": "milliseconds",
       "value": 0,
       "description": "Prevent Remote Desktop session timeouts due to idle TCP sessions by sending periodically keep alive packet to client.\n!!!May cause FreeRDP-based client to CRASH!!!\nSet to 0 to disable this feature.",
+      "displayName": "RDP keepalive connection interval",
       "globalSpec": true
     },
     {
@@ -361,7 +364,8 @@
       "name": "enable_ipv6",
       "type": "bool",
       "value": true,
-      "description": "⚠ Service redemption needs to be manually restarted to take changes into account\n\nEnable primary connection on ipv6.",
+      "description": "⚠ Service redemption needs to be manually restarted to take changes into account\n\nEnable primary connection on IPv6.",
+      "displayName": "Enable IPv6",
       "globalSpec": true,
       "advanced": true
     },
@@ -431,6 +435,7 @@
       "type": "bool",
       "value": false,
       "description": "Fallback to RDP Legacy Encryption if client does not support TLS.\n⚠ Enabling this option is a security risk.",
+      "displayName": "TLS fallback legacy",
       "globalSpec": true
     },
     {
@@ -439,6 +444,7 @@
       "type": "bool",
       "value": true,
       "description": "Enable TLS between client and proxy.",
+      "displayName": "TLS support",
       "iniOnly": true
     },
     {
@@ -447,6 +453,7 @@
       "type": "u32",
       "value": 2,
       "description": "Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3\n⚠ Lower this value only for compatibility reasons.",
+      "displayName": "TLS min level",
       "globalSpec": true
     },
     {
@@ -455,6 +462,7 @@
       "type": "u32",
       "value": 0,
       "description": "Maximal incoming TLS level 0=no restriction, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3\n⚠ Change this value only for compatibility reasons.",
+      "displayName": "TLS max level",
       "globalSpec": true
     },
     {
@@ -463,6 +471,7 @@
       "type": "str",
       "value": "HIGH:!ADH:!3DES:!SHA",
       "description": "[Not configured]: Compatible with more RDP clients (less secure)\nHIGH:!ADH:!3DES: Compatible only with MS Windows 7 client or more recent (moderately secure)\nHIGH:!ADH:!3DES:!SHA: Compatible only with MS Server Windows 2008 R2 client or more recent (more secure)\nThe format used is described on this page: https://www.openssl.org/docs/man3.1/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT",
+      "displayName": "SSL cipher list",
       "globalSpec": true
     },
     {
@@ -499,6 +508,7 @@
       "type": "bool",
       "value": false,
       "description": "Needed for primary NTLM or Kerberos connections over NLA.",
+      "displayName": "Enable NLA",
       "iniOnly": true
     },
     {
@@ -517,6 +527,7 @@
       "value": 4,
       "description": "Specifies the highest RDP compression support available on client connection session.",
       "tags": ["perf"],
+      "displayName": "RDP compression",
       "globalSpec": true,
       "advanced": true,
       "subtype": "RdpCompression"
@@ -593,6 +604,7 @@
       "value": true,
       "description": "Same effect as \"Transform glyph to bitmap\", but only for RDP client on iOS platform.",
       "tags": ["compatibility"],
+      "displayName": "Bogus iOS glyph support level",
       "globalSpec": true
     },
     {
@@ -620,6 +632,7 @@
       "type": "bool",
       "value": true,
       "description": "Enables display of message informing user that his/her session is being audited.",
+      "displayName": "Enable OSD 4 eyes",
       "globalSpec": true
     },
     {
@@ -627,8 +640,9 @@
       "name": "enable_remotefx",
       "type": "bool",
       "value": true,
-      "description": "Enable RemoteFx on client connection.\nNeeds - \"Max Color Depth\" option set to 32 (32-bit RGB mask + alpha)\n      - \"Enable RemoteFX\" option enabled in target connection policy",
+      "description": "Enable RemoteFX on client connection.\nNeeds - \"Max Color Depth\" option set to 32 (32-bit RGB mask + alpha)\n      - \"Enable RemoteFX\" option enabled in target connection policy",
       "tags": ["perf","compatibility"],
+      "displayName": "Enable RemoteFX",
       "globalSpec": true,
       "advanced": true
     },
@@ -659,6 +673,7 @@
       "type": "milliseconds",
       "value": 0,
       "description": "This parameter allows you to specify max timeout before a TCP connection is aborted. If the option value is specified as 0, TCP will use the system default.",
+      "displayName": "TCP user timeout",
       "rdp": true,
       "aclToProxy": true,
       "advanced": true,
@@ -699,6 +714,7 @@
       "value": 4,
       "description": "Specifies the highest RDP compression support available on server connection.",
       "tags": ["perf"],
+      "displayName": "RDP compression",
       "globalSpec": true,
       "advanced": true,
       "subtype": "RdpCompression"
@@ -740,6 +756,7 @@
       "type": "bool",
       "value": true,
       "description": "Enable NLA authentication in secondary target.",
+      "displayName": "Enable NLA",
       "rdp": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -750,6 +767,7 @@
       "type": "bool",
       "value": true,
       "description": "If enabled, NLA authentication will try Kerberos before NTLM.\n(if enable_nla is disabled, this value is ignored).",
+      "displayName": "Enable Kerberos",
       "rdp": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -760,6 +778,7 @@
       "type": "bool",
       "value": false,
       "description": "Allow NTLM fallback if Kerberos authentication fail.\n(if enable_kerberos is disabled, this value is ignored).",
+      "displayName": "Allow NLA NTLM fallback",
       "rdp": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -770,6 +789,7 @@
       "type": "bool",
       "value": false,
       "description": "Allow TLS only fallback if NLA authentication fail.\n(if enable_nla is disabled, this value is ignored).",
+      "displayName": "Allow TLS only fallback",
       "rdp": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -780,6 +800,7 @@
       "type": "bool",
       "value": false,
       "description": "Allow Standard RDP Security (Legacy) fallback if TLS connection fail.",
+      "displayName": "Allow RDP legacy fallback",
       "rdp": true,
       "aclToProxy": true,
       "advanced": true,
@@ -791,6 +812,7 @@
       "type": "u32",
       "value": 0,
       "description": "Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3",
+      "displayName": "TLS min level",
       "rdp": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -801,6 +823,7 @@
       "type": "u32",
       "value": 0,
       "description": "Maximal incoming TLS level 0=no restriction, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3",
+      "displayName": "TLS max level",
       "rdp": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -1053,6 +1076,7 @@
       "type": "bool",
       "value": false,
       "description": "As far as possible, use client-provided remote program (RemoteApp)",
+      "displayName": "Use client provided RemoteApp",
       "rdp": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -1063,6 +1087,7 @@
       "type": "bool",
       "value": true,
       "description": "As far as possible, use native RemoteApp capability",
+      "displayName": "Use native RemoteApp capability",
       "rdp": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -1144,6 +1169,7 @@
       "type": "bool",
       "value": false,
       "description": "Workaround option to support partial clipboard initialization performed by some versions of FreeRDP.",
+      "displayName": "Bogus FreeRDP clipboard",
       "globalSpec": true,
       "advanced": true
     },
@@ -1153,6 +1179,7 @@
       "type": "bool",
       "value": true,
       "description": "Workaround option to disable shared disk for RDP client on iOS platform only.",
+      "displayName": "Bogus iOS RDPDR virtual channel",
       "globalSpec": true,
       "advanced": true
     },
@@ -1172,6 +1199,7 @@
       "type": "bool",
       "value": true,
       "description": "Adds RDPDR channel metadata to session logs. Disabling this option makes shared disks more responsive, but metadata will no longer be collected.if at least one authorization of RDPDR is missing (Printer, ComPort, SmartCard, Drive), then this option is considered enabled.",
+      "displayName": "Enable RDPDR data analysis",
       "rdp": true,
       "aclToProxy": true,
       "advanced": true,
@@ -1183,6 +1211,7 @@
       "type": "milliseconds",
       "value": 0,
       "description": "Delay before automatically bypass Windows's Legal Notice screen in RemoteApp mode.\nSet to 0 to disable this feature.",
+      "displayName": "RemoteApp bypass legal notice delay",
       "globalSpec": true,
       "advanced": true
     },
@@ -1192,6 +1221,7 @@
       "type": "milliseconds",
       "value": 20000,
       "description": "Time limit to automatically bypass Windows's Legal Notice screen in RemoteApp mode.\nSet to 0 to disable this feature.",
+      "displayName": "RemoteApp bypass legal notice timeout",
       "globalSpec": true,
       "advanced": true
     },
@@ -1238,8 +1268,9 @@
       "name": "enable_remotefx",
       "type": "bool",
       "value": false,
-      "description": "Enables support of the remoteFX codec on target connection.",
+      "description": "Enables support of the RemoteFX codec on target connection.",
       "tags": ["compatibility"],
+      "displayName": "Enable RemoteFX",
       "rdp": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -1269,7 +1300,8 @@
       "name": "enable_ipv6",
       "type": "bool",
       "value": true,
-      "description": "Enable target connection on ipv6",
+      "description": "Enable target connection on IPv6",
+      "displayName": "Enable IPv6",
       "rdp": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -1419,6 +1451,7 @@
       "type": "bool",
       "value": true,
       "description": "This option only has an effect in RemoteApp sessions (RDS meaning).\nIf enabled, the RDP Proxy relies on the Session Probe to launch the remote programs.\nOtherwise, remote programs will be launched according to Remote Programs Virtual Channel Extension of Remote Desktop Protocol. This latter is the native method.\nThe difference is that Session Probe does not start a new application when its host session is resumed. Conversely, launching applications according to Remote Programs Virtual Channel Extension of Remote Desktop Protocol is not affected by this behavior. However, launching applications via the native method requires them to be published in Remote Desktop Services, which is unnecessary if launched by the Session Probe.",
+      "displayName": "Use Session Probe to launch remote program",
       "rdp": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -1453,6 +1486,7 @@
       "type": "bool",
       "value": false,
       "description": "",
+      "displayName": "Enable Session Probe",
       "rdp": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -1580,6 +1614,7 @@
       "type": "bool",
       "value": true,
       "description": "If enabled, disconnected auto-deployed Application Driver session will automatically terminate by Session Probe.",
+      "displayName": "Enable autodeployed Application Driver affinity",
       "rdp": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -1765,6 +1800,7 @@
       "type": "u32",
       "value": 0,
       "description": "This debugging feature was created to determine the cause of high CPU consumption by Session Probe in certain environments.\nAs a percentage, the effective alarm threshold is calculated in relation to the reference consumption determined at the start of the program execution. The alarm is deactivated if this value of parameter is less than 200 (200%% of reference consumption).\nWhen CPU consumption exceeds the allowed limit, debugging information can be collected (if the Windows-side logging is enabled), then Session Probe will sabotage. Additional behavior is defined by 'Cpu usage alarm action' parameter.",
+      "displayName": "CPU usage alarm threshold",
       "rdp": true,
       "aclToProxy": true,
       "advanced": true,
@@ -1777,6 +1813,7 @@
       "type": "enum",
       "value": 0,
       "description": "Additional behavior when CPU consumption exceeds what is allowed. Please refer to the 'Cpu usage alarm threshold' parameter.",
+      "displayName": "CPU usage alarm action",
       "rdp": true,
       "aclToProxy": true,
       "advanced": true,
@@ -1801,6 +1838,7 @@
       "type": "bool",
       "value": true,
       "description": "For application session only.\nIf enabled, during the End of session check, the processes that do not have a visible window will not be counted as active processes of the session. Without active processes, the application session will be logged off by the Session Probe.",
+      "displayName": "Ignore UI less processes during end of session check",
       "rdp": true,
       "aclToProxy": true,
       "advanced": true,
@@ -1866,6 +1904,7 @@
       "type": "bool",
       "value": false,
       "description": "This parameter has no effect on the device without BestSafe.\nIs enabled, Session Probe relies on BestSafe to perform the detection of application launches and the detection of outgoing connections.\nBestSafe has more efficient mechanisms in these tasks than Session Probe.\nFor more information please refer to 'Outbound connection monitoring rules' parameter and 'Process monitoring rules' parameter.",
+      "displayName": "Enable BestSafe interaction",
       "rdp": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -2188,6 +2227,7 @@
       "type": "bool",
       "value": false,
       "description": "",
+      "displayName": "Server is MacOS",
       "vnc": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -2198,6 +2238,7 @@
       "type": "bool",
       "value": false,
       "description": "When disabled, Ctrl + Alt becomes AltGr (Windows behavior)",
+      "displayName": "Server Unix alt",
       "vnc": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -2207,7 +2248,8 @@
       "name": "enable_ipv6",
       "type": "bool",
       "value": true,
-      "description": "Enable target connection on ipv6",
+      "description": "Enable target connection on IPv6",
+      "displayName": "Enable IPv6",
       "vnc": true,
       "aclToProxy": true,
       "logStategy": "1"
@@ -2549,6 +2591,7 @@
       "type": "bool",
       "value": true,
       "description": "",
+      "displayName": "Use Redis",
       "iniOnly": true
     },
     {
@@ -2557,6 +2600,7 @@
       "type": "milliseconds",
       "value": 500,
       "description": "",
+      "displayName": "Redis timeout",
       "iniOnly": true
     },
     {
@@ -2891,6 +2935,7 @@
       "type": "bool",
       "value": false,
       "description": "Enable websocket protocol (ws or wss with use_tls=1)",
+      "displayName": "Enable WebSocket",
       "iniOnly": true
     },
     {
@@ -2899,6 +2944,7 @@
       "type": "bool",
       "value": true,
       "description": "Use TLS with websocket (wss)",
+      "displayName": "Use TLS",
       "iniOnly": true
     },
     {
@@ -2924,6 +2970,7 @@
       "type": "uint",
       "value": 22,
       "description": "Port to be used for SSH tunneling",
+      "displayName": "SSH port",
       "vnc": true,
       "external": true
     },
@@ -2943,6 +2990,7 @@
       "type": "str",
       "value": "",
       "description": "Login to be used for SSH tunneling.",
+      "displayName": "SSH login",
       "vnc": true,
       "external": true
     },
@@ -2952,6 +3000,7 @@
       "type": "str",
       "value": "",
       "description": "Password to be used for SSH tunneling.",
+      "displayName": "SSH password",
       "vnc": true,
       "external": true
     },
@@ -4117,6 +4166,7 @@
       "type": "str",
       "value": "",
       "description": "",
+      "displayName": "Fake target IP",
       "iniOnly": true
     },
     {
@@ -4165,6 +4215,7 @@
       "type": "u32",
       "value": 0,
       "description": "- basic_trace         = 0x00000001\n- connection          = 0x00000002\n- security            = 0x00000004\n- capabilities        = 0x00000008\n- license             = 0x00000010\n- asynchronous_task   = 0x00000020\n- graphics_pointer    = 0x00000040\n- graphics            = 0x00000080\n- input               = 0x00000100\n- rail_order          = 0x00000200\n- credssp             = 0x00000400\n- negotiation         = 0x00000800\n- cache_persister     = 0x00001000\n- fsdrvmgr            = 0x00002000\n- sesprobe_launcher   = 0x00004000\n- sesprobe_repetitive = 0x00008000\n- drdynvc             = 0x00010000\n- surfaceCmd          = 0x00020000\n- cache_from_disk     = 0x00040000\n- bmp_info            = 0x00080000\n- drdynvc_dump        = 0x00100000\n- printer             = 0x00200000\n- rdpsnd              = 0x00400000\n- channels            = 0x00800000\n- rail                = 0x01000000\n- sesprobe            = 0x02000000\n- cliprdr             = 0x04000000\n- rdpdr               = 0x08000000\n- rail_dump           = 0x10000000\n- sesprobe_dump       = 0x20000000\n- cliprdr_dump        = 0x40000000\n- rdpdr_dump          = 0x80000000",
+      "displayName": "Mod RDP",
       "globalSpec": true,
       "hex": true,
       "advanced": true
@@ -4175,6 +4226,7 @@
       "type": "u32",
       "value": 0,
       "description": "- basic_trace     = 0x00000001\n- keymap_stack    = 0x00000002\n- draw_event      = 0x00000004\n- input           = 0x00000008\n- connection      = 0x00000010\n- hextile_encoder = 0x00000020\n- cursor_encoder  = 0x00000040\n- clipboard       = 0x00000080\n- zrle_encoder    = 0x00000100\n- zrle_trace      = 0x00000200\n- hextile_trace   = 0x00000400\n- cursor_trace    = 0x00001000\n- rre_encoder     = 0x00002000\n- rre_trace       = 0x00004000\n- raw_encoder     = 0x00008000\n- raw_trace       = 0x00010000\n- copyrect_encoder= 0x00020000\n- copyrect_trace  = 0x00040000\n- keymap          = 0x00080000",
+      "displayName": "Mod VNC",
       "globalSpec": true,
       "hex": true,
       "advanced": true
@@ -4273,6 +4325,7 @@
       "type": "enum",
       "value": 0,
       "description": "",
+      "displayName": "Mod RDP use failure simulation socket transport",
       "iniOnly": true,
       "subtype": "ModRdpUseFailureSimulationSocketTransport"
     },

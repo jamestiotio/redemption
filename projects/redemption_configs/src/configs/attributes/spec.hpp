@@ -96,6 +96,11 @@ enum class DestSpecFile : uint8_t
 };
 MK_ENUM_OP(DestSpecFile)
 
+constexpr bool contains_conn_policy(DestSpecFile dest)
+{
+    return bool(dest & ~(DestSpecFile::global_spec | DestSpecFile::ini_only));
+}
+
 
 enum class ResetBackToSelector : bool { No, Yes };
 
@@ -218,6 +223,31 @@ struct SpecInfo
     ResetBackToSelector reset_back_to_selector;
     Loggable loggable;
     std::string_view image_path;
+
+    bool has_spec() const
+    {
+        return bool(dest);
+    }
+
+    bool has_ini() const
+    {
+        return has_spec() && !bool(attributes & SpecAttributes::external);
+    }
+
+    bool has_acl() const
+    {
+        return bool(acl_io);
+    }
+
+    bool has_global_spec() const
+    {
+        return bool(dest & DestSpecFile::global_spec);
+    }
+
+    bool has_connpolicy() const
+    {
+        return contains_conn_policy(dest);
+    }
 };
 
 struct SesmanInfo

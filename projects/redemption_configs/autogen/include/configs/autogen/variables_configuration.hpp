@@ -338,6 +338,7 @@ namespace cfg
     /// Displays a reminder box at the top of the session when a session is limited in time (timeframe or approval). <br/>
     /// The reminder is displayed successively 30min, 10min, 5min and 1min before the session is closed. <br/>
     /// type: bool <br/>
+    /// displayName: Enable end time warning OSD <br/>
     /// default: true <br/>
     struct globals::enable_end_time_warning_osd {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -348,6 +349,7 @@ namespace cfg
     /// Allow to show target device name with F12 during the session <br/>
     /// type: bool <br/>
     /// acl ⇒ proxy <br/>
+    /// displayName: Enable OSD display remote target <br/>
     /// default: true <br/>
     struct globals::enable_osd_display_remote_target {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -406,6 +408,7 @@ namespace cfg
     /// !!!May cause FreeRDP-based client to CRASH!!! <br/>
     /// Set to 0 to disable this feature. <br/>
     /// type: std::chrono::milliseconds <br/>
+    /// displayName: RDP keepalive connection interval <br/>
     /// default: 0 <br/>
     struct globals::rdp_keepalive_connection_interval {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -415,8 +418,9 @@ namespace cfg
     };
     /// ⚠ Service redemption needs to be manually restarted to take changes into account <br/>
     ///  <br/>
-    /// Enable primary connection on ipv6. <br/>
+    /// Enable primary connection on IPv6. <br/>
     /// type: bool <br/>
+    /// displayName: Enable IPv6 <br/>
     /// default: true <br/>
     struct globals::enable_ipv6 {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -499,6 +503,7 @@ namespace cfg
     /// Fallback to RDP Legacy Encryption if client does not support TLS. <br/>
     /// ⚠ Enabling this option is a security risk. <br/>
     /// type: bool <br/>
+    /// displayName: TLS fallback legacy <br/>
     /// default: false <br/>
     struct client::tls_fallback_legacy {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -508,6 +513,7 @@ namespace cfg
     };
     /// Enable TLS between client and proxy. <br/>
     /// type: bool <br/>
+    /// displayName: TLS support <br/>
     /// default: true <br/>
     struct client::tls_support {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -518,6 +524,7 @@ namespace cfg
     /// Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3 <br/>
     /// ⚠ Lower this value only for compatibility reasons. <br/>
     /// type: uint32_t <br/>
+    /// displayName: TLS min level <br/>
     /// default: 2 <br/>
     struct client::tls_min_level {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -528,6 +535,7 @@ namespace cfg
     /// Maximal incoming TLS level 0=no restriction, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3 <br/>
     /// ⚠ Change this value only for compatibility reasons. <br/>
     /// type: uint32_t <br/>
+    /// displayName: TLS max level <br/>
     /// default: 0 <br/>
     struct client::tls_max_level {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -540,6 +548,7 @@ namespace cfg
     /// HIGH:!ADH:!3DES:!SHA: Compatible only with MS Server Windows 2008 R2 client or more recent (more secure) <br/>
     /// The format used is described on this page: https://www.openssl.org/docs/man3.1/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT <br/>
     /// type: std::string <br/>
+    /// displayName: SSL cipher list <br/>
     /// default: "HIGH:!ADH:!3DES:!SHA" <br/>
     struct client::ssl_cipher_list {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -583,6 +592,7 @@ namespace cfg
     };
     /// Needed for primary NTLM or Kerberos connections over NLA. <br/>
     /// type: bool <br/>
+    /// displayName: Enable NLA <br/>
     /// default: false <br/>
     struct client::enable_nla {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -605,6 +615,7 @@ namespace cfg
     };
     /// Specifies the highest RDP compression support available on client connection session. <br/>
     /// type: RdpCompression <br/>
+    /// displayName: RDP compression <br/>
     /// default: RdpCompression::rdp6_1 <br/>
     struct client::rdp_compression {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -679,6 +690,7 @@ namespace cfg
     };
     /// Same effect as "Transform glyph to bitmap", but only for RDP client on iOS platform. <br/>
     /// type: bool <br/>
+    /// displayName: Bogus iOS glyph support level <br/>
     /// default: true <br/>
     struct client::bogus_ios_glyph_support_level {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -705,6 +717,7 @@ namespace cfg
     };
     /// Enables display of message informing user that his/her session is being audited. <br/>
     /// type: bool <br/>
+    /// displayName: Enable OSD 4 eyes <br/>
     /// default: true <br/>
     struct client::enable_osd_4_eyes {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -712,10 +725,11 @@ namespace cfg
         using mapped_type = bool;
         type value { true };
     };
-    /// Enable RemoteFx on client connection. <br/>
+    /// Enable RemoteFX on client connection. <br/>
     /// Needs - "Max Color Depth" option set to 32 (32-bit RGB mask + alpha) <br/>
     ///       - "Enable RemoteFX" option enabled in target connection policy <br/>
     /// type: bool <br/>
+    /// displayName: Enable RemoteFX <br/>
     /// default: true <br/>
     struct client::enable_remotefx {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -762,6 +776,7 @@ namespace cfg
     /// type: std::chrono::milliseconds <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: all_target_mod:tcp_user_timeout <br/>
+    /// displayName: TCP user timeout <br/>
     /// default: 0 <br/>
     struct all_target_mod::tcp_user_timeout {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -819,6 +834,7 @@ namespace cfg
     };
     /// Specifies the highest RDP compression support available on server connection. <br/>
     /// type: RdpCompression <br/>
+    /// displayName: RDP compression <br/>
     /// default: RdpCompression::rdp6_1 <br/>
     struct mod_rdp::rdp_compression {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -878,6 +894,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:enable_nla <br/>
+    /// displayName: Enable NLA <br/>
     /// default: true <br/>
     struct mod_rdp::enable_nla {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -893,6 +910,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:enable_kerberos <br/>
+    /// displayName: Enable Kerberos <br/>
     /// default: true <br/>
     struct mod_rdp::enable_kerberos {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -908,6 +926,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:allow_nla_ntlm_fallback <br/>
+    /// displayName: Allow NLA NTLM fallback <br/>
     /// default: false <br/>
     struct mod_rdp::allow_nla_ntlm_fallback {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -923,6 +942,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:allow_tls_only_fallback <br/>
+    /// displayName: Allow TLS only fallback <br/>
     /// default: false <br/>
     struct mod_rdp::allow_tls_only_fallback {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -937,6 +957,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:allow_rdp_legacy_fallback <br/>
+    /// displayName: Allow RDP legacy fallback <br/>
     /// default: false <br/>
     struct mod_rdp::allow_rdp_legacy_fallback {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -951,6 +972,7 @@ namespace cfg
     /// type: uint32_t <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:tls_min_level <br/>
+    /// displayName: TLS min level <br/>
     /// default: 0 <br/>
     struct mod_rdp::tls_min_level {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -965,6 +987,7 @@ namespace cfg
     /// type: uint32_t <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:tls_max_level <br/>
+    /// displayName: TLS max level <br/>
     /// default: 0 <br/>
     struct mod_rdp::tls_max_level {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -1275,6 +1298,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:use_client_provided_remoteapp <br/>
+    /// displayName: Use client provided RemoteApp <br/>
     /// default: false <br/>
     struct mod_rdp::use_client_provided_remoteapp {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -1289,6 +1313,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:use_native_remoteapp_capability <br/>
+    /// displayName: Use native RemoteApp capability <br/>
     /// default: true <br/>
     struct mod_rdp::use_native_remoteapp_capability {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -1368,6 +1393,7 @@ namespace cfg
     };
     /// Workaround option to support partial clipboard initialization performed by some versions of FreeRDP. <br/>
     /// type: bool <br/>
+    /// displayName: Bogus FreeRDP clipboard <br/>
     /// default: false <br/>
     struct mod_rdp::bogus_freerdp_clipboard {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -1377,6 +1403,7 @@ namespace cfg
     };
     /// Workaround option to disable shared disk for RDP client on iOS platform only. <br/>
     /// type: bool <br/>
+    /// displayName: Bogus iOS RDPDR virtual channel <br/>
     /// default: true <br/>
     struct mod_rdp::bogus_ios_rdpdr_virtual_channel {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -1398,6 +1425,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:enable_rdpdr_data_analysis <br/>
+    /// displayName: Enable RDPDR data analysis <br/>
     /// default: true <br/>
     struct mod_rdp::enable_rdpdr_data_analysis {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -1411,6 +1439,7 @@ namespace cfg
     /// Delay before automatically bypass Windows's Legal Notice screen in RemoteApp mode. <br/>
     /// Set to 0 to disable this feature. <br/>
     /// type: std::chrono::milliseconds <br/>
+    /// displayName: RemoteApp bypass legal notice delay <br/>
     /// default: 0 <br/>
     struct mod_rdp::remoteapp_bypass_legal_notice_delay {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -1421,6 +1450,7 @@ namespace cfg
     /// Time limit to automatically bypass Windows's Legal Notice screen in RemoteApp mode. <br/>
     /// Set to 0 to disable this feature. <br/>
     /// type: std::chrono::milliseconds <br/>
+    /// displayName: RemoteApp bypass legal notice timeout <br/>
     /// default: 20000 <br/>
     struct mod_rdp::remoteapp_bypass_legal_notice_timeout {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -1475,10 +1505,11 @@ namespace cfg
         using mapped_type = bool;
         type value { true };
     };
-    /// Enables support of the remoteFX codec on target connection. <br/>
+    /// Enables support of the RemoteFX codec on target connection. <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:enable_remotefx <br/>
+    /// displayName: Enable RemoteFX <br/>
     /// default: false <br/>
     struct mod_rdp::enable_remotefx {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -1522,10 +1553,11 @@ namespace cfg
         using mapped_type = bool;
         type value { false };
     };
-    /// Enable target connection on ipv6 <br/>
+    /// Enable target connection on IPv6 <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:enable_ipv6 <br/>
+    /// displayName: Enable IPv6 <br/>
     /// default: true <br/>
     struct mod_rdp::enable_ipv6 {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -1671,6 +1703,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:use_session_probe_to_launch_remote_program <br/>
+    /// displayName: Use Session Probe to launch remote program <br/>
     /// default: true <br/>
     struct mod_rdp::use_session_probe_to_launch_remote_program {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -1713,6 +1746,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:enable_session_probe <br/>
+    /// displayName: Enable Session Probe <br/>
     /// default: false <br/>
     struct session_probe::enable_session_probe {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -1882,6 +1916,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:enable_autodeployed_appdriver_affinity <br/>
+    /// displayName: Enable autodeployed Application Driver affinity <br/>
     /// default: true <br/>
     struct session_probe::enable_autodeployed_appdriver_affinity {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -2140,6 +2175,7 @@ namespace cfg
     /// type: uint32_t <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:cpu_usage_alarm_threshold <br/>
+    /// displayName: CPU usage alarm threshold <br/>
     /// default: 0 <br/>
     struct session_probe::cpu_usage_alarm_threshold {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -2154,6 +2190,7 @@ namespace cfg
     /// type: SessionProbeCPUUsageAlarmAction <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:cpu_usage_alarm_action <br/>
+    /// displayName: CPU usage alarm action <br/>
     /// default: SessionProbeCPUUsageAlarmAction::Restart <br/>
     struct session_probe::cpu_usage_alarm_action {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -2186,6 +2223,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:ignore_ui_less_processes_during_end_of_session_check <br/>
+    /// displayName: Ignore UI less processes during end of session check <br/>
     /// default: true <br/>
     struct session_probe::ignore_ui_less_processes_during_end_of_session_check {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -2285,6 +2323,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:enable_bestsafe_interaction <br/>
+    /// displayName: Enable BestSafe interaction <br/>
     /// default: false <br/>
     struct session_probe::enable_bestsafe_interaction {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -2703,6 +2742,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_vnc:server_is_macos <br/>
+    /// displayName: Server is MacOS <br/>
     /// default: false <br/>
     struct mod_vnc::server_is_macos {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -2717,6 +2757,7 @@ namespace cfg
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_vnc:server_unix_alt <br/>
+    /// displayName: Server Unix alt <br/>
     /// default: false <br/>
     struct mod_vnc::server_unix_alt {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -2727,10 +2768,11 @@ namespace cfg
         using mapped_type = bool;
         type value { false };
     };
-    /// Enable target connection on ipv6 <br/>
+    /// Enable target connection on IPv6 <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_vnc:enable_ipv6 <br/>
+    /// displayName: Enable IPv6 <br/>
     /// default: true <br/>
     struct mod_vnc::enable_ipv6 {
         static constexpr unsigned acl_proxy_communication_flags = 0b10;
@@ -3112,6 +3154,7 @@ namespace cfg
         type value { 5 };
     };
     /// type: bool <br/>
+    /// displayName: Use Redis <br/>
     /// default: true <br/>
     struct audit::use_redis {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -3120,6 +3163,7 @@ namespace cfg
         type value { true };
     };
     /// type: std::chrono::milliseconds <br/>
+    /// displayName: Redis timeout <br/>
     /// default: 500 <br/>
     struct audit::redis_timeout {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -3426,6 +3470,7 @@ namespace cfg
 
     /// Enable websocket protocol (ws or wss with use_tls=1) <br/>
     /// type: bool <br/>
+    /// displayName: Enable WebSocket <br/>
     /// default: false <br/>
     struct websocket::enable_websocket {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -3435,6 +3480,7 @@ namespace cfg
     };
     /// Use TLS with websocket (wss) <br/>
     /// type: bool <br/>
+    /// displayName: Use TLS <br/>
     /// default: true <br/>
     struct websocket::use_tls {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -4886,6 +4932,7 @@ namespace cfg
     };
 
     /// type: std::string <br/>
+    /// displayName: Fake target IP <br/>
     /// default: "" <br/>
     struct debug::fake_target_ip {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -4998,6 +5045,7 @@ namespace cfg
     /// - cliprdr_dump        = 0x40000000 <br/>
     /// - rdpdr_dump          = 0x80000000 <br/>
     /// type: uint32_t <br/>
+    /// displayName: Mod RDP <br/>
     /// default: 0 <br/>
     struct debug::mod_rdp {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -5025,6 +5073,7 @@ namespace cfg
     /// - copyrect_trace  = 0x00040000 <br/>
     /// - keymap          = 0x00080000 <br/>
     /// type: uint32_t <br/>
+    /// displayName: Mod VNC <br/>
     /// default: 0 <br/>
     struct debug::mod_vnc {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;
@@ -5123,6 +5172,7 @@ namespace cfg
         type value { true };
     };
     /// type: ModRdpUseFailureSimulationSocketTransport <br/>
+    /// displayName: Mod RDP use failure simulation socket transport <br/>
     /// default: ModRdpUseFailureSimulationSocketTransport::Off <br/>
     struct debug::mod_rdp_use_failure_simulation_socket_transport {
         static constexpr unsigned acl_proxy_communication_flags = 0b00;

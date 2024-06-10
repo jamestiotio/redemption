@@ -30,12 +30,15 @@ inactivity_timeout = integer(min=0, default=0)
 
 support_cursor_pseudo_encoding = boolean(default=True)
 
+#_display_name=Server is MacOS
 server_is_macos = boolean(default=False)
 
 # When disabled, Ctrl + Alt becomes AltGr (Windows behavior)
+#_display_name=Server Unix alt
 server_unix_alt = boolean(default=False)
 
-# Enable target connection on ipv6
+# Enable target connection on IPv6
+#_display_name=Enable IPv6
 enable_ipv6 = boolean(default=True)
 
 [vnc_over_ssh]
@@ -43,6 +46,7 @@ enable_ipv6 = boolean(default=True)
 enable = boolean(default=False)
 
 # Port to be used for SSH tunneling
+#_display_name=SSH port
 ssh_port = integer(min=0, default=22)
 
 # static_login: Static values provided in "Ssh login" &amp; "Ssh password" fields will be used to establish the SSH tunnel.
@@ -50,9 +54,11 @@ ssh_port = integer(min=0, default=22)
 tunneling_credential_source = option('static_login', 'scenario_account', default="scenario_account")
 
 # Login to be used for SSH tunneling.
+#_display_name=SSH login
 ssh_login = string(default="")
 
 # Password to be used for SSH tunneling.
+#_display_name=SSH password
 ssh_password = string(default="")
 
 # With the following syntax: "account_name@domain_name[@[device_name]]".<br/>

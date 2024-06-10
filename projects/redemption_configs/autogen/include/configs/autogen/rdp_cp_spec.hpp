@@ -35,6 +35,7 @@ inactivity_timeout = integer(min=0, default=0)
 # This parameter allows you to specify max timeout before a TCP connection is aborted. If the option value is specified as 0, TCP will use the system default.<br/>
 # (in milliseconds)
 #_advanced
+#_display_name=TCP user timeout
 tcp_user_timeout = integer(min=0, max=3600000, default=0)
 
 [rdp]
@@ -60,28 +61,35 @@ tcp_user_timeout = integer(min=0, max=3600000, default=0)
 disabled_orders = string(default="27")
 
 # Enable NLA authentication in secondary target.
+#_display_name=Enable NLA
 enable_nla = boolean(default=True)
 
 # If enabled, NLA authentication will try Kerberos before NTLM.
 # (if enable_nla is disabled, this value is ignored).
+#_display_name=Enable Kerberos
 enable_kerberos = boolean(default=True)
 
 # Allow NTLM fallback if Kerberos authentication fail.
 # (if enable_kerberos is disabled, this value is ignored).
+#_display_name=Allow NLA NTLM fallback
 allow_nla_ntlm_fallback = boolean(default=False)
 
 # Allow TLS only fallback if NLA authentication fail.
 # (if enable_nla is disabled, this value is ignored).
+#_display_name=Allow TLS only fallback
 allow_tls_only_fallback = boolean(default=False)
 
 # Allow Standard RDP Security (Legacy) fallback if TLS connection fail.
 #_advanced
+#_display_name=Allow RDP legacy fallback
 allow_rdp_legacy_fallback = boolean(default=False)
 
 # Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3
+#_display_name=TLS min level
 tls_min_level = integer(min=0, default=0)
 
 # Maximal incoming TLS level 0=no restriction, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3
+#_display_name=TLS max level
 tls_max_level = integer(min=0, default=0)
 
 # TLSv1.2 and below additional ciphers supported.
@@ -128,13 +136,16 @@ load_balance_info = string(default="")
 use_client_provided_alternate_shell = boolean(default=False)
 
 # As far as possible, use client-provided remote program (RemoteApp)
+#_display_name=Use client provided RemoteApp
 use_client_provided_remoteapp = boolean(default=False)
 
 # As far as possible, use native RemoteApp capability
+#_display_name=Use native RemoteApp capability
 use_native_remoteapp_capability = boolean(default=True)
 
 # Adds RDPDR channel metadata to session logs. Disabling this option makes shared disks more responsive, but metadata will no longer be collected.if at least one authorization of RDPDR is missing (Printer, ComPort, SmartCard, Drive), then this option is considered enabled.
 #_advanced
+#_display_name=Enable RDPDR data analysis
 enable_rdpdr_data_analysis = boolean(default=True)
 
 # Actives conversion of RemoteApp target session to desktop session.
@@ -143,7 +154,8 @@ enable_rdpdr_data_analysis = boolean(default=True)
 #_display_name=Enable translated RemoteApp with AM
 wabam_uses_translated_remoteapp = boolean(default=False)
 
-# Enables support of the remoteFX codec on target connection.
+# Enables support of the RemoteFX codec on target connection.
+#_display_name=Enable RemoteFX
 enable_remotefx = boolean(default=False)
 
 # Connect to the server in Restricted Admin mode.
@@ -157,7 +169,8 @@ enable_restricted_admin_mode = boolean(default=False)
 # Smartcard redirection (Proxy option RDP_SMARTCARD) must be enabled on service.
 force_smartcard_authentication = boolean(default=False)
 
-# Enable target connection on ipv6
+# Enable target connection on IPv6
+#_display_name=Enable IPv6
 enable_ipv6 = boolean(default=True)
 
 # Console mode management for targets on Windows Server 2003 (requested with /console or /admin mstsc option)
@@ -216,6 +229,7 @@ remote_programs_disconnect_message_delay = integer(min=3000, max=120000, default
 # If enabled, the RDP Proxy relies on the Session Probe to launch the remote programs.
 # Otherwise, remote programs will be launched according to Remote Programs Virtual Channel Extension of Remote Desktop Protocol. This latter is the native method.
 # The difference is that Session Probe does not start a new application when its host session is resumed. Conversely, launching applications according to Remote Programs Virtual Channel Extension of Remote Desktop Protocol is not affected by this behavior. However, launching applications via the native method requires them to be published in Remote Desktop Services, which is unnecessary if launched by the Session Probe.
+#_display_name=Use Session Probe to launch remote program
 use_session_probe_to_launch_remote_program = boolean(default=True)
 
 # ⚠ The use of this feature is not recommended!<br/>
@@ -232,6 +246,7 @@ save_session_info_pdu = option(0, 1, default=1)
 
 [session_probe]
 
+#_display_name=Enable Session Probe
 enable_session_probe = boolean(default=True)
 
 # This parameter only has an effect in Desktop sessions.
@@ -288,6 +303,7 @@ on_keepalive_timeout = option(0, 1, 2, default=2)
 end_disconnected_session = boolean(default=False)
 
 # If enabled, disconnected auto-deployed Application Driver session will automatically terminate by Session Probe.
+#_display_name=Enable autodeployed Application Driver affinity
 enable_autodeployed_appdriver_affinity = boolean(default=True)
 
 # This parameter allows you to enable the Windows-side logging of Session Probe.
@@ -400,12 +416,14 @@ memory_usage_limit = integer(min=0, max=200000000, default=0)
 # As a percentage, the effective alarm threshold is calculated in relation to the reference consumption determined at the start of the program execution. The alarm is deactivated if this value of parameter is less than 200 (200%% of reference consumption).
 # When CPU consumption exceeds the allowed limit, debugging information can be collected (if the Windows-side logging is enabled), then Session Probe will sabotage. Additional behavior is defined by 'Cpu usage alarm action' parameter.
 #_advanced
+#_display_name=CPU usage alarm threshold
 cpu_usage_alarm_threshold = integer(min=0, max=10000, default=0)
 
 # Additional behavior when CPU consumption exceeds what is allowed. Please refer to the 'Cpu usage alarm threshold' parameter.
 # &nbsp; &nbsp;   0: Restart the Session Probe. May result in session disconnection due to loss of KeepAlive messages! Please refer to 'On keepalive timeout' parameter of current section and 'Allow multiple handshakes' parameter of 'Configuration options'.
 # &nbsp; &nbsp;   1: Stop the Session Probe. May result in session disconnection due to loss of KeepAlive messages! Please refer to 'On keepalive timeout' parameter of current section.
 #_advanced
+#_display_name=CPU usage alarm action
 cpu_usage_alarm_action = option(0, 1, default=0)
 
 # For application session only.
@@ -419,6 +437,7 @@ end_of_session_check_delay_time = integer(min=0, max=60000, default=0)
 # For application session only.
 # If enabled, during the End of session check, the processes that do not have a visible window will not be counted as active processes of the session. Without active processes, the application session will be logged off by the Session Probe.
 #_advanced
+#_display_name=Ignore UI less processes during end of session check
 ignore_ui_less_processes_during_end_of_session_check = boolean(default=True)
 
 # This parameter is used to provide the list of (comma-separated) system processes that can be run in the session.
@@ -466,6 +485,7 @@ disabled_features = integer(min=0, max=511, default=352)
 # Is enabled, Session Probe relies on BestSafe to perform the detection of application launches and the detection of outgoing connections.
 # BestSafe has more efficient mechanisms in these tasks than Session Probe.
 # For more information please refer to 'Outbound connection monitoring rules' parameter and 'Process monitoring rules' parameter.
+#_display_name=Enable BestSafe interaction
 enable_bestsafe_interaction = boolean(default=False)
 
 # This parameter has no effect on the device without BestSafe.

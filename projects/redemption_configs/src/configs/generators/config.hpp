@@ -23,6 +23,7 @@ SPDX-License-Identifier: GPL-2.0-or-later
 #include "utils/sugar/int_to_chars.hpp"
 #include "utils/sugar/bounded_array_view.hpp"
 #include "utils/sugar/cast.hpp"
+#include "utils/sugar/split.hpp"
 
 #include "core/RDP/rdp_performance_flags.hpp"
 #include "parse_performance_flags.hpp"
@@ -72,11 +73,6 @@ constexpr inline std::array conn_policies {
     DestSpecFile::rdp,
     DestSpecFile::vnc,
 };
-
-constexpr bool contains_conn_policy(DestSpecFile dest)
-{
-    return bool(dest & ~(DestSpecFile::global_spec | DestSpecFile::ini_only));
-}
 
 constexpr std::string_view dest_file_to_filename(DestSpecFile dest)
 {
@@ -418,6 +414,30 @@ enum class PrefixType : uint8_t
     ForceDisable,
 };
 
+// for implicitly convert std::string_view to std::string
+struct Description : std::string
+{
+    using std::string::operator=;
+
+    Description() = default;
+
+    Description(char const* str)
+    : std::string(str)
+    {}
+
+    Description(std::string_view str)
+    : std::string(str)
+    {}
+
+    Description(std::string const& str)
+    : std::string(str)
+    {}
+
+    Description(std::string&& str) noexcept
+    : std::string(std::move(str))
+    {}
+};
+
 struct MemberInfo
 {
     MemberNames name;
@@ -426,7 +446,34 @@ struct MemberInfo
     SpecInfo spec;
     Tags tags {};
     PrefixType prefix_type = PrefixType::Unspecified;
-    std::string_view desc {};
+    Description desc {};
+};
+
+struct Section
+{
+    Names names;
+    std::vector<MemberInfo> members;
+};
+
+struct ConfigInfo
+{
+    std::vector<Section> sections;
+    std::unordered_map<std::string_view, std::size_t> section_name_positions;
+
+    Section* find_section(std::string_view section_name)
+    {
+        auto it = section_name_positions.find(section_name);
+        if (it != section_name_positions.end()) {
+            return &sections[it->second];
+        }
+        return nullptr;
+    }
+
+    void push_section(std::string_view section_name)
+    {
+        section_name_positions.emplace(section_name, sections.size());
+        sections.emplace_back().names.all = section_name;
+    }
 };
 
 
@@ -1387,7 +1434,7 @@ inline std::string numeric_enum_desc(type_enumeration const& e, bool use_disable
       ? static_cast<std::size_t>(64 - __builtin_clzll(e.max()) + 4 - 1) / 4
       : 0;
     bool show_name_when_description
-      = (e.display_name_option == type_enumeration::DisplayNameOption::WithNameWhenDdescription);
+      = (e.display_name_option == type_enumeration::DisplayNameOption::WithNameWhenDescription);
 
     auto show_values = [&](bool hexa)
     {
@@ -2089,7 +2136,7 @@ struct GeneratorConfig
         cpp.start_indexes.emplace_back(cpp.authid_policies.size());
     }
 
-    void evaluate_member(Names const& section_names, MemberInfo const& mem_info)
+    void evaluate_member(Names const& section_names, MemberInfo const& mem_info, ConfigInfo const& conf)
     {
         std::string spec_desc {};
         std::string ini_desc {};
@@ -2102,16 +2149,13 @@ struct GeneratorConfig
             desc.remove_suffix(1);
         }
 
-        bool const has_spec = bool(mem_info.spec.dest);
-        bool const has_ini = has_spec
-                          && !bool(mem_info.spec.attributes & SpecAttributes::external);
-        bool const has_global_spec = bool(mem_info.spec.dest & DestSpecFile::global_spec);
-        bool const has_connpolicy = contains_conn_policy(mem_info.spec.dest);
+        bool const has_spec = mem_info.spec.has_spec();
+        bool const has_ini = mem_info.spec.has_ini();
+        bool const has_global_spec = mem_info.spec.has_global_spec();
+        bool const has_connpolicy = mem_info.spec.has_connpolicy();
 
         auto const acl_io = mem_info.spec.acl_io;
-        bool const has_acl = bool(acl_io);
-
-        check_names(names, has_ini, has_acl, has_connpolicy);
+        bool const has_acl = mem_info.spec.has_acl();
 
         std::string acl_network_name_tmp;
         std::string_view const acl_network_name
@@ -2566,92 +2610,164 @@ struct GeneratorConfig
 
 struct GeneratorConfigWrapper
 {
+    struct WordReplacement
+    {
+        std::string_view word;
+        std::string_view replacement;
+    };
+
     GeneratorConfig writer;
+    std::vector<WordReplacement> display_name_word_replacement_table {};
 
     void set_sections(std::initializer_list<std::string_view> l)
     {
-        for (std::string_view section : l) {
-            if (!section_names.emplace(section).second) {
-                throw std::runtime_error(str_concat("set_sections(): duplicated section name: ", section));
+        for (std::string_view section_name : l) {
+            if (conf.find_section(section_name)) {
+                throw std::runtime_error(str_concat(
+                    "set_sections(): duplicated section name: ", section_name
+                ));
             }
-            section_makers.emplace_back().names.all = section;
+            conf.push_section(section_name);
         }
     }
 
     template<class Fn>
     void section(MemberNames names, Fn fn)
     {
-        auto it = find_section(names);
-        it->names = std::move(names);
-        it->mk_section = std::unique_ptr<FuncBase>(new Func<decltype(fn)>{fn});
+        auto& section = find_section(names.all);
+        section.names = std::move(names);
+        current_members = &section.members;
+        fn();
+    }
+
+    void member(MemberInfo&& mem_info)
+    {
+        assert(current_members);
+
+        bool const has_ini = mem_info.spec.has_ini();
+        bool const has_connpolicy = mem_info.spec.has_connpolicy();
+        bool const has_acl = mem_info.spec.has_acl();
+
+        check_names(mem_info.name, has_ini, has_acl, has_connpolicy);
+
+        // compute display name there is a word replacement
+        if (mem_info.name.display.empty() && (has_ini || has_connpolicy)) {
+            auto const& replacements = display_name_word_replacement_table;
+
+            auto& name = mem_info.name.all;
+
+            auto find_replacement_at_start = [&](std::string_view str) -> WordReplacement const* {
+                for (auto& rep : replacements) {
+                    if (utils::starts_with(str, rep.word)
+                    && (str.size() == rep.word.size() || str[rep.word.size()] == '_')
+                    ) {
+                        return &rep;
+                    }
+                }
+                return nullptr;
+            };
+
+            auto replace = [&](auto f, auto repf){
+                char const* p = name.data();
+                while (p < name.end()) {
+                    auto str_size = static_cast<std::size_t>(name.end() - p);
+                    auto str = std::string_view{p, str_size};
+                    if (auto* rep = find_replacement_at_start(str)) {
+                        repf(*rep);
+                        str = rep->replacement;
+                        p += rep->word.size();
+                        if (str_size != rep->word.size()) {
+                            ++p;
+                        }
+                    }
+                    else {
+                        p = static_cast<char const*>(memchr(p, '_', str_size));
+                        if (p) {
+                            str_size = static_cast<std::size_t>(p - str.data());
+                            ++p;
+                        }
+                        else {
+                            p = name.end();
+                        }
+                        str = {str.data(), str_size};
+                    }
+
+                    f(str);
+                }
+            };
+
+            std::size_t replacement_size = 0;
+            // init rep_size
+            replace(
+                [](std::string_view /*str*/){},
+                [&](WordReplacement const& word_rep) {
+                    replacement_size += word_rep.replacement.size();
+                }
+            );
+
+            if (replacement_size) {
+                char* buf = display_names.emplace_back(std::make_unique<char[]>(
+                    replacement_size + name.size() + 1)
+                ).get();
+                char* p = buf;
+
+                replace(
+                    [&](std::string_view str){
+                        memcpy(p, str.data(), str.size());
+                        p += str.size();
+                        *p++ = ' ';
+                    },
+                    [&](WordReplacement const& /*word_rep*/) {}
+                );
+
+                // remove last space
+                --p;
+                // upper for first letter
+                *buf = ('a' <= *buf && *buf <= 'z') ? *buf + 'A' - 'a' : *buf;
+                mem_info.name.display = {buf, static_cast<std::size_t>(p-buf)};
+            }
+        }
+
+        current_members->emplace_back(std::move(mem_info));
     }
 
     void build()
     {
-        for (auto& makers : section_makers) {
-            current_section_names = &makers.names;
-            writer.do_start_section(makers.names);
-            makers.mk_section->invoke();
-            writer.do_stop_section(makers.names);
+        for (auto& section : conf.sections) {
+            writer.do_start_section(section.names);
+            for (auto const& member : section.members) {
+                writer.evaluate_member(section.names, member, conf);
+            }
+            writer.do_stop_section(section.names);
         }
-    }
-
-    void member(MemberInfo const& mem_info)
-    {
-        writer.evaluate_member(*current_section_names, mem_info);
     }
 
 private:
-    struct FuncBase
-    {
-        virtual void invoke() = 0;
-        virtual ~FuncBase() = default;
-    };
-
-    template<class F>
-    struct Func : FuncBase
-    {
-        F f;
-
-        Func(F& f) : f(std::move(f)) {}
-
-        void invoke() override
-        {
-            f();
-        }
-    };
-
-    struct SectionInfo
-    {
-        Names names;
-        std::unique_ptr<FuncBase> mk_section;
-    };
-
-    typename std::vector<SectionInfo>::iterator find_section(Names const& names)
+    Section& find_section(MemberNames&& names)
     {
         assert(names.acl.empty());
 
-        if (section_names.find(names.all) == section_names.end()) {
+        std::string_view const section_name = names.all;
+
+        auto* section = conf.find_section(section_name);
+        if (!section) {
             throw std::runtime_error(str_concat(
-                "Unknown section '", names.all, "'. Please add it in set_sections()"
+                "Unknown section '", section_name, "'. Please add it in set_sections()"
             ));
         }
 
-        auto it = std::find_if(section_makers.begin(), section_makers.end(), [&](auto const& info){
-            return info.names.all == names.all;
-        });
-
-        if (it->mk_section) {
-            throw std::runtime_error(str_concat("'", names.all, "' is already set"));
+        if (!section->members.empty()) {
+            throw std::runtime_error(str_concat("'", section_name, "' is already set"));
         }
 
-        return it;
+        return *section;
     }
 
 public:
-    Names const * current_section_names = nullptr;
-    std::vector<SectionInfo> section_makers {};
-    std::unordered_set<std::string_view> section_names {};
+    std::vector<MemberInfo>* current_members = nullptr;
+    // buffer of std::string_view for cfg_desc::names::display (used in menber())
+    std::vector<std::unique_ptr<char[]>> display_names {};
+    ConfigInfo conf {};
 };
 
 }

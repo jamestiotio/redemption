@@ -33,7 +33,7 @@
 struct type_enumeration
 {
     enum class Category { autoincrement, flags, set };
-    enum class DisplayNameOption : bool { WithoutNameWhenDescription, WithNameWhenDdescription };
+    enum class DisplayNameOption : bool { WithoutNameWhenDescription, WithNameWhenDescription };
 
     struct value_type
     {

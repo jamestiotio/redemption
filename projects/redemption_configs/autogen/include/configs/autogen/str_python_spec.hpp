@@ -37,10 +37,12 @@ enable_transparent_mode = boolean(default=False)
 # Displays a reminder box at the top of the session when a session is limited in time (timeframe or approval).
 # The reminder is displayed successively 30min, 10min, 5min and 1min before the session is closed.
 #_advanced
+#_display_name=Enable end time warning OSD
 enable_end_time_warning_osd = boolean(default=True)
 
 # Allow to show target device name with F12 during the session
 #_advanced
+#_display_name=Enable OSD display remote target
 enable_osd_display_remote_target = boolean(default=True)
 
 # Show in session the target username when F12 is pressed.
@@ -51,11 +53,13 @@ show_target_user_in_f12_message = boolean(default=False)
 # !!!May cause FreeRDP-based client to CRASH!!!
 # Set to 0 to disable this feature.<br/>
 # (in milliseconds)
+#_display_name=RDP keepalive connection interval
 rdp_keepalive_connection_interval = integer(min=0, default=0)
 
 # ⚠ Service redemption needs to be manually restarted to take changes into account<br/>
-# Enable primary connection on ipv6.
+# Enable primary connection on IPv6.
 #_advanced
+#_display_name=Enable IPv6
 enable_ipv6 = boolean(default=True)
 
 [client]
@@ -75,20 +79,24 @@ allow_scale_factor = boolean(default=False)
 
 # Fallback to RDP Legacy Encryption if client does not support TLS.
 # ⚠ Enabling this option is a security risk.
+#_display_name=TLS fallback legacy
 tls_fallback_legacy = boolean(default=False)
 
 # Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3
 # ⚠ Lower this value only for compatibility reasons.
+#_display_name=TLS min level
 tls_min_level = integer(min=0, default=2)
 
 # Maximal incoming TLS level 0=no restriction, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3
 # ⚠ Change this value only for compatibility reasons.
+#_display_name=TLS max level
 tls_max_level = integer(min=0, default=0)
 
 # [Not configured]: Compatible with more RDP clients (less secure)
 # HIGH:!ADH:!3DES: Compatible only with MS Windows 7 client or more recent (moderately secure)
 # HIGH:!ADH:!3DES:!SHA: Compatible only with MS Server Windows 2008 R2 client or more recent (more secure)
 # The format used is described on this page: https://www.openssl.org/docs/man3.1/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT
+#_display_name=SSL cipher list
 ssl_cipher_list = string(default="HIGH:!ADH:!3DES:!SHA")
 
 # Configure the available TLSv1.3 ciphersuites.
@@ -115,6 +123,7 @@ show_common_cipher_list = boolean(default=False)
 # &nbsp; &nbsp;   3: RDP 6.0 bulk compression
 # &nbsp; &nbsp;   4: RDP 6.1 bulk compression
 #_advanced
+#_display_name=RDP compression
 rdp_compression = option(0, 1, 2, 3, 4, default=4)
 
 # Specifies the maximum color resolution (color depth) for client connection session:
@@ -144,6 +153,7 @@ bitmap_compression = boolean(default=True)
 enable_suppress_output = boolean(default=True)
 
 # Same effect as "Transform glyph to bitmap", but only for RDP client on iOS platform.
+#_display_name=Bogus iOS glyph support level
 bogus_ios_glyph_support_level = boolean(default=True)
 
 # Some RDP clients advertise glyph support, but this does not work properly with the RDP proxy. This option replaces glyph orders with bitmap orders.
@@ -151,12 +161,14 @@ bogus_ios_glyph_support_level = boolean(default=True)
 transform_glyph_to_bitmap = boolean(default=False)
 
 # Enables display of message informing user that his/her session is being audited.
+#_display_name=Enable OSD 4 eyes
 enable_osd_4_eyes = boolean(default=True)
 
-# Enable RemoteFx on client connection.
+# Enable RemoteFX on client connection.
 # Needs - "Max Color Depth" option set to 32 (32-bit RGB mask + alpha)
 # &nbsp; &nbsp;       - "Enable RemoteFX" option enabled in target connection policy
 #_advanced
+#_display_name=Enable RemoteFX
 enable_remotefx = boolean(default=True)
 
 # This option should only be used if the server or client is showing graphical issues.
@@ -222,6 +234,7 @@ auto_adjust_performance_flags = boolean(default=True)
 # &nbsp; &nbsp;   3: RDP 6.0 bulk compression
 # &nbsp; &nbsp;   4: RDP 6.1 bulk compression
 #_advanced
+#_display_name=RDP compression
 rdp_compression = option(0, 1, 2, 3, 4, default=4)
 
 #_advanced
@@ -268,10 +281,12 @@ use_license_store = boolean(default=True)
 
 # Workaround option to support partial clipboard initialization performed by some versions of FreeRDP.
 #_advanced
+#_display_name=Bogus FreeRDP clipboard
 bogus_freerdp_clipboard = boolean(default=False)
 
 # Workaround option to disable shared disk for RDP client on iOS platform only.
 #_advanced
+#_display_name=Bogus iOS RDPDR virtual channel
 bogus_ios_rdpdr_virtual_channel = boolean(default=True)
 
 # Workaround option to fix some drawing issues with Windows Server 2012.
@@ -283,12 +298,14 @@ bogus_refresh_rect = boolean(default=True)
 # Set to 0 to disable this feature.<br/>
 # (in milliseconds)
 #_advanced
+#_display_name=RemoteApp bypass legal notice delay
 remoteapp_bypass_legal_notice_delay = integer(min=0, default=0)
 
 # Time limit to automatically bypass Windows's Legal Notice screen in RemoteApp mode.
 # Set to 0 to disable this feature.<br/>
 # (in milliseconds)
 #_advanced
+#_display_name=RemoteApp bypass legal notice timeout
 remoteapp_bypass_legal_notice_timeout = integer(min=0, default=20000)
 
 # Some events such as 'Preferred DropEffect' have no particular meaning. This option allows you to exclude these types of events from the logs.
@@ -723,6 +740,7 @@ front = integer(min=0, default=0)
 # - rdpdr_dump          = 0x80000000
 #_advanced
 #_hex
+#_display_name=Mod RDP
 mod_rdp = integer(min=0, default=0)
 
 # - basic_trace     = 0x00000001
@@ -746,6 +764,7 @@ mod_rdp = integer(min=0, default=0)
 # - keymap          = 0x00080000
 #_advanced
 #_hex
+#_display_name=Mod VNC
 mod_vnc = integer(min=0, default=0)
 
 # - copy_paste != 0

@@ -166,6 +166,48 @@ std::string_view tls_key_exchange_groups =
     "The format used is described in this page: https://www.openssl.org/docs/man3.2/man3/SSL_CONF_cmd.html#groups-groups"
 ;
 
+_.display_name_word_replacement_table = {
+    {"rdp", "RDP"},
+    {"vnc", "VNC"},
+    {"ssh", "SSH"},
+
+    {"tls", "TLS"},
+    {"ssl", "SSL"},
+    {"tcp", "TCP"},
+    {"ip", "IP"},
+    {"ipv4", "IPv4"},
+    {"ipv6", "IPv6"},
+
+    {"websocket", "WebSocket"},
+    {"kerberos", "Kerberos"},
+    {"ntlm", "NTLM"},
+    {"nla", "NLA"},
+
+    {"remoteapp", "RemoteApp"},
+    {"remotefx", "RemoteFX"},
+    {"rdpdr", "RDPDR"},
+
+    {"appdriver", "Application Driver"},
+    {"session_probe", "Session Probe"},
+    {"bestsafe", "BestSafe"},
+    {"am", "AM"},
+    {"wabam", "AM"},
+
+    {"osd", "OSD"},
+
+    {"ios", "iOS"},
+    {"macos", "MacOS"},
+    {"unix", "Unix"},
+    {"linux", "Linux"},
+
+    {"redis", "Redis"},
+    {"freerdp", "FreeRDP"},
+    {"ffmpeg", "FFmpeg"},
+
+    {"cpu", "CPU"},
+    {"ui", "UI"},
+};
+
 REDEMPTION_DIAGNOSTIC_PUSH()
 REDEMPTION_DIAGNOSTIC_CLANG_IGNORE("-Wc99-designator")
 
@@ -461,7 +503,7 @@ _.section("globals", [&]
         .spec = global_spec(no_acl, spec::advanced),
         .desc =
             "⚠ Service redemption needs to be manually restarted to take changes into account\n\n"
-            "Enable primary connection on ipv6."
+            "Enable primary connection on IPv6."
     });
 
     _.member(MemberInfo{
@@ -610,10 +652,7 @@ _.section("client", [&]
     });
 
     _.member(MemberInfo{
-        .name = names{
-            .all = "tls_key_exchange_groups",
-            .display = "TLS key exchange groups",
-        },
+        .name = "tls_key_exchange_groups",
         .value = value<std::string>(""),
         .spec = global_spec(no_acl),
         .desc = tls_key_exchange_groups,
@@ -744,7 +783,7 @@ _.section("client", [&]
         .value = value(true),
         .spec = global_spec(no_acl, spec::advanced),
         .tags = Tag::Perf | Tag::Compatibility,
-        .desc = "Enable RemoteFx on client connection.\n"
+        .desc = "Enable RemoteFX on client connection.\n"
         "Needs - \"Max Color Depth\" option set to 32 (32-bit RGB mask + alpha)\n"
         "      - \"Enable RemoteFX\" option enabled in target connection policy",
     });
@@ -930,10 +969,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
     });
 
     _.member(MemberInfo{
-        .name = names{
-            .all = "tls_key_exchange_groups",
-            .display = "TLS key exchange groups",
-        },
+        .name = "tls_key_exchange_groups",
         .value = value<std::string>(""),
         .spec = connpolicy(rdp, L),
         .desc = tls_key_exchange_groups,
@@ -1256,7 +1292,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
         .value = value(false),
         .spec = connpolicy(rdp, L),
         .tags = Tag::Compatibility,
-        .desc = "Enables support of the remoteFX codec on target connection.",
+        .desc = "Enables support of the RemoteFX codec on target connection.",
     });
 
     _.member(MemberInfo{
@@ -1284,7 +1320,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
         .name = "enable_ipv6",
         .value = value(true),
         .spec = connpolicy(rdp, L),
-        .desc = "Enable target connection on ipv6",
+        .desc = "Enable target connection on IPv6",
     });
 
     _.member(MemberInfo{
@@ -2066,7 +2102,7 @@ _.section(names{.all="mod_vnc", .connpolicy="vnc"}, [&]
         .name = "enable_ipv6",
         .value = value(true),
         .spec = connpolicy(vnc, L),
-        .desc = "Enable target connection on ipv6" ,
+        .desc = "Enable target connection on IPv6" ,
     });
 });
 
@@ -2508,10 +2544,7 @@ _.section("audit", [&]
     });
 
     _.member(MemberInfo{
-        .name = names{
-            .all = "ffmpeg_options",
-            .display = "FFmpeg options",
-        },
+        .name = "ffmpeg_options",
         .value = value<std::string>("crf=35 preset=superfast"),
         .spec = global_spec(no_acl, spec::advanced),
         .desc =
@@ -2772,10 +2805,7 @@ _.section("debug", [&]
     });
 
     _.member(MemberInfo{
-        .name = names{
-            .all = "ffmpeg",
-            .display = "FFmpeg",
-        },
+        .name = "ffmpeg",
         .value = value<types::u32>(),
         .spec = global_spec(no_acl, spec::advanced | spec::hex),
         .desc = "Value passed to function av_log_set_level()\nSee https://www.ffmpeg.org/doxygen/2.3/group__lavu__log__constants.html",

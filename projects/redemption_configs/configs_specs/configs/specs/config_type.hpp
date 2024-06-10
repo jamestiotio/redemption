@@ -27,10 +27,10 @@ namespace cfg_specs {
 inline void config_type_definition(type_enumerations & e)
 {
     using Opt = type_enumerations::DisplayNameOption;
-    auto withNameWhenDdescription = Opt::WithNameWhenDdescription;
+    auto withNameWhenDescription = Opt::WithNameWhenDescription;
     auto withoutNameWhenDescription = Opt::WithoutNameWhenDescription;
 
-    e.enumeration_list("ModuleName", withNameWhenDdescription)
+    e.enumeration_list("ModuleName", withNameWhenDescription)
       .value("UNKNOWN")
       .value("login")
       .value("selector")
@@ -52,7 +52,7 @@ inline void config_type_definition(type_enumerations & e)
       .value("card")
     ;
 
-    e.enumeration_flags("CaptureFlags", withNameWhenDdescription, "Specifies the type of data to be captured:")
+    e.enumeration_flags("CaptureFlags", withNameWhenDescription, "Specifies the type of data to be captured:")
       .value("none")
       .value("png")
       .value("wrm", "Session recording file.")
@@ -60,19 +60,19 @@ inline void config_type_definition(type_enumerations & e)
       .value("ocr")
     ;
 
-    e.enumeration_list("RdpSecurityEncryptionLevel", withNameWhenDdescription)
+    e.enumeration_list("RdpSecurityEncryptionLevel", withNameWhenDescription)
       .value("none")
       .value("low")
       .value("medium")
       .value("high")
     ;
 
-    e.enumeration_list("Language", withNameWhenDdescription)
+    e.enumeration_list("Language", withNameWhenDescription)
       .value("en")
       .value("fr")
     ;
 
-    e.enumeration_list("ClipboardEncodingType", withNameWhenDdescription)
+    e.enumeration_list("ClipboardEncodingType", withNameWhenDescription)
       .value("utf8").alias("utf-8")
       .value("latin1")
     ;
@@ -103,7 +103,7 @@ inline void config_type_definition(type_enumerations & e)
       .value("depth32", 32, "32-bit RGB mask + alpha")
     ;
 
-    e.enumeration_flags("ServerNotification", withNameWhenDdescription)
+    e.enumeration_flags("ServerNotification", withNameWhenDescription)
       .value("nobody")
       .value("SIEM", "message sent to SIEM")
     ;
@@ -128,13 +128,13 @@ inline void config_type_definition(type_enumerations & e)
       .value("fully_masked", "keyboard inputs are not logged")
     ;
 
-    e.enumeration_list("SessionProbeOnLaunchFailure", withNameWhenDdescription, "Behavior on failure to launch Session Probe.")
+    e.enumeration_list("SessionProbeOnLaunchFailure", withNameWhenDescription, "Behavior on failure to launch Session Probe.")
       .value("ignore_and_continue", "The metadata collected is not essential for us. Instead, we prefer to minimize the impact on the user experience. The Session Probe launch will be in best-effort mode. The prevailing duration is defined by the 'Launch fallback timeout' instead of the 'Launch timeout'.")
       .value("disconnect_user", "This is the recommended setting. If the target meets all the technical prerequisites, there is no reason for the Session Probe not to launch. All that remains is to adapt the value of 'Launch timeout' to the performance of the target.")
       .value("retry_without_session_probe", "We wish to be able to recover the behavior of Bastion 5 when the Session Probe does not launch. The prevailing duration is defined by the 'Launch fallback timeout' instead of the 'Launch timeout'.")
     ;
 
-    e.enumeration_list("VncBogusClipboardInfiniteLoop", withNameWhenDdescription)
+    e.enumeration_list("VncBogusClipboardInfiniteLoop", withNameWhenDescription)
       .value("delayed", "Clipboard processing is deferred and, if necessary, the token is left with the client.")
       .value("duplicated", "When 2 identical requests are received, the second is ignored. This can block clipboard data reception until a clipboard event is triggered on the server when the client clipboard is blocked, and vice versa.")
       .value("continued", "No special processing is done, the proxy always responds immediately.")
@@ -159,7 +159,7 @@ inline void config_type_definition(type_enumerations & e)
       .value("rdp6_1", "RDP 6.1 bulk compression")
     ;
 
-    e.enumeration_set("OcrVersion", withNameWhenDdescription)
+    e.enumeration_set("OcrVersion", withNameWhenDescription)
       .value("v1", 1)
       .value("v2", 2)
     ;
@@ -169,13 +169,13 @@ inline void config_type_definition(type_enumerations & e)
       .value("cyrillic", "Recognizes Latin and Cyrillic characters")
     ;
 
-    e.enumeration_list("SessionProbeOnKeepaliveTimeout", withNameWhenDdescription)
+    e.enumeration_list("SessionProbeOnKeepaliveTimeout", withNameWhenDescription)
       .value("ignore_and_continue", "Designed to minimize the impact on the user experience if the Session Probe is unstable. It should not be used when Session Probe is working well. An attacker can take advantage of this setting by simulating a Session Probe crash in order to bypass the surveillance.")
       .value("disconnect_user", "Legacy behavior. It’s a choice that gives more security, but the impact on the user experience seems disproportionate. The RDP session can be closed (resulting in the permanent loss of all its unsaved elements) if the 'End disconnected session' parameter (or an equivalent setting at the RDS-level) is enabled.")
       .value("freeze_connection_and_wait", "This is the recommended setting. User actions will be blocked until contact with the Session Probe (reply to KeepAlive message or something else) is resumed.")
     ;
 
-    e.enumeration_list("SmartVideoCropping", withNameWhenDdescription)
+    e.enumeration_list("SmartVideoCropping", withNameWhenDescription)
       .value("disable", "When replaying the session video, the content of the RDP viewer matches the size of the client's desktop")
       .value("v1", "When replaying the session video, the content of the RDP viewer is restricted to the greatest area covered by the application during session")
       .value("v2", "When replaying the session video, the content of the RDP viewer is fully covered by the size of the greatest application window during session")
@@ -200,13 +200,13 @@ inline void config_type_definition(type_enumerations & e)
       .value("group_membership", "Inspect group membership of user. User identity monitoring.")
     ;
 
-    e.enumeration_list("RdpStoreFile", withNameWhenDdescription)
+    e.enumeration_list("RdpStoreFile", withNameWhenDescription)
       .value("never", "Never store transferred files.")
       .value("always", "Always store transferred files.")
       .value("on_invalid_verification", "Transferred files are stored only if file verification is invalid. File verification by ICAP service must be enabled (in section file_verification).")
     ;
 
-    e.enumeration_list("SessionProbeOnAccountManipulation", withNameWhenDdescription, "For targets running WALLIX BestSafe only.")
+    e.enumeration_list("SessionProbeOnAccountManipulation", withNameWhenDescription, "For targets running WALLIX BestSafe only.")
       .value("allow",  "User action will be accepted")
       .value("notify", "(Same thing as 'allow') ")
       .value("deny",   "User action will be rejected")
@@ -218,7 +218,7 @@ inline void config_type_definition(type_enumerations & e)
       .value("front", "Send user client address of front connexion")
     ;
 
-    e.enumeration_list("SessionProbeLogLevel", withNameWhenDdescription)
+    e.enumeration_list("SessionProbeLogLevel", withNameWhenDescription)
       .value("Off").exclude()
       .value("Fatal", "Designates very severe error events that will presumably lead the application to abort.")
       .value("Error", "Designates error events that might still allow the application to continue running.")
@@ -228,30 +228,30 @@ inline void config_type_definition(type_enumerations & e)
       .value("Detail", "Designates finer-grained informational events than Debug.")
     ;
 
-    e.enumeration_list("ModRdpUseFailureSimulationSocketTransport", withNameWhenDdescription)
+    e.enumeration_list("ModRdpUseFailureSimulationSocketTransport", withNameWhenDescription)
       .value("Off")
       .value("SimulateErrorRead")
       .value("SimulateErrorWrite")
     ;
 
-    e.enumeration_list("LoginLanguage", withNameWhenDdescription)
+    e.enumeration_list("LoginLanguage", withNameWhenDescription)
       .value("Auto", "The language will be deduced according to the keyboard layout announced by the client")
       .value("EN")
       .value("FR")
     ;
 
-    e.enumeration_list("VncTunnelingType", withNameWhenDdescription)
+    e.enumeration_list("VncTunnelingType", withNameWhenDescription)
         .value("pxssh")
         .value("pexpect")
         .value("popen")
     ;
 
-    e.enumeration_list("VncTunnelingCredentialSource", withNameWhenDdescription)
+    e.enumeration_list("VncTunnelingCredentialSource", withNameWhenDescription)
         .value("static_login")
         .value("scenario_account")
     ;
 
-    e.enumeration_list("BannerType", withNameWhenDdescription)
+    e.enumeration_list("BannerType", withNameWhenDescription)
       .value("info")
       .value("warn")
       .value("alert")
@@ -262,7 +262,7 @@ inline void config_type_definition(type_enumerations & e)
       .value("Stop", "Stop the Session Probe. May result in session disconnection due to loss of KeepAlive messages! Please refer to 'On keepalive timeout' parameter of current section.")
     ;
 
-    e.enumeration_list("SessionProbeProcessCommandLineRetrieveMethod", withNameWhenDdescription)
+    e.enumeration_list("SessionProbeProcessCommandLineRetrieveMethod", withNameWhenDescription)
       .value("windows_management_instrumentation", "Get command-line of processes via Windows Management Instrumentation. (Legacy method)")
       .value("windows_internals", "Calling internal system APIs to get the process command line. (More efficient but less stable)")
       .value("both", "First use internal system APIs call, if that fails, use Windows Management Instrumentation method.")
@@ -273,7 +273,7 @@ inline void config_type_definition(type_enumerations & e)
         .value("UnsupportedOrUnknown", "Bastion, xrdp or others")
     ;
 
-    e.enumeration_flags("SessionLogFormat", withNameWhenDdescription)
+    e.enumeration_flags("SessionLogFormat", withNameWhenDescription)
         .value("disabled")
         .value("SIEM")
         .value("ArcSight")

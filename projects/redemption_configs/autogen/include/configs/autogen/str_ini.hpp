@@ -63,11 +63,13 @@ R"gen_config_ini(## Config file for RDP proxy.
 # The reminder is displayed successively 30min, 10min, 5min and 1min before the session is closed.
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
+#_display_name=Enable end time warning OSD
 #enable_end_time_warning_osd = 1
 
 # Allow to show target device name with F12 during the session
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
+#_display_name=Enable OSD display remote target
 # (acl config: proxy ⇐ enable_osd_display_remote_target)
 #enable_osd_display_remote_target = 1
 
@@ -94,13 +96,15 @@ R"gen_config_ini(## Config file for RDP proxy.
 # !!!May cause FreeRDP-based client to CRASH!!!
 # Set to 0 to disable this feature.
 # (in milliseconds)
+#_display_name=RDP keepalive connection interval
 #rdp_keepalive_connection_interval = 0
 
 # ⚠ Service redemption needs to be manually restarted to take changes into account
 # 
-# Enable primary connection on ipv6.
+# Enable primary connection on IPv6.
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
+#_display_name=Enable IPv6
 #enable_ipv6 = 1
 
 # 0 for disabled.
@@ -137,26 +141,31 @@ R"gen_config_ini(## Config file for RDP proxy.
 # Fallback to RDP Legacy Encryption if client does not support TLS.
 # ⚠ Enabling this option is a security risk.
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=TLS fallback legacy
 #tls_fallback_legacy = 0
 
 # Enable TLS between client and proxy.
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=TLS support
 #tls_support = 1
 
 # Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3
 # ⚠ Lower this value only for compatibility reasons.
 # (min = 0)
+#_display_name=TLS min level
 #tls_min_level = 2
 
 # Maximal incoming TLS level 0=no restriction, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3
 # ⚠ Change this value only for compatibility reasons.
 # (min = 0)
+#_display_name=TLS max level
 #tls_max_level = 0
 
 # [Not configured]: Compatible with more RDP clients (less secure)
 # HIGH:!ADH:!3DES: Compatible only with MS Windows 7 client or more recent (moderately secure)
 # HIGH:!ADH:!3DES:!SHA: Compatible only with MS Server Windows 2008 R2 client or more recent (more secure)
 # The format used is described on this page: https://www.openssl.org/docs/man3.1/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT
+#_display_name=SSL cipher list
 #ssl_cipher_list = HIGH:!ADH:!3DES:!SHA
 
 # Configure the available TLSv1.3 ciphersuites.
@@ -179,6 +188,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 
 # Needed for primary NTLM or Kerberos connections over NLA.
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Enable NLA
 #enable_nla = 0
 
 # Specifies the highest RDP compression support available on client connection session.
@@ -188,6 +198,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 #   3: RDP 6.0 bulk compression
 #   4: RDP 6.1 bulk compression
 #_advanced
+#_display_name=RDP compression
 #rdp_compression = 4
 
 # Specifies the maximum color resolution (color depth) for client connection session:
@@ -230,6 +241,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 
 # Same effect as "Transform glyph to bitmap", but only for RDP client on iOS platform.
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Bogus iOS glyph support level
 #bogus_ios_glyph_support_level = 1
 
 # Some RDP clients advertise glyph support, but this does not work properly with the RDP proxy. This option replaces glyph orders with bitmap orders.
@@ -242,13 +254,15 @@ R"gen_config_ini(## Config file for RDP proxy.
 
 # Enables display of message informing user that his/her session is being audited.
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Enable OSD 4 eyes
 #enable_osd_4_eyes = 1
 
-# Enable RemoteFx on client connection.
+# Enable RemoteFX on client connection.
 # Needs - "Max Color Depth" option set to 32 (32-bit RGB mask + alpha)
 #       - "Enable RemoteFX" option enabled in target connection policy
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
+#_display_name=Enable RemoteFX
 #enable_remotefx = 1
 
 # This option should only be used if the server or client is showing graphical issues.
@@ -282,6 +296,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # This parameter allows you to specify max timeout before a TCP connection is aborted. If the option value is specified as 0, TCP will use the system default.
 # (in milliseconds | min = 0, max = 3600000)
 #_advanced
+#_display_name=TCP user timeout
 # (acl config: proxy ⇐ all_target_mod:tcp_user_timeout)
 #tcp_user_timeout = 0
 
@@ -325,6 +340,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 #   3: RDP 6.0 bulk compression
 #   4: RDP 6.1 bulk compression
 #_advanced
+#_display_name=RDP compression
 #rdp_compression = 4
 
 # (type: boolean (0/no/false or 1/yes/true))
@@ -361,40 +377,47 @@ R"gen_config_ini(## Config file for RDP proxy.
 
 # Enable NLA authentication in secondary target.
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Enable NLA
 # (acl config: proxy ⇐ mod_rdp:enable_nla)
 #enable_nla = 1
 
 # If enabled, NLA authentication will try Kerberos before NTLM.
 # (if enable_nla is disabled, this value is ignored).
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Enable Kerberos
 # (acl config: proxy ⇐ mod_rdp:enable_kerberos)
 #enable_kerberos = 1
 
 # Allow NTLM fallback if Kerberos authentication fail.
 # (if enable_kerberos is disabled, this value is ignored).
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Allow NLA NTLM fallback
 # (acl config: proxy ⇐ mod_rdp:allow_nla_ntlm_fallback)
 #allow_nla_ntlm_fallback = 0
 
 # Allow TLS only fallback if NLA authentication fail.
 # (if enable_nla is disabled, this value is ignored).
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Allow TLS only fallback
 # (acl config: proxy ⇐ mod_rdp:allow_tls_only_fallback)
 #allow_tls_only_fallback = 0
 
 # Allow Standard RDP Security (Legacy) fallback if TLS connection fail.
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
+#_display_name=Allow RDP legacy fallback
 # (acl config: proxy ⇐ mod_rdp:allow_rdp_legacy_fallback)
 #allow_rdp_legacy_fallback = 0
 
 # Minimal incoming TLS level 0=TLSv1, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3
 # (min = 0)
+#_display_name=TLS min level
 # (acl config: proxy ⇐ mod_rdp:tls_min_level)
 #tls_min_level = 0
 
 # Maximal incoming TLS level 0=no restriction, 1=TLSv1.1, 2=TLSv1.2, 3=TLSv1.3
 # (min = 0)
+#_display_name=TLS max level
 # (acl config: proxy ⇐ mod_rdp:tls_max_level)
 #tls_max_level = 0
 
@@ -521,11 +544,13 @@ R"gen_config_ini(## Config file for RDP proxy.
 
 # As far as possible, use client-provided remote program (RemoteApp)
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Use client provided RemoteApp
 # (acl config: proxy ⇐ mod_rdp:use_client_provided_remoteapp)
 #use_client_provided_remoteapp = 0
 
 # As far as possible, use native RemoteApp capability
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Use native RemoteApp capability
 # (acl config: proxy ⇐ mod_rdp:use_native_remoteapp_capability)
 #use_native_remoteapp_capability = 1
 
@@ -560,11 +585,13 @@ R"gen_config_ini(## Config file for RDP proxy.
 # Workaround option to support partial clipboard initialization performed by some versions of FreeRDP.
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
+#_display_name=Bogus FreeRDP clipboard
 #bogus_freerdp_clipboard = 0
 
 # Workaround option to disable shared disk for RDP client on iOS platform only.
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
+#_display_name=Bogus iOS RDPDR virtual channel
 #bogus_ios_rdpdr_virtual_channel = 1
 
 # Workaround option to fix some drawing issues with Windows Server 2012.
@@ -576,6 +603,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # Adds RDPDR channel metadata to session logs. Disabling this option makes shared disks more responsive, but metadata will no longer be collected.if at least one authorization of RDPDR is missing (Printer, ComPort, SmartCard, Drive), then this option is considered enabled.
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
+#_display_name=Enable RDPDR data analysis
 # (acl config: proxy ⇐ mod_rdp:enable_rdpdr_data_analysis)
 #enable_rdpdr_data_analysis = 1
 
@@ -583,12 +611,14 @@ R"gen_config_ini(## Config file for RDP proxy.
 # Set to 0 to disable this feature.
 # (in milliseconds)
 #_advanced
+#_display_name=RemoteApp bypass legal notice delay
 #remoteapp_bypass_legal_notice_delay = 0
 
 # Time limit to automatically bypass Windows's Legal Notice screen in RemoteApp mode.
 # Set to 0 to disable this feature.
 # (in milliseconds)
 #_advanced
+#_display_name=RemoteApp bypass legal notice timeout
 #remoteapp_bypass_legal_notice_timeout = 20000
 
 # Some events such as 'Preferred DropEffect' have no particular meaning. This option allows you to exclude these types of events from the logs.
@@ -617,8 +647,9 @@ R"gen_config_ini(## Config file for RDP proxy.
 #_advanced
 #session_shadowing_support = 1
 
-# Enables support of the remoteFX codec on target connection.
+# Enables support of the RemoteFX codec on target connection.
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Enable RemoteFX
 # (acl config: proxy ⇐ mod_rdp:enable_remotefx)
 #enable_remotefx = 0
 
@@ -637,8 +668,9 @@ R"gen_config_ini(## Config file for RDP proxy.
 # (acl config: proxy ⇐ mod_rdp:force_smartcard_authentication)
 #force_smartcard_authentication = 0
 
-# Enable target connection on ipv6
+# Enable target connection on IPv6
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Enable IPv6
 # (acl config: proxy ⇐ mod_rdp:enable_ipv6)
 #enable_ipv6 = 1
 
@@ -695,6 +727,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # Otherwise, remote programs will be launched according to Remote Programs Virtual Channel Extension of Remote Desktop Protocol. This latter is the native method.
 # The difference is that Session Probe does not start a new application when its host session is resumed. Conversely, launching applications according to Remote Programs Virtual Channel Extension of Remote Desktop Protocol is not affected by this behavior. However, launching applications via the native method requires them to be published in Remote Desktop Services, which is unnecessary if launched by the Session Probe.
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Use Session Probe to launch remote program
 # (acl config: proxy ⇐ mod_rdp:use_session_probe_to_launch_remote_program)
 #use_session_probe_to_launch_remote_program = 1
 
@@ -717,6 +750,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 [session_probe]
 
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Enable Session Probe
 # (acl config: proxy ⇐ session_probe:enable_session_probe)
 #enable_session_probe = 0
 
@@ -794,6 +828,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 
 # If enabled, disconnected auto-deployed Application Driver session will automatically terminate by Session Probe.
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Enable autodeployed Application Driver affinity
 # (acl config: proxy ⇐ session_probe:enable_autodeployed_appdriver_affinity)
 #enable_autodeployed_appdriver_affinity = 1
 
@@ -929,6 +964,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # When CPU consumption exceeds the allowed limit, debugging information can be collected (if the Windows-side logging is enabled), then Session Probe will sabotage. Additional behavior is defined by 'Cpu usage alarm action' parameter.
 # (min = 0, max = 10000)
 #_advanced
+#_display_name=CPU usage alarm threshold
 # (acl config: proxy ⇐ session_probe:cpu_usage_alarm_threshold)
 #cpu_usage_alarm_threshold = 0
 
@@ -936,6 +972,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 #   0: Restart the Session Probe. May result in session disconnection due to loss of KeepAlive messages! Please refer to 'On keepalive timeout' parameter of current section and 'Allow multiple handshakes' parameter of 'Configuration options'.
 #   1: Stop the Session Probe. May result in session disconnection due to loss of KeepAlive messages! Please refer to 'On keepalive timeout' parameter of current section.
 #_advanced
+#_display_name=CPU usage alarm action
 # (acl config: proxy ⇐ session_probe:cpu_usage_alarm_action)
 #cpu_usage_alarm_action = 0
 
@@ -952,6 +989,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # If enabled, during the End of session check, the processes that do not have a visible window will not be counted as active processes of the session. Without active processes, the application session will be logged off by the Session Probe.
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
+#_display_name=Ignore UI less processes during end of session check
 # (acl config: proxy ⇐ session_probe:ignore_ui_less_processes_during_end_of_session_check)
 #ignore_ui_less_processes_during_end_of_session_check = 1
 
@@ -1008,6 +1046,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # BestSafe has more efficient mechanisms in these tasks than Session Probe.
 # For more information please refer to 'Outbound connection monitoring rules' parameter and 'Process monitoring rules' parameter.
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Enable BestSafe interaction
 # (acl config: proxy ⇐ session_probe:enable_bestsafe_interaction)
 #enable_bestsafe_interaction = 0
 
@@ -1206,16 +1245,19 @@ R"gen_config_ini(## Config file for RDP proxy.
 #bogus_clipboard_infinite_loop = 0
 
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Server is MacOS
 # (acl config: proxy ⇐ mod_vnc:server_is_macos)
 #server_is_macos = 0
 
 # When disabled, Ctrl + Alt becomes AltGr (Windows behavior)
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Server Unix alt
 # (acl config: proxy ⇐ mod_vnc:server_unix_alt)
 #server_unix_alt = 0
 
-# Enable target connection on ipv6
+# Enable target connection on IPv6
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Enable IPv6
 # (acl config: proxy ⇐ mod_vnc:enable_ipv6)
 #enable_ipv6 = 1
 
@@ -1411,9 +1453,11 @@ R"gen_config_ini(## Config file for RDP proxy.
 #rt_png_limit = 5
 
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Use Redis
 #use_redis = 1
 
 # (in milliseconds)
+#_display_name=Redis timeout
 #redis_timeout = 500
 
 [file_verification]
@@ -1496,10 +1540,12 @@ R"gen_config_ini(## Config file for RDP proxy.
 
 # Enable websocket protocol (ws or wss with use_tls=1)
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Enable WebSocket
 #enable_websocket = 0
 
 # Use TLS with websocket (wss)
 # (type: boolean (0/no/false or 1/yes/true))
+#_display_name=Use TLS
 #use_tls = 1
 
 # ${addr}:${port} or ${port} or ${unix_socket_path}
@@ -1653,6 +1699,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 
 [debug]
 
+#_display_name=Fake target IP
 #fake_target_ip = 
 
 # - kbd / ocr when != 0
@@ -1745,6 +1792,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # - rdpdr_dump          = 0x80000000
 # (min = 0)
 #_advanced
+#_display_name=Mod RDP
 #mod_rdp = 0
 
 # - basic_trace     = 0x00000001
@@ -1768,6 +1816,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # - keymap          = 0x00080000
 # (min = 0)
 #_advanced
+#_display_name=Mod VNC
 #mod_vnc = 0
 
 # - copy_paste != 0
@@ -1826,6 +1875,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 #   0: Off
 #   1: SimulateErrorRead
 #   2: SimulateErrorWrite
+#_display_name=Mod RDP use failure simulation socket transport
 #mod_rdp_use_failure_simulation_socket_transport = 0
 
 # List of client probe IP addresses (ex: ip1,ip2,etc) to prevent some continuous logs
