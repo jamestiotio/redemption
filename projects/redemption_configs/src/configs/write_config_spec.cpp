@@ -28,7 +28,7 @@ int main()
         cfg_generators::GeneratorConfig(
             "autogen/include/configs/autogen/str_ini.hpp",
 
-            "autogen/include/configs/autogen/str_python_spec.hpp",
+            "autogen/include/configs/autogen/ini_spec.hpp",
 
             "autogen/doc/config.json",
 

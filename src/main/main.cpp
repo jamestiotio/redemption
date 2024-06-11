@@ -284,7 +284,7 @@ int main(int argc, char** argv)
         cli::option("print-spec").help("Show file spec for rdpproxy.ini")
             .parser(cli::quit([]{
                 std::cout <<
-                    #include "configs/autogen/str_python_spec.hpp"
+                    #include "configs/autogen/ini_spec.hpp"
                 ;
             })),
 

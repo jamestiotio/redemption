@@ -7,7 +7,7 @@ int main()
 {
     std::ostream{nullptr}
       <<
-        #include "configs/autogen/str_python_spec.hpp"
+        #include "configs/autogen/ini_spec.hpp"
       <<
         #include "configs/autogen/str_ini.hpp"
     ;
