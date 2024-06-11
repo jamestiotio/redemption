@@ -28,7 +28,7 @@
 #include <krb5.h>
 
 
-static char const* get_krb_err_message(krb5_error_code ret)
+char const* get_krb_err_message(krb5_error_code ret)
 {
 #define CASE(constant) case constant: return #constant
 #define CASE_MSG(constant, msg) case constant: return "[" #constant "]: " msg

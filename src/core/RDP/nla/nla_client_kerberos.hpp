@@ -389,7 +389,6 @@ private:
         major_status = gss_wrap(&minor_status, this->sspi_krb_ctx->gss_ctx, true,
                 GSS_C_QOP_DEFAULT, &inbuf, &conf_state, &outbuf);
         if (GSS_ERROR(major_status)) {
-            LOG(LOG_INFO, "MAJOR ERROR");
             this->sspi_report_error(GSS_C_GSS_CODE, "CredSSP: GSS WRAP failed.",
                                major_status, minor_status);
             return SEC_E_ENCRYPT_FAILURE;
@@ -429,7 +428,6 @@ private:
         OM_uint32 major_status = gss_unwrap(&minor_status, this->sspi_krb_ctx->gss_ctx, &inbuf, &outbuf,
                                   &conf_state, &qop_state);
         if (GSS_ERROR(major_status)) {
-            LOG(LOG_INFO, "MAJOR ERROR");
             this->sspi_report_error(GSS_C_GSS_CODE, "CredSSP: GSS UNWRAP failed.",
                                major_status, minor_status);
             return SEC_E_DECRYPT_FAILURE;
@@ -447,18 +445,19 @@ private:
         OM_uint32 ms;
         gss_buffer_desc status_string;
 
-        LOG(LOG_ERR, "GSS error [%u:%u:%u]: %s",
+        LOG(LOG_ERR, "GSS Major error [%u:%u:%u] %s",
             (major_status & 0xff000000) >> 24,    // Calling error
             (major_status & 0xff0000) >> 16,    // Routine error
             major_status & 0xffff,    // Supplementary info bits
             str);
 
-        LOG(LOG_ERR, "GSS Minor status error [%u:%u:%u]:%u %s",
+        LOG(LOG_ERR, "GSS Minor status error [%u:%u:%u]:%d %s",
             (minor_status & 0xff000000) >> 24,    // Calling error
             (minor_status & 0xff0000) >> 16,    // Routine error
             minor_status & 0xffff,    // Supplementary info bits
-            minor_status,
-            str);
+            static_cast<int>(minor_status),
+            get_krb_err_message(minor_status));
+
 
         do {
             ms = gss_display_status(
@@ -721,7 +720,6 @@ private:
                                             &this->sspi_krb_ctx->actual_time);
 
         if (GSS_ERROR(major_status)) {
-            LOG(LOG_INFO, "MAJOR ERROR");
             this->sspi_report_error(GSS_C_GSS_CODE, "CredSSP: SPNEGO negotiation failed.",
                                major_status, minor_status);
             // SEC_E_OUT_OF_SEQUENCE;
@@ -970,7 +968,6 @@ public:
                                             &this->sspi_krb_ctx->actual_time);
 
         if (GSS_ERROR(major_status)) {
-            LOG(LOG_INFO, "MAJOR ERROR");
             this->sspi_report_error(GSS_C_GSS_CODE, "CredSSP: SPNEGO negotiation failed.",
                                major_status, minor_status);
             // SEC_E_OUT_OF_SEQUENCE;

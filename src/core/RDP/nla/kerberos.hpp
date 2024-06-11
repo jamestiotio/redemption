@@ -28,6 +28,8 @@
 #include <krb5.h>
 
 
+char const* get_krb_err_message(krb5_error_code ret);
+
 class Krb5Creds final
 {
     krb5_context ctx;
