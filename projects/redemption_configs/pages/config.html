@@ -612,8 +612,8 @@ const makeHtmlSpec = (enumDatas, sections, spec, prefix, isConnpolicy, prefixPre
       }
 
       description = description
-        ? htmlEscape(description).replaceAll('\n', '<br>')
-        : 'No description';
+        ? refOptionFormatting(htmlEscape(description).replaceAll('\n', '<br>'))
+        : '<i>No description</i>';
 
       const defaultValue = preferHex ? `0x${option.value.toString(16)}` : option.value;
       humanValue = humanValue && ` (= ${humanValue})`;
@@ -671,6 +671,18 @@ const makeHtmlAdvancedMod = (name) => {
 const formatReason = (reason) => reason ? ` | ${reason}` : '';
 
 const htmlEscape = (s) => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;');
+
+const refOptionFormatting = (s) => {
+  // &lt; because called after htmlEscape()
+  return s.replace(/&lt;code>([^&]+)&lt;\/code>/g, (_, code) => {
+    // refer to literal reference (cf. `"member name" (in "section name" section of "file")`)
+    if (code[0] === '"') {
+      return code.replace(/"([^"]+)"/g, '"<code>$1</code>"');
+    }
+    // refer to ini reference (cf. `[section]name`)
+    return `<code>${code.replace(']', '] ')}</code>`;
+  });
+};
 
 const showTab = (tab) => {
   document.getElementById(`tab-${tab}`).classList.add('tab-current')

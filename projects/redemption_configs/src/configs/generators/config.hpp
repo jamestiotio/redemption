@@ -2241,54 +2241,52 @@ public:
                 : mem.connpolicy_section;
         };
 
-        auto ini_mem_desc = desc_ref_replacer.replace_refs(
-            has_ini || has_acl,
-            [&](std::string& s, Section const& section, MemberInfo const& mem){
-                str_append(s, '[', section.names.ini_name(), ']', mem.name.ini_name());
+        auto ini_desc_replacer = [&](std::string& s, Section const& section, MemberInfo const& mem){
+            str_append(s, '[', section.names.ini_name(), ']', mem.name.ini_name());
+        };
+
+        auto ini_mem_desc = desc_ref_replacer.replace_refs(has_ini || has_acl, ini_desc_replacer);
+
+        auto spec_desc_replacer = [&](std::string& s, Section const& section, MemberInfo const& mem){
+            if (!mem.name.display.empty()) {
+                str_append(s, '"', mem.name.display, '"');
             }
-        );
-
-        auto spec_mem_desc = desc_ref_replacer.replace_refs(
-            has_global_spec || has_connpolicy,
-            [&](std::string& s, Section const& section, MemberInfo const& mem){
-                if (!mem.name.display.empty()) {
-                    str_append(s, '"', mem.name.display, '"');
+            else {
+                auto name = mem.spec.has_connpolicy()
+                    ? mem.name.connpolicy_name()
+                    : mem.name.ini_name();
+                auto first = name.begin();
+                auto last = name.end();
+                s.push_back('"');
+                s.push_back(*first);
+                inplace_upper(s.back());
+                while (++first != last) {
+                    s.push_back(*first == '_' ? ' ' : *first);
                 }
-                else {
-                    auto name = mem.spec.has_connpolicy()
-                        ? mem.name.connpolicy_name()
-                        : mem.name.ini_name();
-                    auto first = name.begin();
-                    auto last = name.end();
-                    s.push_back('"');
-                    s.push_back(*first);
-                    inplace_upper(s.back());
-                    while (++first != last) {
-                        s.push_back(*first == '_' ? ' ' : *first);
-                    }
-                    s.push_back('"');
-                }
-                s += " option"sv;
+                s.push_back('"');
+            }
+            s += " option"sv;
 
-                const bool refer_to_same_spec =
-                    (mem.spec.has_connpolicy() == mem_info.spec.has_connpolicy());
-                auto section_name = connpolicy_section_name(mem_info, section_names);
-                auto section_name_ref = connpolicy_section_name(mem, section.names);
-                bool same_section = (section_name == section_name_ref);
+            const bool refer_to_same_spec =
+                (mem.spec.has_connpolicy() == mem_info.spec.has_connpolicy());
+            auto section_name = connpolicy_section_name(mem_info, section_names);
+            auto section_name_ref = connpolicy_section_name(mem, section.names);
+            bool same_section = (section_name == section_name_ref);
+            if (!refer_to_same_spec || !same_section) {
+                s += " (in "sv;
                 if (!refer_to_same_spec || !same_section) {
-                    s += " (in "sv;
-                    if (!refer_to_same_spec || !same_section) {
-                        str_append(s, '"', section_name_ref, "\" section"sv,
-                            refer_to_same_spec ? ")"sv : " of ");
-                    }
-                    if (!refer_to_same_spec) {
-                        s += mem.spec.has_connpolicy()
-                            ? "\"Connection Policy\" configuration)"sv
-                            : "\"RDP Proxy\" configuration option)"sv;
-                    }
+                    str_append(s, '"', section_name_ref, "\" section"sv,
+                        refer_to_same_spec ? ")"sv : " of ");
+                }
+                if (!refer_to_same_spec) {
+                    s += mem.spec.has_connpolicy()
+                        ? "\"Connection Policy\" configuration)"sv
+                        : "\"RDP Proxy\" configuration option)"sv;
                 }
             }
-        );
+        };
+
+        auto spec_mem_desc = desc_ref_replacer.replace_refs(has_global_spec || has_connpolicy, spec_desc_replacer);
 
         auto const acl_direction
                 = (acl_io == SesmanIO::acl_to_proxy)
@@ -2410,8 +2408,18 @@ public:
                 "\n      \"value\": "sv, mem_info.value.values.json, ","
                 "\n      \"description\": \""sv
             );
-            auto json_mem_desc = (has_global_spec || has_connpolicy) ? spec_mem_desc : ini_mem_desc;
-            json_quoted(json_values, json_mem_desc.sv());
+            json_quoted(json_values, desc_ref_replacer.replace_refs(
+                true, [&](std::string& s, Section const& section, MemberInfo const& mem){
+                    s += "<code>"sv;
+                    if (has_global_spec || has_connpolicy) {
+                        spec_desc_replacer(s, section, mem);
+                    }
+                    else {
+                        ini_desc_replacer(s, section, mem);
+                    }
+                    s += "</code>"sv;
+                }
+            ).sv());
             json_values += '"';
             if (bool(mem_info.tags)) {
                 json_values += ",\n      \"tags\": ["sv;
@@ -2747,10 +2755,15 @@ private:
             return desc.empty();
         }
 
+        bool has_replacement() const
+        {
+            return !replacements.empty();
+        }
+
         template<class Fn>
         String replace_refs(bool cond, Fn&& fn)
         {
-            if (!cond || replacements.empty()) {
+            if (!cond || !has_replacement()) {
                 return {this, 0, 0, desc};
             }
 
