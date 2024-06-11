@@ -375,7 +375,7 @@ _.section("globals", [&]
         .desc =
             "No automatic disconnection due to inactivity, timer is set on target session.\n"
             "If value is between 1 and 30, then 30 is used.\n"
-            "If value is set to 0, then value set in \"Base inactivity timeout\" (in \"RDP Proxy\" configuration option) is used."
+            "If value is set to 0, then value set in :REF:[globals]:base_inactivity_timeout is used."
     });
 
     _.member(MemberInfo{
@@ -455,7 +455,7 @@ _.section("globals", [&]
         .spec = global_spec(no_acl),
         .desc =
             "Show in session the target username when F12 is pressed.\n"
-            "This option needs \"Enable Osd Display Remote Target\"."
+            "This option needs :REF:[globals]:enable_osd_display_remote_target."
     });
 
 
@@ -708,7 +708,7 @@ _.section("client", [&]
         .name = "cache_waiting_list",
         .value = value(false),
         .spec = ini_only(no_acl),
-        .desc = "Support of Cache Waiting List: Experimental cache strategy (this value is ignored if Persistent Disk Bitmap Cache is disabled).",
+        .desc = "Support of Cache Waiting List: Experimental cache strategy (this value is ignored if :REF:[client]:persistent_disk_bitmap_cache is disabled).",
     });
 
     _.member(MemberInfo{
@@ -717,7 +717,7 @@ _.section("client", [&]
         .spec = global_spec(no_acl, spec::advanced),
         .tags = Tag::Perf,
         .desc =
-            "If enabled, the contents of Persistent Bitmap Caches are stored on disk for reusing them later (this value is ignored if Persistent Disk Bitmap Cache is disabled).",
+            "If enabled, the contents of Persistent Bitmap Caches are stored on disk for reusing them later (this value is ignored if :REF:[client]:persistent_disk_bitmap_cache is disabled).",
     });
 
     _.member(MemberInfo{
@@ -752,7 +752,7 @@ _.section("client", [&]
         .value = value(true),
         .spec = global_spec(no_acl),
         .tags = Tag::Compatibility,
-        .desc = "Same effect as \"Transform glyph to bitmap\", but only for RDP client on iOS platform.",
+        .desc = "Same effect as :REF:[client]:transform_glyph_to_bitmap, but only for RDP client on iOS platform.",
     });
 
     // TODO should be merged with disabled_orders
@@ -784,8 +784,8 @@ _.section("client", [&]
         .spec = global_spec(no_acl, spec::advanced),
         .tags = Tag::Perf | Tag::Compatibility,
         .desc = "Enable RemoteFX on client connection.\n"
-        "Needs - \"Max Color Depth\" option set to 32 (32-bit RGB mask + alpha)\n"
-        "      - \"Enable RemoteFX\" option enabled in target connection policy",
+        "Needs - :REF:[client]:max_color_depth set to 32 (32-bit RGB mask + alpha)\n"
+        "      - :REF:[mod_rdp]:enable_remotefx set to on",
     });
 
     _.member(MemberInfo{
@@ -905,7 +905,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
         .spec = connpolicy(rdp, L),
         .desc =
             "If enabled, NLA authentication will try Kerberos before NTLM.\n"
-            "(if enable_nla is disabled, this value is ignored)."
+            "(if :REF:[mod_rdp]:enable_nla is disabled, this value is ignored)."
     });
 
     _.member(MemberInfo{
@@ -913,7 +913,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
         .value = value<bool>(false),
         .spec = connpolicy(rdp, L),
         .desc = "Allow NTLM fallback if Kerberos authentication fail.\n"
-        "(if enable_kerberos is disabled, this value is ignored).",
+        "(if :REF:[mod_rdp]:enable_kerberos is disabled, this value is ignored).",
     });
 
     _.member(MemberInfo{
@@ -921,7 +921,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
         .value = value<bool>(false),
         .spec = connpolicy(rdp, L),
         .desc = "Allow TLS only fallback if NLA authentication fail.\n"
-        "(if enable_nla is disabled, this value is ignored).",
+        "(if :REF:[mod_rdp]:enable_nla is disabled, this value is ignored).",
     });
 
     _.member(MemberInfo{
@@ -996,7 +996,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
         .name = "cache_waiting_list",
         .value = value(true),
         .spec = global_spec(no_acl, spec::advanced),
-        .desc = "Support of Cache Waiting List (this value is ignored if Persistent Disk Bitmap Cache is disabled).",
+        .desc = "Support of Cache Waiting List (this value is ignored if :REF:[mod_rdp]:persistent_disk_bitmap_cache is disabled).",
     });
 
     _.member(MemberInfo{
@@ -1004,7 +1004,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
         .value = value(false),
         .spec = global_spec(no_acl, spec::advanced),
         .tags = Tag::Perf,
-        .desc = "If enabled, the contents of Persistent Bitmap Caches are stored on disk for reusing them later (this value is ignored if Persistent Disk Bitmap Cache is disabled).",
+        .desc = "If enabled, the contents of Persistent Bitmap Caches are stored on disk for reusing them later (this value is ignored if :REF:[mod_rdp]:persistent_disk_bitmap_cache is disabled).",
     });
 
     _.member(MemberInfo{
@@ -1013,7 +1013,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
         .spec = ini_only(acl_to_proxy(no_reset_back_to_selector, L)),
         .desc =
             "List of (comma-separated) enabled (static) virtual channel. If character '*' is used as a name then enables everything.\n"
-            "An explicit name in 'Allowed channels' and 'Denied channels' will have higher priority than '*'."
+            "An explicit name will have higher priority than '*' in :REF::denied_channels."
     });
 
     _.member(MemberInfo{
@@ -1022,7 +1022,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
         .spec = ini_only(acl_to_proxy(no_reset_back_to_selector, L)),
         .desc =
             "List of (comma-separated) disabled (static) virtual channel. If character '*' is used as a name then disables everything.\n"
-            "An explicit name in 'Allowed channels' and 'Denied channels' will have higher priority than '*'."
+            "An explicit name will have higher priority than '*' in :REF::allowed_channels."
     });
 
     _.member(MemberInfo{
@@ -1031,7 +1031,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
         .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "List of (comma-separated) enabled dynamic virtual channel. If character '*' is used as a name then enables everything.\n"
-            "An explicit name in 'Allowed dynamic channels' and 'Denied dynamic channels' will have higher priority than '*'."
+            "An explicit name will have higher priority than '*' in :REF::denied_dynamic_channels."
     });
 
     _.member(MemberInfo{
@@ -1040,7 +1040,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
         .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "List of (comma-separated) disabled dynamic virtual channel. If character '*' is used as a name then disables everything.\n"
-            "An explicit name in 'Allowed dynamic channels' and 'Denied dynamic channels' will have higher priority than '*'."
+            "An explicit name will have higher priority than '*' in :REF::allowed_dynamic_channels."
     });
 
     // TODO remove ?
@@ -1349,7 +1349,7 @@ _.section(names{.all="mod_rdp", .connpolicy="rdp"}, [&]
         .tags = Tag::Workaround,
         .desc =
             "If the feature is enabled, the end user can trigger a session disconnection/reconnection with the shortcut Ctrl+F12.\n"
-            "This feature should not be used together with the End disconnected session option (section session_probe).\n"
+            "This feature should not be used together with the :REF:[session_probe]:end_disconnected_session.\n"
             "The keyboard shortcut is fixed and cannot be changed."
     });
 
@@ -1511,7 +1511,7 @@ _.section("session_probe", [&]
         .value = value<types::range<std::chrono::milliseconds, 0, 300000>>(40000),
         .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
-            "This parameter is used if 'On launch failure' is 1 (disconnect user).\n"
+            "This parameter is used if :REF::on_launch_failure is 1 (disconnect user).\n"
             "0 to disable timeout."
     });
 
@@ -1520,7 +1520,7 @@ _.section("session_probe", [&]
         .value = value<types::range<std::chrono::milliseconds, 0, 300000>>(40000),
         .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
-            "This parameter is used if 'On launch failure' is 0 (ignore failure and continue) or 2 (retry without Session Probe).\n"
+            "This parameter is used if :REF::on_launch_failure is 0 (ignore failure and continue) or 2 (retry without Session Probe).\n"
             "0 to disable timeout."
     });
 
@@ -1528,7 +1528,7 @@ _.section("session_probe", [&]
         .name = "start_launch_timeout_timer_only_after_logon",
         .value = value(true),
         .spec = connpolicy(rdp, L),
-        .desc = "If enabled, the Launch timeout countdown timer will be started only after user logged in Windows. Otherwise, the countdown timer will be started immediately after RDP protocol connexion.",
+        .desc = "If enabled, the :REF::launch_timeout countdown timer will be started only after user logged in Windows. Otherwise, the countdown timer will be started immediately after RDP protocol connexion.",
     });
 
     _.member(MemberInfo{
@@ -1536,8 +1536,8 @@ _.section("session_probe", [&]
         .value = value<types::range<std::chrono::milliseconds, 0, 60000>>(5000),
         .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
-            "The amount of time that RDP Proxy waits for a reply from the Session Probe to the KeepAlive message before adopting the behavior defined by 'On keepalive timeout'.\n"
-            "If our local network is subject to congestion, or if the Windows lacks responsiveness, it is possible to increase the value of the timeout to minimize disturbances related to the behavior defined by 'On keepalive timeout'.\n"
+            "The amount of time that RDP Proxy waits for a reply from the Session Probe to the KeepAlive message before adopting the behavior defined by :REF::on_keepalive_timeout.\n"
+            "If our local network is subject to congestion, or if the Windows lacks responsiveness, it is possible to increase the value of the timeout to minimize disturbances related to the behavior defined by :REF::on_keepalive_timeout.\n"
             "The KeepAlive message is used to detect Session Probe unavailability. Without Session Probe, session monitoring will be minimal. No metadata will be collected.\n"
             "During the delay between sending a KeepAlive request and receiving the corresponding reply, Session Probe availability is indeterminate."
     });
@@ -1558,7 +1558,7 @@ _.section("session_probe", [&]
             "If enabled, Session Probe will automatically end the disconnected Desktop session. Otherwise, the RDP session and the applications it contains will remain active after user disconnection (unless a parameter defined at the RDS-level decides otherwise).\n"
             "The parameter in RemoteApp session (RDS meaning) does not cause the latter to be closed but a simple cleanup. However, this makes the session suitable for reuse.\n"
             "This parameter must be enabled for Web applications because an existing session with a running browser cannot be reused.\n"
-            "It is also recommended to enable this parameter for connections in RemoteApp mode (RDS meaning) when 'Use session probe to launch remote program' parameter is enabled. Because an existing Session Probe does not launch a startup program (a new Bastion application) when the RemoteApp session resumes."
+            "It is also recommended to enable this parameter for connections in RemoteApp mode (RDS meaning) when :REF:[mod_rdp]:use_session_probe_to_launch_remote_program is enabled. Because an existing Session Probe does not launch a startup program (a new Bastion application) when the RemoteApp session resumes."
     });
 
     _.member(MemberInfo{
@@ -1628,7 +1628,7 @@ _.section("session_probe", [&]
         .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "The additional period given to the device to make Clipboard redirection available.\n"
-            "This parameter is effective only if the Smart launcher is used.\n"
+            "This parameter is effective only if :REF::use_smart_launcher is enabled.\n"
             "If we see the message \"Clipboard Virtual Channel is unavailable\" in the Bastion’s syslog and we are sure that this virtual channel is allowed on the device (confirmed by a direct connection test for example), we probably need to use this parameter."
     });
 
@@ -1639,7 +1639,7 @@ _.section("session_probe", [&]
         .desc =
             "For under-performing devices.\n"
             "The extra time given to the device before starting the Session Probe launch sequence.\n"
-            "This parameter is effective only if the Smart launcher is used.\n"
+            "This parameter is effective only if :REF::use_smart_launcher is enabled.\n"
             "This parameter can be useful when (with Launch mask disabled) Windows Explorer is not immediately visible when the RDP session is opened."
     });
 
@@ -1649,9 +1649,9 @@ _.section("session_probe", [&]
         .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "The delay between two simulated keystrokes during the Session Probe launch sequence execution.\n"
-            "This parameter is effective only if the Smart launcher is used.\n"
+            "This parameter is effective only if :REF::use_smart_launcher is enabled.\n"
             "This parameter may help if the Session Probe launch failure is caused by network slowness or device under-performance.\n"
-            "This parameter is usually used together with the 'Smart launcher short delay' parameter."
+            "This parameter is usually used together with the :REF::smart_launcher_short_delay."
     });
 
     _.member(MemberInfo{
@@ -1660,9 +1660,9 @@ _.section("session_probe", [&]
         .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "The delay between two steps of the same simulated keystrokes during the Session Probe launch sequence execution.\n"
-            "This parameter is effective only if the Smart launcher is used.\n"
+            "This parameter is effective only if :REF::use_smart_launcher is enabled.\n"
             "This parameter may help if the Session Probe launch failure is caused by network slowness or device under-performance.\n"
-            "This parameter is usually used together with the 'Smart launcher long delay' parameter."
+            "This parameter is usually used together with the :REF::smart_launcher_long_delay."
     });
 
     _.member(MemberInfo{
@@ -1673,8 +1673,8 @@ _.section("session_probe", [&]
         .value = value(true),
         .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
-            "Allow sufficient time for the RDP client (Access Manager) to respond to the Clipboard virtual channel initialization message. Otherwise, the time granted to the RDP client (Access Manager or another) for Clipboard virtual channel initialization will be defined by the 'Smart launcher clipboard initialization delay' parameter.\n"
-            "This parameter is effective only if the Smart launcher is used and the RDP client is Access Manager."
+            "Allow sufficient time for the RDP client (Access Manager) to respond to the Clipboard virtual channel initialization message. Otherwise, the time granted to the RDP client (Access Manager or another) for Clipboard virtual channel initialization will be defined by the :REF::smart_launcher_clipboard_initialization_delay.\n"
+            "This parameter is effective only if :REF::use_smart_launcher is enabled and the RDP client is Access Manager."
     });
 
     _.member(MemberInfo{
@@ -1707,8 +1707,8 @@ _.section("session_probe", [&]
             "Use only if you see unusually high consumption of system object handles by the Session Probe.\n"
             "The Session Probe will sabotage and then restart it-self if it consumes more handles than what is defined by this parameter.\n"
             "A value of 0 disables this feature.\n"
-            "This feature can cause the session to be disconnected if the value of the 'On KeepAlive timeout' parameter is set to 1 (Disconnect user).\n"
-            "If 'Allow multiple handshakes' parameter ('session_probe' section of 'Configuration options') is disabled, restarting the Session Probe will cause the session to disconnect."
+            "This feature can cause the session to be disconnected if the value of the :REF::on_keepalive_timeout is set to 1 (Disconnect user).\n"
+            "If :REF::allow_multiple_handshake is disabled, restarting the Session Probe will cause the session to disconnect."
     });
 
     _.member(MemberInfo{
@@ -1719,8 +1719,8 @@ _.section("session_probe", [&]
             "Use only if you see unusually high consumption of memory by the Session Probe.\n"
             "The Session Probe will sabotage and then restart it-self if it consumes more memory than what is defined by this parameter.\n"
             "A value of 0 disables this feature.\n"
-            "This feature can cause the session to be disconnected if the value of the 'On KeepAlive timeout' parameter is set to 1 (Disconnect user).\n"
-            "If 'Allow multiple handshakes' parameter ('session_probe' section of 'Configuration options') is disabled, restarting the Session Probe will cause the session to disconnect."
+            "This feature can cause the session to be disconnected if the value of the :REF::on_keepalive_timeout is set to 1 (Disconnect user).\n"
+            "If :REF::allow_multiple_handshake is disabled, restarting the Session Probe will cause the session to disconnect."
     });
 
     _.member(MemberInfo{
@@ -1730,14 +1730,14 @@ _.section("session_probe", [&]
         .desc =
             "This debugging feature was created to determine the cause of high CPU consumption by Session Probe in certain environments.\n"
             "As a percentage, the effective alarm threshold is calculated in relation to the reference consumption determined at the start of the program execution. The alarm is deactivated if this value of parameter is less than 200 (200%% of reference consumption).\n"
-            "When CPU consumption exceeds the allowed limit, debugging information can be collected (if the Windows-side logging is enabled), then Session Probe will sabotage. Additional behavior is defined by 'Cpu usage alarm action' parameter."
+            "When CPU consumption exceeds the allowed limit, debugging information can be collected (if the Windows-side logging is enabled), then Session Probe will sabotage. Additional behavior is defined by :REF::cpu_usage_alarm_action."
     });
 
     _.member(MemberInfo{
         .name = "cpu_usage_alarm_action",
         .value = from_enum(SessionProbeCPUUsageAlarmAction::Restart),
         .spec = connpolicy(rdp, L, spec::advanced),
-        .desc = "Additional behavior when CPU consumption exceeds what is allowed. Please refer to the 'Cpu usage alarm threshold' parameter.",
+        .desc = "Additional behavior when CPU consumption exceeds what is allowed. Please refer to the :REF::cpu_usage_alarm_threshold.",
     });
 
     _.member(MemberInfo{
@@ -1778,7 +1778,7 @@ _.section("session_probe", [&]
             "This parameter concerns the functionality of the Password field detection performed by the Session Probe. This detection is necessary to avoid logging the text entered in the password fields as metadata of session (also known as Session log).\n"
             "Unfortunately, the detection does not work with applications developed in Java, Flash, etc. In order to work around the problem, we will treat the windows of these applications as input fields of unknown type. Therefore, the text entered in these will not be included in the session’s metadata.\n"
             "One of the specifics of these applications is that their main windows do not have any child window from point of view of WIN32 API. Activating this parameter allows this property to be used to detect applications developed in Java or Flash.\n"
-            "Please refer to the 'Keyboard input masking level' parameter of 'session_log' section."
+            "Please refer to the :REF:[session_log]:keyboard_input_masking_level."
     });
 
     _.member(MemberInfo{
@@ -1790,7 +1790,7 @@ _.section("session_probe", [&]
             "This parameter concerns the functionality of the Password field detection performed by the Session Probe. This detection is necessary to avoid logging the text entered in the password fields as metadata of session (also known as Session log).\n"
             "Unfortunately, the detection is not infallible. In order to work around the problem, we will treat the windows of these applications as input fields of unknown type. Therefore, the text entered in these will not be included in the session’s metadata.\n"
             "This parameter is used to provide the list of processes whose windows are considered as input fields of unknown type.\n"
-            "Please refer to the 'Keyboard input masking level' parameter of 'session_log' section."
+            "Please refer to the :REF:[session_log]:keyboard_input_masking_level."
     });
 
     _.member(MemberInfo{
@@ -1799,7 +1799,7 @@ _.section("session_probe", [&]
         .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "This parameter is used when resuming a session hosting a existing Session Probe.\n"
-            "If enabled, the Session Probe will activate or deactivate features according to the value of 'Disabled features' parameter received when resuming its host session. Otherwise, the Session Probe will keep the same set of features that were used during the previous connection.\n"
+            "If enabled, the Session Probe will activate or deactivate features according to the value of :REF::disabled_features received when resuming its host session. Otherwise, the Session Probe will keep the same set of features that were used during the previous connection.\n"
             "It is recommended to keep the default value of this parameter."
     });
 
@@ -1812,10 +1812,10 @@ _.section("session_probe", [&]
         .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "This parameter was created to work around some compatibility issues and to limit the CPU load that the Session Probe process causes.\n"
-            "If 'Java Acccess Bridge' feature is disabled, data entered in the password field of Java applications may be visible in the metadata. "
-            "For more information please refer to 'Keyboard input masking level' parameter of 'session_log' section. "
-            "For more information please also refer to 'Childless window as unidentified input field and Windows of these applications as unidentified input field o"
-            "It is not recommended to deactivate 'MS Active Accessibility' and 'MS UI Automation' at the same time. This configuration will lead to the loss of detection of password input fields. Entries in these fields will be visible as plain text in the session metadata. For more information please refer to 'Keyboard input masking level' parameter of 'session_log' section of 'Connection Policy'."
+            "If 'Java Acccess Bridge' feature is disabled, data entered in the password field of Java applications may be visible in the metadata.\n"
+            "For more information please refer to :REF:[session_log]:keyboard_input_masking_level.\n"
+            "For more information please also refer to :REF::childless_window_as_unidentified_input_field and :REF::windows_of_these_applications_as_unidentified_input_field."
+            "It is not recommended to deactivate 'MS Active Accessibility' and 'MS UI Automation' at the same time. This configuration will lead to the loss of detection of password input fields. Entries in these fields will be visible as plain text in the session metadata."
     });
 
     _.member(MemberInfo{
@@ -1826,7 +1826,7 @@ _.section("session_probe", [&]
             "This parameter has no effect on the device without BestSafe.\n"
             "Is enabled, Session Probe relies on BestSafe to perform the detection of application launches and the detection of outgoing connections.\n"
             "BestSafe has more efficient mechanisms in these tasks than Session Probe.\n"
-            "For more information please refer to 'Outbound connection monitoring rules' parameter and 'Process monitoring rules' parameter."
+            "For more information please refer to :REF::outbound_connection_monitoring_rules and :REF::process_monitoring_rules."
     });
 
     _.member(MemberInfo{
@@ -1835,7 +1835,7 @@ _.section("session_probe", [&]
         .spec = connpolicy(rdp, L),
         .desc =
             "This parameter has no effect on the device without BestSafe.\n"
-            "BestSafe interaction must be enabled. Please refer to 'Enable bestsafe interaction' parameter.\n"
+            "BestSafe interaction must be enabled. Please refer to :REF::enable_bestsafe_interaction.\n"
             "This parameter allows you to choose the behavior of the RDP Proxy in case of detection of Windows account manipulation.\n"
             "Detectable account manipulations are the creation, deletion of a Windows account, and the addition and deletion of an account from a Windows user group."
     });
@@ -1871,7 +1871,7 @@ _.section("session_probe", [&]
             "(Ex. IPv6 addresses: $deny:2001:0db8:85a3:0000:0000:8a2e:0370:7334:3389,$allow:[20D1:0:3238:DFE1:63::FEFB]:21)\n"
             "(Ex. hostname can be used to resolve to both IPv4 and IPv6 addresses: $allow:host.domain.net:3389)\n"
             "(Ex. for backwards compatibility only: 10.1.0.0/16:22)\n"
-            "BestSafe can be used to perform detection of outgoing connections created in the session. Please refer to 'Enable bestsafe interaction' parameter."
+            "BestSafe can be used to perform detection of outgoing connections created in the session. Please refer to :REF::enable_bestsafe_interaction."
     });
 
     _.member(MemberInfo{
@@ -1882,7 +1882,7 @@ _.section("session_probe", [&]
             "This parameter is used to provide the list of (comma-separated) rules used to monitor the execution of processes in the session.\n"
             "(Ex.: $deny:taskmgr.exe)\n"
             "@ = All child processes of (Bastion) application (Ex.: $deny:@)\n"
-            "BestSafe can be used to perform detection of process launched in the session. Please refer to 'Enable bestsafe interaction' parameter."
+            "BestSafe can be used to perform detection of process launched in the session. Please refer to :REF::enable_bestsafe_interaction."
     });
 
     _.member(MemberInfo{
@@ -2126,8 +2126,8 @@ _.section(names{"vnc_over_ssh"}, [&]
         .value = enum_as_string(VncTunnelingCredentialSource::scenario_account),
         .spec = acl_connpolicy(vnc),
         .desc =
-            "static_login: Static values provided in \"Ssh login\" & \"Ssh password\" fields will be used to establish the SSH tunnel.\n"
-            "scenario_account: Scenario account provided in \"Scenario account name\" field will be used to establish the SSH tunnel. (Recommended)"
+            "static_login: Static values provided in :REF:[vnc_over_ssh]:ssh_login & :REF:[vnc_over_ssh]:ssh_password fields will be used to establish the SSH tunnel.\n"
+            "scenario_account: Scenario account provided in :REF:[vnc_over_ssh]:scenario_account_name field will be used to establish the SSH tunnel. (Recommended)"
     });
 
     _.member(MemberInfo{
@@ -2455,7 +2455,7 @@ _.section("capture", [&]
         .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "Disable keyboard log:\n"
-            "(Please see also \"Keyboard input masking level\" in \"session_log\" section of \"Connection Policy\".)"
+            "(Please see also :REF:[session_log]:keyboard_input_masking_level)"
     });
 
     _.member(MemberInfo{
@@ -2509,7 +2509,7 @@ _.section("audit", [&]
         .spec = global_spec(no_acl, spec::advanced),
         .desc =
             "Show keyboard input event in meta file\n"
-            "(Please see also \"Keyboard input masking level\" in \"session_log\".)"
+            "(Please see also :REF:[session_log]:keyboard_input_masking_level)"
     });
 
     _.member(MemberInfo{
@@ -2882,7 +2882,7 @@ _.section("internal_mod", [&]
         .spec = global_spec(no_acl),
         .desc =
             "Show close screen.\n"
-            "This displays errors related to the secondary connection then closes automatically after a timeout specified by \"Close Timeout\" or on user request.",
+            "This displays errors related to the secondary connection then closes automatically after a timeout specified by :REF:[internal_mod]:close_box_timeout or on user request.",
     });
 
     _.member(MemberInfo{

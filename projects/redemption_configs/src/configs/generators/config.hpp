@@ -179,12 +179,12 @@ DataAsStrings string_value_to_strings(types::fixed_string<n>)
 
 inline std::string cpp_expr_to_string(cpp::expr expr)
 {
-    return str_concat(end_raw_string, " << ("_av, expr.value, ") << "_av, begin_raw_string);
+    return str_concat(end_raw_string, " << ("sv, expr.value, ") << "sv, begin_raw_string);
 }
 
 inline std::string cpp_expr_to_json(cpp::expr expr)
 {
-    return str_concat('"', expr.value, "\", \"cppExpr\": true");
+    return str_concat('"', expr.value, "\", \"cppExpr\": true"sv);
 }
 
 inline DataAsStrings string_value_to_strings(cpp::expr expr)
@@ -351,7 +351,7 @@ inline DataAsStrings color_value_to_strings(uint32_t color)
     return {
         .py = str_concat('"', s, '"'),
         .ini = std::string(s),
-        .cpp = str_concat("0x"_av, std::string_view(data+1, 6)),
+        .cpp = str_concat("0x"sv, std::string_view(data+1, 6)),
     };
 }
 
@@ -453,25 +453,40 @@ struct Section
 {
     Names names;
     std::vector<MemberInfo> members;
+
+    MemberInfo const* find_member(std::string_view member_name) const
+    {
+        for (auto const& m : members) {
+            if (m.name.all == member_name) {
+                return &m;
+            }
+        }
+        return nullptr;
+    }
 };
 
 struct ConfigInfo
 {
     std::vector<Section> sections;
-    std::unordered_map<std::string_view, std::size_t> section_name_positions;
+    std::unordered_map<std::string_view, std::size_t> sections_pos_by_name;
 
     Section* find_section(std::string_view section_name)
     {
-        auto it = section_name_positions.find(section_name);
-        if (it != section_name_positions.end()) {
+        auto it = sections_pos_by_name.find(section_name);
+        if (it != sections_pos_by_name.end()) {
             return &sections[it->second];
         }
         return nullptr;
     }
 
+    Section const* find_section(std::string_view section_name) const
+    {
+        return const_cast<ConfigInfo*>(this)->find_section(section_name);
+    }
+
     void push_section(std::string_view section_name)
     {
-        section_name_positions.emplace(section_name, sections.size());
+        sections_pos_by_name.emplace(section_name, sections.size());
         sections.emplace_back().names.all = section_name;
     }
 };
@@ -605,7 +620,7 @@ struct CppConfigWriterBase
                     std::string_view previous_name;
                     for (std::string_view name : names) {
                         if (name == previous_name) {
-                            str_append(error, (error.empty() ? "duplicates member: " : ", "), name);
+                            str_append(error, (error.empty() ? "duplicates member: "sv : ", "sv), name);
                         }
                         previous_name = name;
                     }
@@ -615,7 +630,7 @@ struct CppConfigWriterBase
                     if (not full_err.empty()) {
                         full_err += " ; ";
                     }
-                    str_append(full_err, p.name, ": ", error);
+                    str_append(full_err, p.name, ": "sv, error);
                 }
             }
 
@@ -1068,12 +1083,12 @@ ValueAsStrings compute_value_as_strings(type_<T>, V const& value)
     }
     else if constexpr (std::is_same_v<T, types::dirpath>) {
         return ValueAsStrings{
-            .prefix_spec_type = str_concat("string(max="_av, path_max_as_str, ", "_av),
+            .prefix_spec_type = str_concat("string(max="sv, path_max_as_str, ", "sv),
             .cpp_type = "::configs::spec_types::directory_path"s,
             .json_type = "dirpath"sv,
             .spec_str_buffer_size = 0,
             .values = string_value_to_strings(value),
-            .ini_note = str_concat("maxlen = "_av, path_max_as_str),
+            .ini_note = str_concat("maxlen = "sv, path_max_as_str),
         };
     }
     else if constexpr (std::is_same_v<T, types::ip_string>) {
@@ -1198,15 +1213,15 @@ ValueAsStrings compute_value_as_strings(type_<types::fixed_string<N>>, V const& 
 {
     auto d = int_to_decimal_chars(N);
     return ValueAsStrings{
-        .prefix_spec_type = str_concat("string(max="_av, d, ", "_av),
-        .cpp_type = str_concat("char["_av, d, "+1]"_av),
+        .prefix_spec_type = str_concat("string(max="sv, d, ", "sv),
+        .cpp_type = str_concat("char["sv, d, "+1]"sv),
         .json_type = "str"sv,
-        .json_extra_type = str_concat("\"minlen\": "_av, d, ", \"maxlen\": "_av, d),
+        .json_extra_type = str_concat("\"minlen\": "sv, d, ", \"maxlen\": "sv, d),
         .spec_type = "::configs::spec_types::fixed_string"s,
-        .acl_diag_type = str_concat("std::string(maxlen="_av, d, ")"_av),
+        .acl_diag_type = str_concat("std::string(maxlen="sv, d, ")"sv),
         .spec_str_buffer_size = 0,
         .values = string_value_to_strings(value),
-        .ini_note = str_concat("maxlen = "_av, d),
+        .ini_note = str_concat("maxlen = "sv, d),
     };
 }
 
@@ -1215,15 +1230,15 @@ ValueAsStrings compute_value_as_strings(type_<types::fixed_binary<N>>, V const& 
 {
     auto d = int_to_decimal_chars(N);
     return ValueAsStrings{
-        .prefix_spec_type = str_concat("string(min="_av, d, ", max="_av, d, ", "_av),
-        .cpp_type = str_concat("std::array<unsigned char, "_av, d, '>'),
+        .prefix_spec_type = str_concat("string(min="sv, d, ", max="sv, d, ", "sv),
+        .cpp_type = str_concat("std::array<unsigned char, "sv, d, '>'),
         .json_type = "bytes"sv,
-        .json_extra_type = str_concat("\"minlen\": "_av, d, ", \"maxlen\": "_av, d),
+        .json_extra_type = str_concat("\"minlen\": "sv, d, ", \"maxlen\": "sv, d),
         .spec_type = "::configs::spec_types::fixed_binary"s,
         .spec_str_buffer_size = N * 2,
         .values = binary_string_value_to_strings<N>(value),
         .spec_note = "in hexadecimal format"s,
-        .ini_note = str_concat("hexadecimal string of length "_av, d),
+        .ini_note = str_concat("hexadecimal string of length "sv, d),
     };
 }
 
@@ -1234,8 +1249,8 @@ ValueAsStrings compute_value_as_strings(type_<types::list<T>>, V const& value)
         .prefix_spec_type = "string(",
         .cpp_type = "std::string",
         .json_type = "list"sv,
-        .json_extra_type = str_concat("\"subtype\": \""_av, json_subtype(type_<T>()), '"'),
-        .spec_type = str_concat("::configs::spec_types::list<"_av, type_name<T>(), '>'),
+        .json_extra_type = str_concat("\"subtype\": \""sv, json_subtype(type_<T>()), '"'),
+        .spec_type = str_concat("::configs::spec_types::list<"sv, type_name<T>(), '>'),
         .spec_str_buffer_size = 0,
         .values = string_value_to_strings(value),
         .spec_note = "values are comma-separated"s
@@ -1272,16 +1287,16 @@ ValueAsStrings compute_value_as_strings(type_<types::range<Int, min, max>>, V co
     }
 
     return ValueAsStrings{
-        .prefix_spec_type = str_concat("integer(min="_av, smin, ", max="_av, smax, ", "_av),
+        .prefix_spec_type = str_concat("integer(min="sv, smin, ", max="sv, smax, ", "sv),
         .cpp_type = std::string(type_name<Int>()),
         .json_type = json_subtype(type_<Int>()),
-        .json_extra_type = str_concat("\"min\": "_av, smin, ", \"max\": "_av, smax),
-        .spec_type = str_concat("::configs::spec_types::range<"_av, type_name<Int>(), ", "_av, smin, ", "_av, smax, ">"_av),
+        .json_extra_type = str_concat("\"min\": "sv, smin, ", \"max\": "sv, smax),
+        .spec_type = str_concat("::configs::spec_types::range<"sv, type_name<Int>(), ", "sv, smin, ", "sv, smax, ">"sv),
         .spec_str_buffer_size = integral_buffer_size_v<Int>,
         // TODO hexconverter
         .values = integer_value_to_strings(value),
         .spec_note = spec_note,
-        .ini_note = str_concat(spec_note, sep, "min = "_av, smin, ", max = "_av, smax),
+        .ini_note = str_concat(spec_note, sep, "min = "sv, smin, ", max = "sv, smax),
     };
 }
 
@@ -1304,7 +1319,7 @@ inline ValueAsStrings compute_value_as_strings(type_<types::performance_flags>, 
         .values = {
             .py = str_concat('"', value, '"'),
             .ini = std::string(value),
-            .cpp = str_concat("0x", force_present, ", 0x", force_not_present),
+            .cpp = str_concat("0x"sv, force_present, ", 0x"sv, force_not_present),
         },
     };
 }
@@ -1323,7 +1338,7 @@ inline std::string enum_options_to_prefix_spec_type(type_enumeration const& e)
     ret += "option("sv;
     for (type_enumeration::value_type const & v : e.values) {
         if (!v.exclude) {
-            str_append(ret, '\'', v.get_name(), "', "_av);
+            str_append(ret, '\'', v.get_name(), "', "sv);
         }
     }
     return ret;
@@ -1379,7 +1394,7 @@ inline std::string_view get_enum_value_data(uint64_t value, type_enumeration con
         }
     }
     throw std::runtime_error(str_concat(
-        "unknown value "_av, int_to_decimal_chars(value), " for "_av, e.name
+        "unknown value "sv, int_to_decimal_chars(value), " for "sv, e.name
     ));
 }
 
@@ -1390,14 +1405,14 @@ inline ValueAsStrings compute_string_enum_as_strings(uint64_t value, type_enumer
         .prefix_spec_type = enum_options_to_prefix_spec_type(e),
         .cpp_type = std::string(e.name),
         .json_type = "enumStr"sv,
-        .json_extra_type = str_concat("\"subtype\": \""_av, e.name, '"'),
+        .json_extra_type = str_concat("\"subtype\": \""sv, e.name, '"'),
         .spec_type = "std::string"s,
         .acl_diag_type = "std::string"s,
         .spec_str_buffer_size = 0,
         .values = {
             .py = str_concat('"', name, '"'),
             .ini = std::string(name),
-            .cpp = str_concat(e.name, "::"_av, name),
+            .cpp = str_concat(e.name, "::"sv, name),
         },
         .enumeration = &e,
         .string_parser_for_enum = true,
@@ -1409,7 +1424,7 @@ inline std::string enum_to_prefix_spec_type(type_enumeration const& e)
 {
     switch (e.cat) {
         case type_enumeration::Category::flags:
-            return str_concat("integer(min=0, max="_av, int_to_decimal_chars(e.max()), ", "_av);
+            return str_concat("integer(min=0, max="sv, int_to_decimal_chars(e.max()), ", "sv);
 
         case type_enumeration::Category::autoincrement:
         case type_enumeration::Category::set:
@@ -1421,7 +1436,7 @@ inline std::string enum_to_prefix_spec_type(type_enumeration const& e)
     ret += "option(";
     for (type_enumeration::value_type const & v : e.values) {
         if (!v.exclude) {
-            str_append(ret, int_to_decimal_chars(v.val), ", "_av);
+            str_append(ret, int_to_decimal_chars(v.val), ", "sv);
         }
     }
     return ret;
@@ -1494,9 +1509,9 @@ inline std::string numeric_enum_desc(type_enumeration const& e, bool use_disable
             }
 
             note[note.size() - 2] = '=';
-            str_append(str, "\nNote: values can be added ("_av,
-                (use_disable_prefix ? "disable all: "_av : "enable all: "_av),
-                note, "0x"_av, int_to_hexadecimal_lower_chars(total), ')');
+            str_append(str, "\nNote: values can be added ("sv,
+                (use_disable_prefix ? "disable all: "sv : "enable all: "sv),
+                note, "0x"sv, int_to_hexadecimal_lower_chars(total), ')');
         }
     }
 
@@ -1508,7 +1523,7 @@ inline std::string enum_to_cpp_string(
     uint64_t value, type_enumeration const& e, int_to_chars_result const& int_converted)
 {
     try {
-        return str_concat(e.name, "::"_av, get_enum_value_data(value, e));
+        return str_concat(e.name, "::"sv, get_enum_value_data(value, e));
     }
     catch (std::exception const&) {
         if (e.cat != type_enumeration::Category::flags) {
@@ -1526,7 +1541,7 @@ inline ValueAsStrings compute_integer_enum_as_strings(uint64_t value, type_enume
         .prefix_spec_type = enum_to_prefix_spec_type(e),
         .cpp_type = std::string(e.name),
         .json_type = "enum",
-        .json_extra_type = str_concat("\"subtype\": \""_av, e.name, '"'),
+        .json_extra_type = str_concat("\"subtype\": \""sv, e.name, '"'),
         .spec_str_buffer_size = integral_buffer_size_v<uint64_t>,
         .values = {
             .py = std::string(d.sv()),
@@ -1588,7 +1603,7 @@ inline void check_policy(std::initializer_list<DestSpecFile> dest_files)
                 case DestSpecFile::vnc: dest_name = " (vnc)"; break;
             }
             throw std::runtime_error(
-                str_concat("duplicate connection policy value", dest_name)
+                str_concat("duplicate connection policy value"sv, dest_name)
             );
         }
         policy_type |= dest_file;
@@ -1685,6 +1700,10 @@ ValueAsStrings value(U const& value = T(), TConnPolicy const&... conn_policy_val
     return ret;
 }
 
+inline void inplace_upper(char& c)
+{
+    c = ('a' <= c && c <= 'z') ? c + 'A' - 'a' : c;
+}
 
 inline constexpr std::string_view workaround_message = "⚠ The use of this feature is not recommended!\n\n";
 
@@ -1797,22 +1816,22 @@ static void check_names(
     bool has_ini, bool has_acl, bool has_connpolicy)
 {
     if (!has_ini && !names.ini.empty())
-        throw std::runtime_error(str_concat("names.ini without ini for ", names.all));
+        throw std::runtime_error(str_concat("names.ini without ini for "sv, names.all));
 
     if (!has_acl && !names.acl.empty())
-        throw std::runtime_error(str_concat("names.acl without acl for ", names.all));
+        throw std::runtime_error(str_concat("names.acl without acl for "sv, names.all));
 
     // if (has_acl && !names.connpolicy.empty())
-    //     throw std::runtime_error(str_concat("names.connpolicy with acl for ", names.all));
+    //     throw std::runtime_error(str_concat("names.connpolicy with acl for "sv, names.all));
 
     if (!has_connpolicy && !names.connpolicy.empty())
-        throw std::runtime_error(str_concat("names.connpolicy without connpolicy for ", names.all));
+        throw std::runtime_error(str_concat("names.connpolicy without connpolicy for "sv, names.all));
 
     if (has_connpolicy && !names.acl.empty())
-        throw std::runtime_error(str_concat("names.acl with connpolicy for ", names.all));
+        throw std::runtime_error(str_concat("names.acl with connpolicy for "sv, names.all));
 
     if (!(has_ini || has_connpolicy) && !names.display.empty())
-        throw std::runtime_error(str_concat("names.display without ini or connpolicy for ", names.all));
+        throw std::runtime_error(str_concat("names.display without ini or connpolicy for "sv, names.all));
 }
 
 struct Appender
@@ -1852,7 +1871,7 @@ struct Marker
     }
 };
 
-struct GeneratorConfig
+class GeneratorConfig
 {
     struct File
     {
@@ -1894,6 +1913,13 @@ struct GeneratorConfig
         std::unordered_set<std::string> acl_mems {};
     };
 
+    struct SectionData
+    {
+        Names names;
+        std::string global_spec {};
+        std::string ini {};
+    };
+
     File spec;
     File ini;
     File json;
@@ -1903,18 +1929,11 @@ struct GeneratorConfig
     cpp_config_writer::CppConfigWriterBase cpp;
     std::string json_values;
 
-    struct SectionData
-    {
-        Names names;
-        std::string global_spec {};
-        std::string ini {};
-    };
-
     std::unordered_map<std::string_view, SectionData> sections;
 
     std::vector<std::string_view> ordered_section_names;
 
-
+public:
     GeneratorConfig(
         std::string ini_filename,
         std::string ini_spec_filename,
@@ -2064,7 +2083,7 @@ struct GeneratorConfig
 
         for (auto const& [cat, section_map] : policy.spec_file_map) {
             auto const spec_filename = str_concat(
-                policy.directory_spec, '/', dest_file_to_filename(cat), ".spec");
+                policy.directory_spec, '/', dest_file_to_filename(cat), ".spec"sv);
 
             std::ofstream out_spec(spec_filename);
 
@@ -2136,17 +2155,23 @@ struct GeneratorConfig
         cpp.start_indexes.emplace_back(cpp.authid_policies.size());
     }
 
-    void evaluate_member(Names const& section_names, MemberInfo const& mem_info, ConfigInfo const& conf)
+    void evaluate_member(Section const& section_info, MemberInfo const& mem_info, ConfigInfo const& conf)
     {
         std::string spec_desc {};
         std::string ini_desc {};
+
+        Names const& section_names = section_info.names;
         auto& section = get_section(section_names);
 
         Names const& names = mem_info.name;
-        std::string_view desc = mem_info.desc;
-        // trim right
-        while (!desc.empty() && (desc.back() == ' ' || desc.back() == '\n')) {
-            desc.remove_suffix(1);
+
+        {
+            std::string_view desc = mem_info.desc;
+            // trim right
+            while (!desc.empty() && (desc.back() == ' ' || desc.back() == '\n')) {
+                desc.remove_suffix(1);
+            }
+            desc_ref_replacer.init(desc, section_info, mem_info, conf);
         }
 
         bool const has_spec = mem_info.spec.has_spec();
@@ -2156,6 +2181,8 @@ struct GeneratorConfig
 
         auto const acl_io = mem_info.spec.acl_io;
         bool const has_acl = mem_info.spec.has_acl();
+
+        check_names(mem_info.name, has_ini, has_acl, has_connpolicy);
 
         std::string acl_network_name_tmp;
         std::string_view const acl_network_name
@@ -2171,9 +2198,7 @@ struct GeneratorConfig
             auto prefix_type = mem_info.prefix_type;
             auto* enumeration = mem_info.value.enumeration;
             if (enumeration) {
-                if (desc.empty()) {
-                    desc = enumeration->desc;
-                }
+                desc_ref_replacer.set_desc_if_empty(enumeration->desc);
 
                 bool use_disable_prefix_for_enumeration = false;
 
@@ -2210,6 +2235,61 @@ struct GeneratorConfig
             }
         }
 
+        auto connpolicy_section_name = [](MemberInfo const& mem, Names const& section_names){
+            return mem.connpolicy_section.empty()
+                ? section_names.connpolicy_name()
+                : mem.connpolicy_section;
+        };
+
+        auto ini_mem_desc = desc_ref_replacer.replace_refs(
+            has_ini || has_acl,
+            [&](std::string& s, Section const& section, MemberInfo const& mem){
+                str_append(s, '[', section.names.ini_name(), ']', mem.name.ini_name());
+            }
+        );
+
+        auto spec_mem_desc = desc_ref_replacer.replace_refs(
+            has_global_spec || has_connpolicy,
+            [&](std::string& s, Section const& section, MemberInfo const& mem){
+                if (!mem.name.display.empty()) {
+                    str_append(s, '"', mem.name.display, '"');
+                }
+                else {
+                    auto name = mem.spec.has_connpolicy()
+                        ? mem.name.connpolicy_name()
+                        : mem.name.ini_name();
+                    auto first = name.begin();
+                    auto last = name.end();
+                    s.push_back('"');
+                    s.push_back(*first);
+                    inplace_upper(s.back());
+                    while (++first != last) {
+                        s.push_back(*first == '_' ? ' ' : *first);
+                    }
+                    s.push_back('"');
+                }
+                s += " option"sv;
+
+                const bool refer_to_same_spec =
+                    (mem.spec.has_connpolicy() == mem_info.spec.has_connpolicy());
+                auto section_name = connpolicy_section_name(mem_info, section_names);
+                auto section_name_ref = connpolicy_section_name(mem, section.names);
+                bool same_section = (section_name == section_name_ref);
+                if (!refer_to_same_spec || !same_section) {
+                    s += " (in "sv;
+                    if (!refer_to_same_spec || !same_section) {
+                        str_append(s, '"', section_name_ref, "\" section"sv,
+                            refer_to_same_spec ? ")"sv : " of ");
+                    }
+                    if (!refer_to_same_spec) {
+                        s += mem.spec.has_connpolicy()
+                            ? "\"Connection Policy\" configuration)"sv
+                            : "\"RDP Proxy\" configuration option)"sv;
+                    }
+                }
+            }
+        );
+
         auto const acl_direction
                 = (acl_io == SesmanIO::acl_to_proxy)
                 ? " ⇐ "sv
@@ -2229,7 +2309,7 @@ struct GeneratorConfig
                 appender(workaround_message);
             }
 
-            appender.add_paragraph(desc);
+            appender.add_paragraph(is_spec ? spec_mem_desc.sv() : ini_mem_desc.sv());
 
             appender(is_spec ? spec_desc : ini_desc);
             auto const& note = is_spec ? mem_info.value.spec_note : mem_info.value.ini_note;
@@ -2311,7 +2391,7 @@ struct GeneratorConfig
 
             auto marker = Marker(acl_diag.buffer);
 
-            add_to_acl_diag.add_paragraph(desc);
+            add_to_acl_diag.add_paragraph(ini_mem_desc.sv());
             add_to_acl_diag(spec_desc);
             add_to_acl_diag(mem_info.value.acl_diag_note);
             add_comment(acl_diag.buffer, marker.cut(), "    "sv);
@@ -2322,15 +2402,16 @@ struct GeneratorConfig
         //
         {
             str_append(json_values,
-                json_values.empty() ? ""_av : ","_av,
+                json_values.empty() ? ""sv : ","sv,
                 "\n    {"
-                "\n      \"section\": \""_av, section.names.all, "\","
-                "\n      \"name\": \""_av, mem_info.name.all, "\","
-                "\n      \"type\": \""_av, mem_info.value.json_type, "\","
-                "\n      \"value\": "_av, mem_info.value.values.json, ","
-                "\n      \"description\": \""_av
+                "\n      \"section\": \""sv, section.names.all, "\","
+                "\n      \"name\": \""sv, mem_info.name.all, "\","
+                "\n      \"type\": \""sv, mem_info.value.json_type, "\","
+                "\n      \"value\": "sv, mem_info.value.values.json, ","
+                "\n      \"description\": \""sv
             );
-            json_quoted(json_values, desc);
+            auto json_mem_desc = (has_global_spec || has_connpolicy) ? spec_mem_desc : ini_mem_desc;
+            json_quoted(json_values, json_mem_desc.sv());
             json_values += '"';
             if (bool(mem_info.tags)) {
                 json_values += ",\n      \"tags\": ["sv;
@@ -2348,7 +2429,7 @@ struct GeneratorConfig
                 if (str.empty()) {
                     return;
                 }
-                str_append(json_values, ",\n      \""_av, json_key, "\": \""_av, str, '"');
+                str_append(json_values, ",\n      \""sv, json_key, "\": \""sv, str, '"');
             };
             append_if_not_empty("connpolicySection"sv, mem_info.connpolicy_section);
             append_if_not_empty("iniName"sv, names.ini);
@@ -2358,7 +2439,7 @@ struct GeneratorConfig
             append_if_not_empty("imagePath"sv, mem_info.spec.image_path);
             auto append_if_true = [&](std::string_view json_key, bool value) {
                 if (value) {
-                    str_append(json_values, ",\n      \""_av, json_key, "\": true"_av);
+                    str_append(json_values, ",\n      \""sv, json_key, "\": true"sv);
                 }
             };
             append_if_true("globalSpec", bool(mem_info.spec.dest & DestSpecFile::global_spec));
@@ -2379,7 +2460,7 @@ struct GeneratorConfig
             append_if_not_empty("logStategy", mem_info.spec.loggable == Loggable::No
                 ? ""sv : mem_info.spec.loggable == Loggable::Yes ? "1"sv : "2"sv);
             if (!mem_info.value.json_extra_type.empty()) {
-                str_append(json_values, ",\n      "_av, mem_info.value.json_extra_type);
+                str_append(json_values, ",\n      "sv, mem_info.value.json_extra_type);
             }
             json_values += "\n    }"sv;
         }
@@ -2400,9 +2481,7 @@ struct GeneratorConfig
                      mem_info.value.prefix_spec_type,
                      "default="sv);
 
-            std::string_view section_name = mem_info.connpolicy_section.empty()
-                ? section_names.connpolicy_name()
-                : mem_info.connpolicy_section;
+            std::string_view section_name = connpolicy_section_name(mem_info, section_names);
 
             if (policy.section_names.emplace(section_name).second) {
                 policy.ordered_section.emplace_back(section_name);
@@ -2446,13 +2525,13 @@ struct GeneratorConfig
                 // acl <-> proxy mapping
                 if (!bool(mem_info.spec.attributes & SpecAttributes::external)) {
                     str_append(policy.acl_map[dest_file].sections[section_name],
-                        "        ('", acl_name, "', '", member_name, "', ", *py_value, "),\n"
+                        "        ('"sv, acl_name, "', '"sv, member_name, "', "sv, *py_value, "),\n"sv
                     );
 
                     for (auto& connpolicy : mem_info.value.values.connection_policies) {
                         if (connpolicy.forced) {
                             str_append(policy.acl_map[connpolicy.dest_file].hidden_values,
-                                "    '", acl_name, "': ", connpolicy.py, ",\n");
+                                "    '"sv, acl_name, "': "sv, connpolicy.py, ",\n"sv);
                         }
                     }
                 }
@@ -2483,8 +2562,8 @@ struct GeneratorConfig
                 cpp.variables_acl.emplace_back(varname_with_section);
             }
 
-            if (!desc.empty()) {
-                cpp.out_member_ << cpp_doxygen_comment(desc, 4);
+            if (!desc_ref_replacer.empty()) {
+                cpp.out_member_ << cpp_doxygen_comment(ini_mem_desc.sv(), 4);
             }
             if (!mem_info.value.cpp_note.empty()) {
                 cpp.out_member_ << "    /// (" << mem_info.value.cpp_note << ") <br/>\n";
@@ -2598,13 +2677,172 @@ struct GeneratorConfig
                 "                value\n"
                 "            );\n"
                 "        }\n";
-                str_append(cpp.cfg_values, "cfg::"_av, varname_with_section, ",\n"_av);
+                str_append(cpp.cfg_values, "cfg::"sv, varname_with_section, ",\n"sv);
                 str_append(cpp.cfg_str_values,
-                    "{\""_av, section_names.ini_name(), "\"_zv, \""_av,
-                    names.ini_name(), "\"_zv},\n"_av);
+                    "{\""sv, section_names.ini_name(), "\"_zv, \""sv,
+                    names.ini_name(), "\"_zv},\n"sv);
             }
         }
     }
+
+private:
+    struct DescRefReplacer
+    {
+        // format:
+        //  :REF:[section_name]:member_name
+        //  :REF::member_name
+        //  :REF:SELF:
+        static constexpr std::string_view sref = ":REF:"sv;
+        static constexpr std::string_view self_param = "SELF:"sv;
+
+        struct String
+        {
+            DescRefReplacer const* self;
+            std::size_t start;
+            std::size_t end;
+            std::string_view s;
+
+            std::string_view sv() const
+            {
+                return start != end
+                    ? std::string_view(self->buf.data() + start, end - start)
+                    : s;
+            }
+        };
+
+        DescRefReplacer()
+        {
+            rep_buffer.reserve(240);
+            buf.reserve(8);
+        }
+
+        void init(std::string_view str, Section const& section_info, MemberInfo const& mem_info, ConfigInfo const& conf)
+        {
+            buf.clear();
+            replacements.clear();
+
+            std::string_view::size_type pos = 0;
+            while ((pos = str.find(sref, pos)) != std::string_view::npos) {
+                auto len = add_replacement(str, pos, section_info, mem_info, conf);
+                if (!len) {
+                    throw std::runtime_error(str_concat(
+                        "invalid :REF: in ["sv, section_info.names.all, ']', mem_info.name.all
+                    ));
+                }
+                pos += len;
+            }
+
+            desc = str;
+        }
+
+        void set_desc_if_empty(std::string_view str)
+        {
+            if (desc.empty()) {
+                desc = str;
+            }
+        }
+
+        bool empty() const
+        {
+            return desc.empty();
+        }
+
+        template<class Fn>
+        String replace_refs(bool cond, Fn&& fn)
+        {
+            if (!cond || replacements.empty()) {
+                return {this, 0, 0, desc};
+            }
+
+            const auto n = buf.size();
+
+            std::size_t pos = 0;
+            for (auto const& rep : replacements) {
+                buf.insert(buf.end(), desc.data() + pos, desc.data() + rep.pattern_start);
+                rep_buffer.clear();
+                fn(rep_buffer, *rep.section, *rep.member);
+                buf.insert(buf.end(), rep_buffer.begin(), rep_buffer.end());
+                pos = rep.pattern_start + rep.pattern_len;
+            }
+
+            buf.insert(buf.end(), desc.data() + pos, desc.data() + desc.size());
+            return {this, n, buf.size(), {}};
+        }
+
+    private:
+        struct ReplacementInfo
+        {
+            Section const* section;
+            MemberInfo const* member;
+            std::size_t pattern_start;
+            std::size_t pattern_len;
+        };
+
+        std::vector<ReplacementInfo> replacements;
+        std::string_view desc;
+        std::vector<char> buf;
+        std::string rep_buffer;
+
+        std::size_t add_replacement(std::string_view str, std::string_view::size_type pos, Section const& section_info, MemberInfo const& mem_info, ConfigInfo const& conf)
+        {
+            str = str.substr(pos + sref.size());
+            if (str.empty()) {
+                return 0;
+            }
+
+            Section const* section_ref = &section_info;
+
+            std::string_view::size_type start_mem_pos;
+            if (str[0] == '[') {
+                std::string_view::size_type end_sec_pos = str.find(']', 1);
+                if (end_sec_pos == std::string_view::npos || str.size() == end_sec_pos || str[end_sec_pos+1] != ':') {
+                    return 0;
+                }
+                const auto section_ref_name = str.substr(1, end_sec_pos - 1);
+                section_ref = conf.find_section(section_ref_name);
+                if (!section_ref) {
+                    return 0;
+                }
+                start_mem_pos = end_sec_pos + 2;
+            }
+            else if (str[0] == ':') {
+                start_mem_pos = 1;
+            }
+            else {
+                if (!utils::starts_with(str, self_param)) {
+                    return 0;
+                }
+                auto patt_len = sref.size() + self_param.size();
+                replacements.push_back(ReplacementInfo{&section_info, &mem_info, pos, patt_len});
+                return patt_len;
+            }
+
+            std::string_view::size_type end_mem_pos = start_mem_pos;
+            for (char c : str.substr(end_mem_pos)) {
+                auto is_identifier_char = ('a' <= c && c <= 'z')
+                                       || ('A' <= c && c <= 'Z')
+                                       || ('0' <= c && c <= '9')
+                                       || (c == '_');
+                if (!is_identifier_char) {
+                    break;
+                }
+                ++end_mem_pos;
+            }
+
+            const auto member_ref_name = str.substr(start_mem_pos, end_mem_pos - start_mem_pos);
+            MemberInfo const* member_ref = section_ref->find_member(member_ref_name);
+
+            if (!member_ref || member_ref == &mem_info) {
+                return 0;
+            }
+
+            auto patt_len = end_mem_pos + sref.size();
+            replacements.push_back(ReplacementInfo{section_ref, member_ref, pos, patt_len});
+            return patt_len;
+        }
+    };
+
+    DescRefReplacer desc_ref_replacer;
 };
 
 
@@ -2624,7 +2862,7 @@ struct GeneratorConfigWrapper
         for (std::string_view section_name : l) {
             if (conf.find_section(section_name)) {
                 throw std::runtime_error(str_concat(
-                    "set_sections(): duplicated section name: ", section_name
+                    "set_sections(): duplicated section name: "sv, section_name
                 ));
             }
             conf.push_section(section_name);
@@ -2644,14 +2882,8 @@ struct GeneratorConfigWrapper
     {
         assert(current_members);
 
-        bool const has_ini = mem_info.spec.has_ini();
-        bool const has_connpolicy = mem_info.spec.has_connpolicy();
-        bool const has_acl = mem_info.spec.has_acl();
-
-        check_names(mem_info.name, has_ini, has_acl, has_connpolicy);
-
         // compute display name there is a word replacement
-        if (mem_info.name.display.empty() && (has_ini || has_connpolicy)) {
+        if (mem_info.name.display.empty() && (mem_info.spec.has_ini() || mem_info.spec.has_connpolicy())) {
             compute_display_name_with_replacement(mem_info.name);
         }
 
@@ -2663,7 +2895,7 @@ struct GeneratorConfigWrapper
         for (auto& section : conf.sections) {
             writer.do_start_section(section.names);
             for (auto const& member : section.members) {
-                writer.evaluate_member(section.names, member, conf);
+                writer.evaluate_member(section, member, conf);
             }
             writer.do_stop_section(section.names);
         }
@@ -2679,12 +2911,12 @@ private:
         auto* section = conf.find_section(section_name);
         if (!section) {
             throw std::runtime_error(str_concat(
-                "Unknown section '", section_name, "'. Please add it in set_sections()"
+                "Unknown section '"sv, section_name, "'. Please add it in set_sections()"sv
             ));
         }
 
         if (!section->members.empty()) {
-            throw std::runtime_error(str_concat("'", section_name, "' is already set"));
+            throw std::runtime_error(str_concat('\'', section_name, "' is already set"sv));
         }
 
         return *section;
@@ -2694,7 +2926,7 @@ private:
     {
         auto const& replacements = display_name_word_replacement_table;
 
-        auto& name = names.all;
+        auto const& name = names.all;
 
         auto find_replacement_at_start = [&](std::string_view str) -> WordReplacement const* {
             for (auto& rep : replacements) {
@@ -2745,37 +2977,39 @@ private:
             }
         );
 
-        if (replacement_size) {
-            char* buf = display_names.emplace_back(std::make_unique<char[]>(
-                replacement_size + name.size() + 1)
-            ).get();
-            char* p = buf;
-            int first_word_is_replaced = 2;
-
-            replace(
-                [&](std::string_view str){
-                    memcpy(p, str.data(), str.size());
-                    p += str.size();
-                    *p++ = ' ';
-                    if (first_word_is_replaced != 1) {
-                        first_word_is_replaced = 0;
-                    }
-                },
-                [&](WordReplacement const& /*word_rep*/) {
-                    if (first_word_is_replaced == 2) {
-                        first_word_is_replaced = 1;
-                    }
-                }
-            );
-
-            // remove last space
-            --p;
-            // upper for first letter
-            if (first_word_is_replaced != 1) {
-                *buf = ('a' <= *buf && *buf <= 'z') ? *buf + 'A' - 'a' : *buf;
-            }
-            names.display = {buf, static_cast<std::size_t>(p-buf)};
+        if (!replacement_size) {
+            return;
         }
+
+        char* buf = display_names.emplace_back(
+            std::make_unique<char[]>(replacement_size + name.size() + 1)
+        ).get();
+        char* p = buf;
+        int first_word_is_replaced = 2;
+
+        replace(
+            [&](std::string_view str){
+                memcpy(p, str.data(), str.size());
+                p += str.size();
+                *p++ = ' ';
+                if (first_word_is_replaced != 1) {
+                    first_word_is_replaced = 0;
+                }
+            },
+            [&](WordReplacement const& /*word_rep*/) {
+                if (first_word_is_replaced == 2) {
+                    first_word_is_replaced = 1;
+                }
+            }
+        );
+
+        // remove last space
+        --p;
+        // upper for first letter
+        if (first_word_is_replaced != 1) {
+            inplace_upper(*buf);
+        }
+        names.display = {buf, static_cast<std::size_t>(p-buf)};
     }
 
 public:

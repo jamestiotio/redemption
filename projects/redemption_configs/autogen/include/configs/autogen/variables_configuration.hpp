@@ -242,7 +242,7 @@ namespace cfg
     };
     /// No automatic disconnection due to inactivity, timer is set on target session. <br/>
     /// If value is between 1 and 30, then 30 is used. <br/>
-    /// If value is set to 0, then value set in "Base inactivity timeout" (in "RDP Proxy" configuration option) is used. <br/>
+    /// If value is set to 0, then value set in [globals]base_inactivity_timeout is used. <br/>
     /// type: std::chrono::seconds <br/>
     /// connpolicy -> proxy    [name: session::inactivity_timeout] <br/>
     /// aclName: globals:inactivity_timeout <br/>
@@ -361,7 +361,7 @@ namespace cfg
         type value { true };
     };
     /// Show in session the target username when F12 is pressed. <br/>
-    /// This option needs "Enable Osd Display Remote Target". <br/>
+    /// This option needs [globals]enable_osd_display_remote_target. <br/>
     /// type: bool <br/>
     /// default: false <br/>
     struct globals::show_target_user_in_f12_message {
@@ -641,7 +641,7 @@ namespace cfg
         using mapped_type = bool;
         type value { true };
     };
-    /// Support of Cache Waiting List: Experimental cache strategy (this value is ignored if Persistent Disk Bitmap Cache is disabled). <br/>
+    /// Support of Cache Waiting List: Experimental cache strategy (this value is ignored if [client]persistent_disk_bitmap_cache is disabled). <br/>
     /// type: bool <br/>
     /// default: false <br/>
     struct client::cache_waiting_list {
@@ -650,7 +650,7 @@ namespace cfg
         using mapped_type = bool;
         type value { false };
     };
-    /// If enabled, the contents of Persistent Bitmap Caches are stored on disk for reusing them later (this value is ignored if Persistent Disk Bitmap Cache is disabled). <br/>
+    /// If enabled, the contents of Persistent Bitmap Caches are stored on disk for reusing them later (this value is ignored if [client]persistent_disk_bitmap_cache is disabled). <br/>
     /// type: bool <br/>
     /// default: false <br/>
     struct client::persist_bitmap_cache_on_disk {
@@ -688,7 +688,7 @@ namespace cfg
         using mapped_type = bool;
         type value { true };
     };
-    /// Same effect as "Transform glyph to bitmap", but only for RDP client on iOS platform. <br/>
+    /// Same effect as [client]transform_glyph_to_bitmap, but only for RDP client on iOS platform. <br/>
     /// type: bool <br/>
     /// displayName: Bogus iOS glyph support level <br/>
     /// default: true <br/>
@@ -726,8 +726,8 @@ namespace cfg
         type value { true };
     };
     /// Enable RemoteFX on client connection. <br/>
-    /// Needs - "Max Color Depth" option set to 32 (32-bit RGB mask + alpha) <br/>
-    ///       - "Enable RemoteFX" option enabled in target connection policy <br/>
+    /// Needs - [client]max_color_depth set to 32 (32-bit RGB mask + alpha) <br/>
+    ///       - [mod_rdp]enable_remotefx set to on <br/>
     /// type: bool <br/>
     /// displayName: Enable RemoteFX <br/>
     /// default: true <br/>
@@ -906,7 +906,7 @@ namespace cfg
         type value { true };
     };
     /// If enabled, NLA authentication will try Kerberos before NTLM. <br/>
-    /// (if enable_nla is disabled, this value is ignored). <br/>
+    /// (if [mod_rdp]enable_nla is disabled, this value is ignored). <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:enable_kerberos <br/>
@@ -922,7 +922,7 @@ namespace cfg
         type value { true };
     };
     /// Allow NTLM fallback if Kerberos authentication fail. <br/>
-    /// (if enable_kerberos is disabled, this value is ignored). <br/>
+    /// (if [mod_rdp]enable_kerberos is disabled, this value is ignored). <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:allow_nla_ntlm_fallback <br/>
@@ -938,7 +938,7 @@ namespace cfg
         type value { false };
     };
     /// Allow TLS only fallback if NLA authentication fail. <br/>
-    /// (if enable_nla is disabled, this value is ignored). <br/>
+    /// (if [mod_rdp]enable_nla is disabled, this value is ignored). <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:allow_tls_only_fallback <br/>
@@ -1072,7 +1072,7 @@ namespace cfg
         using mapped_type = bool;
         type value { true };
     };
-    /// Support of Cache Waiting List (this value is ignored if Persistent Disk Bitmap Cache is disabled). <br/>
+    /// Support of Cache Waiting List (this value is ignored if [mod_rdp]persistent_disk_bitmap_cache is disabled). <br/>
     /// type: bool <br/>
     /// default: true <br/>
     struct mod_rdp::cache_waiting_list {
@@ -1081,7 +1081,7 @@ namespace cfg
         using mapped_type = bool;
         type value { true };
     };
-    /// If enabled, the contents of Persistent Bitmap Caches are stored on disk for reusing them later (this value is ignored if Persistent Disk Bitmap Cache is disabled). <br/>
+    /// If enabled, the contents of Persistent Bitmap Caches are stored on disk for reusing them later (this value is ignored if [mod_rdp]persistent_disk_bitmap_cache is disabled). <br/>
     /// type: bool <br/>
     /// default: false <br/>
     struct mod_rdp::persist_bitmap_cache_on_disk {
@@ -1091,7 +1091,7 @@ namespace cfg
         type value { false };
     };
     /// List of (comma-separated) enabled (static) virtual channel. If character '*' is used as a name then enables everything. <br/>
-    /// An explicit name in 'Allowed channels' and 'Denied channels' will have higher priority than '*'. <br/>
+    /// An explicit name will have higher priority than '*' in [mod_rdp]denied_channels. <br/>
     /// type: std::string <br/>
     /// acl ⇒ proxy <br/>
     /// default: "*" <br/>
@@ -1105,7 +1105,7 @@ namespace cfg
         type value { "*" };
     };
     /// List of (comma-separated) disabled (static) virtual channel. If character '*' is used as a name then disables everything. <br/>
-    /// An explicit name in 'Allowed channels' and 'Denied channels' will have higher priority than '*'. <br/>
+    /// An explicit name will have higher priority than '*' in [mod_rdp]allowed_channels. <br/>
     /// type: std::string <br/>
     /// acl ⇒ proxy <br/>
     /// default: "" <br/>
@@ -1119,7 +1119,7 @@ namespace cfg
         type value {  };
     };
     /// List of (comma-separated) enabled dynamic virtual channel. If character '*' is used as a name then enables everything. <br/>
-    /// An explicit name in 'Allowed dynamic channels' and 'Denied dynamic channels' will have higher priority than '*'. <br/>
+    /// An explicit name will have higher priority than '*' in [mod_rdp]denied_dynamic_channels. <br/>
     /// type: std::string <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:allowed_dynamic_channels <br/>
@@ -1134,7 +1134,7 @@ namespace cfg
         type value { "*" };
     };
     /// List of (comma-separated) disabled dynamic virtual channel. If character '*' is used as a name then disables everything. <br/>
-    /// An explicit name in 'Allowed dynamic channels' and 'Denied dynamic channels' will have higher priority than '*'. <br/>
+    /// An explicit name will have higher priority than '*' in [mod_rdp]allowed_dynamic_channels. <br/>
     /// type: std::string <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: mod_rdp:denied_dynamic_channels <br/>
@@ -1599,7 +1599,7 @@ namespace cfg
         type value { false };
     };
     /// If the feature is enabled, the end user can trigger a session disconnection/reconnection with the shortcut Ctrl+F12. <br/>
-    /// This feature should not be used together with the End disconnected session option (section session_probe). <br/>
+    /// This feature should not be used together with the [session_probe]end_disconnected_session. <br/>
     /// The keyboard shortcut is fixed and cannot be changed. <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
@@ -1819,7 +1819,7 @@ namespace cfg
         using mapped_type = SessionProbeOnLaunchFailure;
         type value { SessionProbeOnLaunchFailure::disconnect_user };
     };
-    /// This parameter is used if 'On launch failure' is 1 (disconnect user). <br/>
+    /// This parameter is used if [session_probe]on_launch_failure is 1 (disconnect user). <br/>
     /// 0 to disable timeout. <br/>
     /// type: std::chrono::milliseconds <br/>
     /// connpolicy -> proxy <br/>
@@ -1834,7 +1834,7 @@ namespace cfg
         using mapped_type = ::configs::spec_types::range<std::chrono::milliseconds, 0, 300000>;
         type value { 40000 };
     };
-    /// This parameter is used if 'On launch failure' is 0 (ignore failure and continue) or 2 (retry without Session Probe). <br/>
+    /// This parameter is used if [session_probe]on_launch_failure is 0 (ignore failure and continue) or 2 (retry without Session Probe). <br/>
     /// 0 to disable timeout. <br/>
     /// type: std::chrono::milliseconds <br/>
     /// connpolicy -> proxy <br/>
@@ -1849,7 +1849,7 @@ namespace cfg
         using mapped_type = ::configs::spec_types::range<std::chrono::milliseconds, 0, 300000>;
         type value { 40000 };
     };
-    /// If enabled, the Launch timeout countdown timer will be started only after user logged in Windows. Otherwise, the countdown timer will be started immediately after RDP protocol connexion. <br/>
+    /// If enabled, the [session_probe]launch_timeout countdown timer will be started only after user logged in Windows. Otherwise, the countdown timer will be started immediately after RDP protocol connexion. <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:start_launch_timeout_timer_only_after_logon <br/>
@@ -1863,8 +1863,8 @@ namespace cfg
         using mapped_type = bool;
         type value { true };
     };
-    /// The amount of time that RDP Proxy waits for a reply from the Session Probe to the KeepAlive message before adopting the behavior defined by 'On keepalive timeout'. <br/>
-    /// If our local network is subject to congestion, or if the Windows lacks responsiveness, it is possible to increase the value of the timeout to minimize disturbances related to the behavior defined by 'On keepalive timeout'. <br/>
+    /// The amount of time that RDP Proxy waits for a reply from the Session Probe to the KeepAlive message before adopting the behavior defined by [session_probe]on_keepalive_timeout. <br/>
+    /// If our local network is subject to congestion, or if the Windows lacks responsiveness, it is possible to increase the value of the timeout to minimize disturbances related to the behavior defined by [session_probe]on_keepalive_timeout. <br/>
     /// The KeepAlive message is used to detect Session Probe unavailability. Without Session Probe, session monitoring will be minimal. No metadata will be collected. <br/>
     /// During the delay between sending a KeepAlive request and receiving the corresponding reply, Session Probe availability is indeterminate. <br/>
     /// type: std::chrono::milliseconds <br/>
@@ -1898,7 +1898,7 @@ namespace cfg
     /// If enabled, Session Probe will automatically end the disconnected Desktop session. Otherwise, the RDP session and the applications it contains will remain active after user disconnection (unless a parameter defined at the RDS-level decides otherwise). <br/>
     /// The parameter in RemoteApp session (RDS meaning) does not cause the latter to be closed but a simple cleanup. However, this makes the session suitable for reuse. <br/>
     /// This parameter must be enabled for Web applications because an existing session with a running browser cannot be reused. <br/>
-    /// It is also recommended to enable this parameter for connections in RemoteApp mode (RDS meaning) when 'Use session probe to launch remote program' parameter is enabled. Because an existing Session Probe does not launch a startup program (a new Bastion application) when the RemoteApp session resumes. <br/>
+    /// It is also recommended to enable this parameter for connections in RemoteApp mode (RDS meaning) when [mod_rdp]use_session_probe_to_launch_remote_program is enabled. Because an existing Session Probe does not launch a startup program (a new Bastion application) when the RemoteApp session resumes. <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:end_disconnected_session <br/>
@@ -2018,7 +2018,7 @@ namespace cfg
         type value {  };
     };
     /// The additional period given to the device to make Clipboard redirection available. <br/>
-    /// This parameter is effective only if the Smart launcher is used. <br/>
+    /// This parameter is effective only if [session_probe]use_smart_launcher is enabled. <br/>
     /// If we see the message "Clipboard Virtual Channel is unavailable" in the Bastion’s syslog and we are sure that this virtual channel is allowed on the device (confirmed by a direct connection test for example), we probably need to use this parameter. <br/>
     /// type: std::chrono::milliseconds <br/>
     /// connpolicy -> proxy <br/>
@@ -2035,7 +2035,7 @@ namespace cfg
     };
     /// For under-performing devices. <br/>
     /// The extra time given to the device before starting the Session Probe launch sequence. <br/>
-    /// This parameter is effective only if the Smart launcher is used. <br/>
+    /// This parameter is effective only if [session_probe]use_smart_launcher is enabled. <br/>
     /// This parameter can be useful when (with Launch mask disabled) Windows Explorer is not immediately visible when the RDP session is opened. <br/>
     /// type: std::chrono::milliseconds <br/>
     /// connpolicy -> proxy <br/>
@@ -2051,9 +2051,9 @@ namespace cfg
         type value {  };
     };
     /// The delay between two simulated keystrokes during the Session Probe launch sequence execution. <br/>
-    /// This parameter is effective only if the Smart launcher is used. <br/>
+    /// This parameter is effective only if [session_probe]use_smart_launcher is enabled. <br/>
     /// This parameter may help if the Session Probe launch failure is caused by network slowness or device under-performance. <br/>
-    /// This parameter is usually used together with the 'Smart launcher short delay' parameter. <br/>
+    /// This parameter is usually used together with the [session_probe]smart_launcher_short_delay. <br/>
     /// type: std::chrono::milliseconds <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:smart_launcher_long_delay <br/>
@@ -2068,9 +2068,9 @@ namespace cfg
         type value { 500 };
     };
     /// The delay between two steps of the same simulated keystrokes during the Session Probe launch sequence execution. <br/>
-    /// This parameter is effective only if the Smart launcher is used. <br/>
+    /// This parameter is effective only if [session_probe]use_smart_launcher is enabled. <br/>
     /// This parameter may help if the Session Probe launch failure is caused by network slowness or device under-performance. <br/>
-    /// This parameter is usually used together with the 'Smart launcher long delay' parameter. <br/>
+    /// This parameter is usually used together with the [session_probe]smart_launcher_long_delay. <br/>
     /// type: std::chrono::milliseconds <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:smart_launcher_short_delay <br/>
@@ -2084,8 +2084,8 @@ namespace cfg
         using mapped_type = std::chrono::milliseconds;
         type value { 50 };
     };
-    /// Allow sufficient time for the RDP client (Access Manager) to respond to the Clipboard virtual channel initialization message. Otherwise, the time granted to the RDP client (Access Manager or another) for Clipboard virtual channel initialization will be defined by the 'Smart launcher clipboard initialization delay' parameter. <br/>
-    /// This parameter is effective only if the Smart launcher is used and the RDP client is Access Manager. <br/>
+    /// Allow sufficient time for the RDP client (Access Manager) to respond to the Clipboard virtual channel initialization message. Otherwise, the time granted to the RDP client (Access Manager or another) for Clipboard virtual channel initialization will be defined by the [session_probe]smart_launcher_clipboard_initialization_delay. <br/>
+    /// This parameter is effective only if [session_probe]use_smart_launcher is enabled and the RDP client is Access Manager. <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:smart_launcher_enable_wabam_affinity <br/>
@@ -2136,8 +2136,8 @@ namespace cfg
     /// Use only if you see unusually high consumption of system object handles by the Session Probe. <br/>
     /// The Session Probe will sabotage and then restart it-self if it consumes more handles than what is defined by this parameter. <br/>
     /// A value of 0 disables this feature. <br/>
-    /// This feature can cause the session to be disconnected if the value of the 'On KeepAlive timeout' parameter is set to 1 (Disconnect user). <br/>
-    /// If 'Allow multiple handshakes' parameter ('session_probe' section of 'Configuration options') is disabled, restarting the Session Probe will cause the session to disconnect. <br/>
+    /// This feature can cause the session to be disconnected if the value of the [session_probe]on_keepalive_timeout is set to 1 (Disconnect user). <br/>
+    /// If [session_probe]allow_multiple_handshake is disabled, restarting the Session Probe will cause the session to disconnect. <br/>
     /// type: uint32_t <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:handle_usage_limit <br/>
@@ -2154,8 +2154,8 @@ namespace cfg
     /// Use only if you see unusually high consumption of memory by the Session Probe. <br/>
     /// The Session Probe will sabotage and then restart it-self if it consumes more memory than what is defined by this parameter. <br/>
     /// A value of 0 disables this feature. <br/>
-    /// This feature can cause the session to be disconnected if the value of the 'On KeepAlive timeout' parameter is set to 1 (Disconnect user). <br/>
-    /// If 'Allow multiple handshakes' parameter ('session_probe' section of 'Configuration options') is disabled, restarting the Session Probe will cause the session to disconnect. <br/>
+    /// This feature can cause the session to be disconnected if the value of the [session_probe]on_keepalive_timeout is set to 1 (Disconnect user). <br/>
+    /// If [session_probe]allow_multiple_handshake is disabled, restarting the Session Probe will cause the session to disconnect. <br/>
     /// type: uint32_t <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:memory_usage_limit <br/>
@@ -2171,7 +2171,7 @@ namespace cfg
     };
     /// This debugging feature was created to determine the cause of high CPU consumption by Session Probe in certain environments. <br/>
     /// As a percentage, the effective alarm threshold is calculated in relation to the reference consumption determined at the start of the program execution. The alarm is deactivated if this value of parameter is less than 200 (200%% of reference consumption). <br/>
-    /// When CPU consumption exceeds the allowed limit, debugging information can be collected (if the Windows-side logging is enabled), then Session Probe will sabotage. Additional behavior is defined by 'Cpu usage alarm action' parameter. <br/>
+    /// When CPU consumption exceeds the allowed limit, debugging information can be collected (if the Windows-side logging is enabled), then Session Probe will sabotage. Additional behavior is defined by [session_probe]cpu_usage_alarm_action. <br/>
     /// type: uint32_t <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:cpu_usage_alarm_threshold <br/>
@@ -2186,7 +2186,7 @@ namespace cfg
         using mapped_type = ::configs::spec_types::range<uint32_t, 0, 10000>;
         type value { 0 };
     };
-    /// Additional behavior when CPU consumption exceeds what is allowed. Please refer to the 'Cpu usage alarm threshold' parameter. <br/>
+    /// Additional behavior when CPU consumption exceeds what is allowed. Please refer to the [session_probe]cpu_usage_alarm_threshold. <br/>
     /// type: SessionProbeCPUUsageAlarmAction <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:cpu_usage_alarm_action <br/>
@@ -2253,7 +2253,7 @@ namespace cfg
     /// This parameter concerns the functionality of the Password field detection performed by the Session Probe. This detection is necessary to avoid logging the text entered in the password fields as metadata of session (also known as Session log). <br/>
     /// Unfortunately, the detection does not work with applications developed in Java, Flash, etc. In order to work around the problem, we will treat the windows of these applications as input fields of unknown type. Therefore, the text entered in these will not be included in the session’s metadata. <br/>
     /// One of the specifics of these applications is that their main windows do not have any child window from point of view of WIN32 API. Activating this parameter allows this property to be used to detect applications developed in Java or Flash. <br/>
-    /// Please refer to the 'Keyboard input masking level' parameter of 'session_log' section. <br/>
+    /// Please refer to the [session_log]keyboard_input_masking_level. <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:childless_window_as_unidentified_input_field <br/>
@@ -2271,7 +2271,7 @@ namespace cfg
     /// This parameter concerns the functionality of the Password field detection performed by the Session Probe. This detection is necessary to avoid logging the text entered in the password fields as metadata of session (also known as Session log). <br/>
     /// Unfortunately, the detection is not infallible. In order to work around the problem, we will treat the windows of these applications as input fields of unknown type. Therefore, the text entered in these will not be included in the session’s metadata. <br/>
     /// This parameter is used to provide the list of processes whose windows are considered as input fields of unknown type. <br/>
-    /// Please refer to the 'Keyboard input masking level' parameter of 'session_log' section. <br/>
+    /// Please refer to the [session_log]keyboard_input_masking_level. <br/>
     /// type: std::string <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:windows_of_these_applications_as_unidentified_input_field <br/>
@@ -2286,7 +2286,7 @@ namespace cfg
         type value {  };
     };
     /// This parameter is used when resuming a session hosting a existing Session Probe. <br/>
-    /// If enabled, the Session Probe will activate or deactivate features according to the value of 'Disabled features' parameter received when resuming its host session. Otherwise, the Session Probe will keep the same set of features that were used during the previous connection. <br/>
+    /// If enabled, the Session Probe will activate or deactivate features according to the value of [session_probe]disabled_features received when resuming its host session. Otherwise, the Session Probe will keep the same set of features that were used during the previous connection. <br/>
     /// It is recommended to keep the default value of this parameter. <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
@@ -2302,7 +2302,9 @@ namespace cfg
         type value { true };
     };
     /// This parameter was created to work around some compatibility issues and to limit the CPU load that the Session Probe process causes. <br/>
-    /// If 'Java Acccess Bridge' feature is disabled, data entered in the password field of Java applications may be visible in the metadata. For more information please refer to 'Keyboard input masking level' parameter of 'session_log' section. For more information please also refer to 'Childless window as unidentified input field and Windows of these applications as unidentified input field oIt is not recommended to deactivate 'MS Active Accessibility' and 'MS UI Automation' at the same time. This configuration will lead to the loss of detection of password input fields. Entries in these fields will be visible as plain text in the session metadata. For more information please refer to 'Keyboard input masking level' parameter of 'session_log' section of 'Connection Policy'. <br/>
+    /// If 'Java Acccess Bridge' feature is disabled, data entered in the password field of Java applications may be visible in the metadata. <br/>
+    /// For more information please refer to [session_log]keyboard_input_masking_level. <br/>
+    /// For more information please also refer to [session_probe]childless_window_as_unidentified_input_field and [session_probe]windows_of_these_applications_as_unidentified_input_field.It is not recommended to deactivate 'MS Active Accessibility' and 'MS UI Automation' at the same time. This configuration will lead to the loss of detection of password input fields. Entries in these fields will be visible as plain text in the session metadata. <br/>
     /// type: SessionProbeDisabledFeature <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:disabled_features <br/>
@@ -2319,7 +2321,7 @@ namespace cfg
     /// This parameter has no effect on the device without BestSafe. <br/>
     /// Is enabled, Session Probe relies on BestSafe to perform the detection of application launches and the detection of outgoing connections. <br/>
     /// BestSafe has more efficient mechanisms in these tasks than Session Probe. <br/>
-    /// For more information please refer to 'Outbound connection monitoring rules' parameter and 'Process monitoring rules' parameter. <br/>
+    /// For more information please refer to [session_probe]outbound_connection_monitoring_rules and [session_probe]process_monitoring_rules. <br/>
     /// type: bool <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:enable_bestsafe_interaction <br/>
@@ -2335,7 +2337,7 @@ namespace cfg
         type value { false };
     };
     /// This parameter has no effect on the device without BestSafe. <br/>
-    /// BestSafe interaction must be enabled. Please refer to 'Enable bestsafe interaction' parameter. <br/>
+    /// BestSafe interaction must be enabled. Please refer to [session_probe]enable_bestsafe_interaction. <br/>
     /// This parameter allows you to choose the behavior of the RDP Proxy in case of detection of Windows account manipulation. <br/>
     /// Detectable account manipulations are the creation, deletion of a Windows account, and the addition and deletion of an account from a Windows user group. <br/>
     /// type: SessionProbeOnAccountManipulation <br/>
@@ -2389,7 +2391,7 @@ namespace cfg
     /// (Ex. IPv6 addresses: $deny:2001:0db8:85a3:0000:0000:8a2e:0370:7334:3389,$allow:[20D1:0:3238:DFE1:63::FEFB]:21) <br/>
     /// (Ex. hostname can be used to resolve to both IPv4 and IPv6 addresses: $allow:host.domain.net:3389) <br/>
     /// (Ex. for backwards compatibility only: 10.1.0.0/16:22) <br/>
-    /// BestSafe can be used to perform detection of outgoing connections created in the session. Please refer to 'Enable bestsafe interaction' parameter. <br/>
+    /// BestSafe can be used to perform detection of outgoing connections created in the session. Please refer to [session_probe]enable_bestsafe_interaction. <br/>
     /// type: std::string <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:outbound_connection_monitoring_rules <br/>
@@ -2406,7 +2408,7 @@ namespace cfg
     /// This parameter is used to provide the list of (comma-separated) rules used to monitor the execution of processes in the session. <br/>
     /// (Ex.: $deny:taskmgr.exe) <br/>
     /// @ = All child processes of (Bastion) application (Ex.: $deny:@) <br/>
-    /// BestSafe can be used to perform detection of process launched in the session. Please refer to 'Enable bestsafe interaction' parameter. <br/>
+    /// BestSafe can be used to perform detection of process launched in the session. Please refer to [session_probe]enable_bestsafe_interaction. <br/>
     /// type: std::string <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: session_probe:process_monitoring_rules <br/>
@@ -2959,7 +2961,7 @@ namespace cfg
         type value { CaptureFlags{11} };
     };
     /// Disable keyboard log: <br/>
-    /// (Please see also "Keyboard input masking level" in "session_log" section of "Connection Policy".) <br/>
+    /// (Please see also [session_log]keyboard_input_masking_level) <br/>
     /// type: KeyboardLogFlags <br/>
     /// connpolicy -> proxy <br/>
     /// aclName: capture:disable_keyboard_log <br/>
@@ -3030,7 +3032,7 @@ namespace cfg
     };
 
     /// Show keyboard input event in meta file <br/>
-    /// (Please see also "Keyboard input masking level" in "session_log".) <br/>
+    /// (Please see also [session_log]keyboard_input_masking_level) <br/>
     /// type: bool <br/>
     /// default: true <br/>
     struct audit::enable_keyboard_log {
@@ -4639,7 +4641,7 @@ namespace cfg
         type value { "en-US, fr-FR, de-DE, ru-RU" };
     };
     /// Show close screen. <br/>
-    /// This displays errors related to the secondary connection then closes automatically after a timeout specified by "Close Timeout" or on user request. <br/>
+    /// This displays errors related to the secondary connection then closes automatically after a timeout specified by [internal_mod]close_box_timeout or on user request. <br/>
     /// type: bool <br/>
     /// default: true <br/>
     struct internal_mod::enable_close_box {

@@ -46,7 +46,7 @@ enable_end_time_warning_osd = boolean(default=True)
 enable_osd_display_remote_target = boolean(default=True)
 
 # Show in session the target username when F12 is pressed.
-# This option needs "Enable Osd Display Remote Target".
+# This option needs "Enable OSD display remote target" option.
 show_target_user_in_f12_message = boolean(default=False)
 
 # Prevent Remote Desktop session timeouts due to idle TCP sessions by sending periodically keep alive packet to client.
@@ -139,7 +139,7 @@ max_color_depth = option(8, 15, 16, 24, 32, default=24)
 #_advanced
 persistent_disk_bitmap_cache = boolean(default=True)
 
-# If enabled, the contents of Persistent Bitmap Caches are stored on disk for reusing them later (this value is ignored if Persistent Disk Bitmap Cache is disabled).
+# If enabled, the contents of Persistent Bitmap Caches are stored on disk for reusing them later (this value is ignored if "Persistent disk bitmap cache" option is disabled).
 #_advanced
 persist_bitmap_cache_on_disk = boolean(default=False)
 
@@ -152,7 +152,7 @@ bitmap_compression = boolean(default=True)
 # ⚠ If changes occur on the target, they will not be visible in the recordings either.
 enable_suppress_output = boolean(default=True)
 
-# Same effect as "Transform glyph to bitmap", but only for RDP client on iOS platform.
+# Same effect as "Transform glyph to bitmap" option, but only for RDP client on iOS platform.
 #_display_name=Bogus iOS glyph support level
 bogus_ios_glyph_support_level = boolean(default=True)
 
@@ -165,8 +165,8 @@ transform_glyph_to_bitmap = boolean(default=False)
 enable_osd_4_eyes = boolean(default=True)
 
 # Enable RemoteFX on client connection.
-# Needs - "Max Color Depth" option set to 32 (32-bit RGB mask + alpha)
-# &nbsp; &nbsp;       - "Enable RemoteFX" option enabled in target connection policy
+# Needs - "Max color depth" option set to 32 (32-bit RGB mask + alpha)
+# &nbsp; &nbsp;       - "Enable RemoteFX" option (in "rdp" section of "Connection Policy" configuration) set to on
 #_advanced
 #_display_name=Enable RemoteFX
 enable_remotefx = boolean(default=True)
@@ -250,11 +250,11 @@ open_session_timeout = integer(min=0, default=0)
 #_advanced
 persistent_disk_bitmap_cache = boolean(default=True)
 
-# Support of Cache Waiting List (this value is ignored if Persistent Disk Bitmap Cache is disabled).
+# Support of Cache Waiting List (this value is ignored if "Persistent disk bitmap cache" option is disabled).
 #_advanced
 cache_waiting_list = boolean(default=True)
 
-# If enabled, the contents of Persistent Bitmap Caches are stored on disk for reusing them later (this value is ignored if Persistent Disk Bitmap Cache is disabled).
+# If enabled, the contents of Persistent Bitmap Caches are stored on disk for reusing them later (this value is ignored if "Persistent disk bitmap cache" option is disabled).
 #_advanced
 persist_bitmap_cache_on_disk = boolean(default=False)
 
@@ -445,7 +445,7 @@ wrm_compression_algorithm = option(0, 1, 2, default=1)
 [audit]
 
 # Show keyboard input event in meta file
-# (Please see also "Keyboard input masking level" in "session_log".)
+# (Please see also "Keyboard input masking level" option (in "session_log" section of "Connection Policy" configuration))
 #_advanced
 enable_keyboard_log = boolean(default=True)
 
@@ -539,7 +539,7 @@ enable_target_field = boolean(default=True)
 keyboard_layout_proposals = string(default="en-US, fr-FR, de-DE, ru-RU")
 
 # Show close screen.
-# This displays errors related to the secondary connection then closes automatically after a timeout specified by "Close Timeout" or on user request.
+# This displays errors related to the secondary connection then closes automatically after a timeout specified by "Close box timeout" option or on user request.
 enable_close_box = boolean(default=True)
 
 # Specifies the time to spend on the close box of proxy RDP before closing client window.

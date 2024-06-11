@@ -22,7 +22,7 @@ vault_transformation_rule = string(default="")
 
 # No automatic disconnection due to inactivity, timer is set on target session.
 # If value is between 1 and 30, then 30 is used.
-# If value is set to 0, then value set in "Base inactivity timeout" (in "RDP Proxy" configuration option) is used.<br/>
+# If value is set to 0, then value set in "Base inactivity timeout" option (in "globals" section of "RDP Proxy" configuration option) is used.<br/>
 # (in seconds)
 inactivity_timeout = integer(min=0, default=0)
 
@@ -49,8 +49,8 @@ enable = boolean(default=False)
 #_display_name=SSH port
 ssh_port = integer(min=0, default=22)
 
-# static_login: Static values provided in "Ssh login" &amp; "Ssh password" fields will be used to establish the SSH tunnel.
-# scenario_account: Scenario account provided in "Scenario account name" field will be used to establish the SSH tunnel. (Recommended)
+# static_login: Static values provided in "SSH login" option &amp; "SSH password" option fields will be used to establish the SSH tunnel.
+# scenario_account: Scenario account provided in "Scenario account name" option field will be used to establish the SSH tunnel. (Recommended)
 tunneling_credential_source = option('static_login', 'scenario_account', default="scenario_account")
 
 # Login to be used for SSH tunneling.

@@ -213,7 +213,7 @@ namespace cpp_enumeration_writer
                     "inline constexpr std::pair<chars_view, " << e.name << "> enum_str_value_" << e.name << "[] {\n"
                 ;
                 for (auto & v : e.values) {
-                    out << "    {\"" << io_upper{v.get_name().data()}
+                    out << "    {\"" << io_upper{v.get_name()}
                         << "\"_av, " << e.name << "::" << v.name << "},\n";
                 }
                 out <<

@@ -22,7 +22,7 @@
 
 #include <iostream>
 #include <iomanip>
-#include <string>
+#include <string_view>
 
 #include <cstring>
 
@@ -32,26 +32,27 @@ namespace cfg_generators
 
 struct io_prefix_lines
 {
-    char const * s;
-    char const * prefix;
-    char const * suffix;
+    std::string_view s;
+    std::string_view prefix;
+    std::string_view suffix;
     unsigned space;
 
     friend std::ostream & operator<<(std::ostream & out, io_prefix_lines const & comment)
     {
-        if (auto s = comment.s) {
-            auto const prefix_size = strlen(comment.prefix);
-            while (*s) {
-                auto s_point = s;
-                for (; *s && '\n' != *s; ++s) {
-                }
-                out << std::setw(int(comment.space + prefix_size)) << comment.prefix;
-                out.write(s_point, s - s_point);
-                if (*s == '\n') {
-                    ++s;
-                }
-                out << comment.suffix << '\n';
+        auto first = comment.s.begin();
+        auto last = comment.s.end();
+        auto const prefix_size = comment.prefix.size();
+        while (first != last) {
+            auto s_point = first;
+            for (; first != last && '\n' != *first; ++first) {
             }
+            out << std::setw(int(comment.space + prefix_size)) << comment.prefix;
+            out.write(s_point, first - s_point);
+            if (first != last && *first == '\n') {
+                ++first;
+            }
+            out << comment.suffix << '\n';
+
         }
         return out;
     }
@@ -59,27 +60,26 @@ struct io_prefix_lines
 
 inline io_prefix_lines cpp_comment(std::string_view s, unsigned space)
 {
-    return io_prefix_lines{s.data(), "// ", "", space};
+    return io_prefix_lines{s, "// ", "", space};
 }
 
 inline io_prefix_lines cpp_doxygen_comment(std::string_view s, unsigned space)
 {
-    return io_prefix_lines{s.data(), "/// ", " <br/>", space};
+    return io_prefix_lines{s, "/// ", " <br/>", space};
 }
 
 inline io_prefix_lines python_comment(std::string_view s, unsigned space)
 {
-    return io_prefix_lines{s.data(), "# ", "", space};
+    return io_prefix_lines{s, "# ", "", space};
 }
 
 struct io_upper
 {
-    char const* s;
+    std::string_view s;
 
     friend std::ostream& operator<<(std::ostream& out, io_upper const& u)
     {
-        for (char const * s = u.s; *s; ++s) {
-            char c = *s;
+        for (char c : u.s) {
             out << char(('a' <= c && c <= 'z') ? c - 'a' + 'A' : c);
         }
         return out;

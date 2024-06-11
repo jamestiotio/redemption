@@ -30,7 +30,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 
 # No automatic disconnection due to inactivity, timer is set on target session.
 # If value is between 1 and 30, then 30 is used.
-# If value is set to 0, then value set in "Base inactivity timeout" (in "RDP Proxy" configuration option) is used.
+# If value is set to 0, then value set in [globals]base_inactivity_timeout is used.
 # (in seconds)
 # (acl config: proxy ⇐ globals:inactivity_timeout)
 #inactivity_timeout = 0
@@ -74,7 +74,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 #enable_osd_display_remote_target = 1
 
 # Show in session the target username when F12 is pressed.
-# This option needs "Enable Osd Display Remote Target".
+# This option needs [globals]enable_osd_display_remote_target.
 # (type: boolean (0/no/false or 1/yes/true))
 #show_target_user_in_f12_message = 0
 
@@ -215,11 +215,11 @@ R"gen_config_ini(## Config file for RDP proxy.
 #_advanced
 #persistent_disk_bitmap_cache = 1
 
-# Support of Cache Waiting List: Experimental cache strategy (this value is ignored if Persistent Disk Bitmap Cache is disabled).
+# Support of Cache Waiting List: Experimental cache strategy (this value is ignored if [client]persistent_disk_bitmap_cache is disabled).
 # (type: boolean (0/no/false or 1/yes/true))
 #cache_waiting_list = 0
 
-# If enabled, the contents of Persistent Bitmap Caches are stored on disk for reusing them later (this value is ignored if Persistent Disk Bitmap Cache is disabled).
+# If enabled, the contents of Persistent Bitmap Caches are stored on disk for reusing them later (this value is ignored if [client]persistent_disk_bitmap_cache is disabled).
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
 #persist_bitmap_cache_on_disk = 0
@@ -239,7 +239,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # (type: boolean (0/no/false or 1/yes/true))
 #enable_suppress_output = 1
 
-# Same effect as "Transform glyph to bitmap", but only for RDP client on iOS platform.
+# Same effect as [client]transform_glyph_to_bitmap, but only for RDP client on iOS platform.
 # (type: boolean (0/no/false or 1/yes/true))
 #_display_name=Bogus iOS glyph support level
 #bogus_ios_glyph_support_level = 1
@@ -258,8 +258,8 @@ R"gen_config_ini(## Config file for RDP proxy.
 #enable_osd_4_eyes = 1
 
 # Enable RemoteFX on client connection.
-# Needs - "Max Color Depth" option set to 32 (32-bit RGB mask + alpha)
-#       - "Enable RemoteFX" option enabled in target connection policy
+# Needs - [client]max_color_depth set to 32 (32-bit RGB mask + alpha)
+#       - [mod_rdp]enable_remotefx set to on
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
 #_display_name=Enable RemoteFX
@@ -382,21 +382,21 @@ R"gen_config_ini(## Config file for RDP proxy.
 #enable_nla = 1
 
 # If enabled, NLA authentication will try Kerberos before NTLM.
-# (if enable_nla is disabled, this value is ignored).
+# (if [mod_rdp]enable_nla is disabled, this value is ignored).
 # (type: boolean (0/no/false or 1/yes/true))
 #_display_name=Enable Kerberos
 # (acl config: proxy ⇐ mod_rdp:enable_kerberos)
 #enable_kerberos = 1
 
 # Allow NTLM fallback if Kerberos authentication fail.
-# (if enable_kerberos is disabled, this value is ignored).
+# (if [mod_rdp]enable_kerberos is disabled, this value is ignored).
 # (type: boolean (0/no/false or 1/yes/true))
 #_display_name=Allow NLA NTLM fallback
 # (acl config: proxy ⇐ mod_rdp:allow_nla_ntlm_fallback)
 #allow_nla_ntlm_fallback = 0
 
 # Allow TLS only fallback if NLA authentication fail.
-# (if enable_nla is disabled, this value is ignored).
+# (if [mod_rdp]enable_nla is disabled, this value is ignored).
 # (type: boolean (0/no/false or 1/yes/true))
 #_display_name=Allow TLS only fallback
 # (acl config: proxy ⇐ mod_rdp:allow_tls_only_fallback)
@@ -453,36 +453,36 @@ R"gen_config_ini(## Config file for RDP proxy.
 #_advanced
 #persistent_disk_bitmap_cache = 1
 
-# Support of Cache Waiting List (this value is ignored if Persistent Disk Bitmap Cache is disabled).
+# Support of Cache Waiting List (this value is ignored if [mod_rdp]persistent_disk_bitmap_cache is disabled).
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
 #cache_waiting_list = 1
 
-# If enabled, the contents of Persistent Bitmap Caches are stored on disk for reusing them later (this value is ignored if Persistent Disk Bitmap Cache is disabled).
+# If enabled, the contents of Persistent Bitmap Caches are stored on disk for reusing them later (this value is ignored if [mod_rdp]persistent_disk_bitmap_cache is disabled).
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
 #persist_bitmap_cache_on_disk = 0
 
 # List of (comma-separated) enabled (static) virtual channel. If character '*' is used as a name then enables everything.
-# An explicit name in 'Allowed channels' and 'Denied channels' will have higher priority than '*'.
+# An explicit name will have higher priority than '*' in [mod_rdp]denied_channels.
 # (values are comma-separated)
 # (acl config: proxy ⇐ mod_rdp:allowed_channels)
 #allowed_channels = *
 
 # List of (comma-separated) disabled (static) virtual channel. If character '*' is used as a name then disables everything.
-# An explicit name in 'Allowed channels' and 'Denied channels' will have higher priority than '*'.
+# An explicit name will have higher priority than '*' in [mod_rdp]allowed_channels.
 # (values are comma-separated)
 # (acl config: proxy ⇐ mod_rdp:denied_channels)
 #denied_channels = 
 
 # List of (comma-separated) enabled dynamic virtual channel. If character '*' is used as a name then enables everything.
-# An explicit name in 'Allowed dynamic channels' and 'Denied dynamic channels' will have higher priority than '*'.
+# An explicit name will have higher priority than '*' in [mod_rdp]denied_dynamic_channels.
 #_advanced
 # (acl config: proxy ⇐ mod_rdp:allowed_dynamic_channels)
 #allowed_dynamic_channels = *
 
 # List of (comma-separated) disabled dynamic virtual channel. If character '*' is used as a name then disables everything.
-# An explicit name in 'Allowed dynamic channels' and 'Denied dynamic channels' will have higher priority than '*'.
+# An explicit name will have higher priority than '*' in [mod_rdp]allowed_dynamic_channels.
 #_advanced
 # (acl config: proxy ⇐ mod_rdp:denied_dynamic_channels)
 #denied_dynamic_channels = 
@@ -692,7 +692,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # ⚠ The use of this feature is not recommended!
 # 
 # If the feature is enabled, the end user can trigger a session disconnection/reconnection with the shortcut Ctrl+F12.
-# This feature should not be used together with the End disconnected session option (section session_probe).
+# This feature should not be used together with the [session_probe]end_disconnected_session.
 # The keyboard shortcut is fixed and cannot be changed.
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
@@ -782,27 +782,27 @@ R"gen_config_ini(## Config file for RDP proxy.
 # (acl config: proxy ⇐ session_probe:on_launch_failure)
 #on_launch_failure = 1
 
-# This parameter is used if 'On launch failure' is 1 (disconnect user).
+# This parameter is used if [session_probe]on_launch_failure is 1 (disconnect user).
 # 0 to disable timeout.
 # (in milliseconds | min = 0, max = 300000)
 #_advanced
 # (acl config: proxy ⇐ session_probe:launch_timeout)
 #launch_timeout = 40000
 
-# This parameter is used if 'On launch failure' is 0 (ignore failure and continue) or 2 (retry without Session Probe).
+# This parameter is used if [session_probe]on_launch_failure is 0 (ignore failure and continue) or 2 (retry without Session Probe).
 # 0 to disable timeout.
 # (in milliseconds | min = 0, max = 300000)
 #_advanced
 # (acl config: proxy ⇐ session_probe:launch_fallback_timeout)
 #launch_fallback_timeout = 40000
 
-# If enabled, the Launch timeout countdown timer will be started only after user logged in Windows. Otherwise, the countdown timer will be started immediately after RDP protocol connexion.
+# If enabled, the [session_probe]launch_timeout countdown timer will be started only after user logged in Windows. Otherwise, the countdown timer will be started immediately after RDP protocol connexion.
 # (type: boolean (0/no/false or 1/yes/true))
 # (acl config: proxy ⇐ session_probe:start_launch_timeout_timer_only_after_logon)
 #start_launch_timeout_timer_only_after_logon = 1
 
-# The amount of time that RDP Proxy waits for a reply from the Session Probe to the KeepAlive message before adopting the behavior defined by 'On keepalive timeout'.
-# If our local network is subject to congestion, or if the Windows lacks responsiveness, it is possible to increase the value of the timeout to minimize disturbances related to the behavior defined by 'On keepalive timeout'.
+# The amount of time that RDP Proxy waits for a reply from the Session Probe to the KeepAlive message before adopting the behavior defined by [session_probe]on_keepalive_timeout.
+# If our local network is subject to congestion, or if the Windows lacks responsiveness, it is possible to increase the value of the timeout to minimize disturbances related to the behavior defined by [session_probe]on_keepalive_timeout.
 # The KeepAlive message is used to detect Session Probe unavailability. Without Session Probe, session monitoring will be minimal. No metadata will be collected.
 # During the delay between sending a KeepAlive request and receiving the corresponding reply, Session Probe availability is indeterminate.
 # (in milliseconds | min = 0, max = 60000)
@@ -821,7 +821,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # If enabled, Session Probe will automatically end the disconnected Desktop session. Otherwise, the RDP session and the applications it contains will remain active after user disconnection (unless a parameter defined at the RDS-level decides otherwise).
 # The parameter in RemoteApp session (RDS meaning) does not cause the latter to be closed but a simple cleanup. However, this makes the session suitable for reuse.
 # This parameter must be enabled for Web applications because an existing session with a running browser cannot be reused.
-# It is also recommended to enable this parameter for connections in RemoteApp mode (RDS meaning) when 'Use session probe to launch remote program' parameter is enabled. Because an existing Session Probe does not launch a startup program (a new Bastion application) when the RemoteApp session resumes.
+# It is also recommended to enable this parameter for connections in RemoteApp mode (RDS meaning) when [mod_rdp]use_session_probe_to_launch_remote_program is enabled. Because an existing Session Probe does not launch a startup program (a new Bastion application) when the RemoteApp session resumes.
 # (type: boolean (0/no/false or 1/yes/true))
 # (acl config: proxy ⇐ session_probe:end_disconnected_session)
 #end_disconnected_session = 0
@@ -880,7 +880,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 #idle_session_limit = 0
 
 # The additional period given to the device to make Clipboard redirection available.
-# This parameter is effective only if the Smart launcher is used.
+# This parameter is effective only if [session_probe]use_smart_launcher is enabled.
 # If we see the message "Clipboard Virtual Channel is unavailable" in the Bastion’s syslog and we are sure that this virtual channel is allowed on the device (confirmed by a direct connection test for example), we probably need to use this parameter.
 # (in milliseconds)
 #_advanced
@@ -889,7 +889,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 
 # For under-performing devices.
 # The extra time given to the device before starting the Session Probe launch sequence.
-# This parameter is effective only if the Smart launcher is used.
+# This parameter is effective only if [session_probe]use_smart_launcher is enabled.
 # This parameter can be useful when (with Launch mask disabled) Windows Explorer is not immediately visible when the RDP session is opened.
 # (in milliseconds)
 #_advanced
@@ -897,25 +897,25 @@ R"gen_config_ini(## Config file for RDP proxy.
 #smart_launcher_start_delay = 0
 
 # The delay between two simulated keystrokes during the Session Probe launch sequence execution.
-# This parameter is effective only if the Smart launcher is used.
+# This parameter is effective only if [session_probe]use_smart_launcher is enabled.
 # This parameter may help if the Session Probe launch failure is caused by network slowness or device under-performance.
-# This parameter is usually used together with the 'Smart launcher short delay' parameter.
+# This parameter is usually used together with the [session_probe]smart_launcher_short_delay.
 # (in milliseconds)
 #_advanced
 # (acl config: proxy ⇐ session_probe:smart_launcher_long_delay)
 #smart_launcher_long_delay = 500
 
 # The delay between two steps of the same simulated keystrokes during the Session Probe launch sequence execution.
-# This parameter is effective only if the Smart launcher is used.
+# This parameter is effective only if [session_probe]use_smart_launcher is enabled.
 # This parameter may help if the Session Probe launch failure is caused by network slowness or device under-performance.
-# This parameter is usually used together with the 'Smart launcher long delay' parameter.
+# This parameter is usually used together with the [session_probe]smart_launcher_long_delay.
 # (in milliseconds)
 #_advanced
 # (acl config: proxy ⇐ session_probe:smart_launcher_short_delay)
 #smart_launcher_short_delay = 50
 
-# Allow sufficient time for the RDP client (Access Manager) to respond to the Clipboard virtual channel initialization message. Otherwise, the time granted to the RDP client (Access Manager or another) for Clipboard virtual channel initialization will be defined by the 'Smart launcher clipboard initialization delay' parameter.
-# This parameter is effective only if the Smart launcher is used and the RDP client is Access Manager.
+# Allow sufficient time for the RDP client (Access Manager) to respond to the Clipboard virtual channel initialization message. Otherwise, the time granted to the RDP client (Access Manager or another) for Clipboard virtual channel initialization will be defined by the [session_probe]smart_launcher_clipboard_initialization_delay.
+# This parameter is effective only if [session_probe]use_smart_launcher is enabled and the RDP client is Access Manager.
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
 #_display_name=Enable Smart launcher with AM affinity
@@ -942,8 +942,8 @@ R"gen_config_ini(## Config file for RDP proxy.
 # Use only if you see unusually high consumption of system object handles by the Session Probe.
 # The Session Probe will sabotage and then restart it-self if it consumes more handles than what is defined by this parameter.
 # A value of 0 disables this feature.
-# This feature can cause the session to be disconnected if the value of the 'On KeepAlive timeout' parameter is set to 1 (Disconnect user).
-# If 'Allow multiple handshakes' parameter ('session_probe' section of 'Configuration options') is disabled, restarting the Session Probe will cause the session to disconnect.
+# This feature can cause the session to be disconnected if the value of the [session_probe]on_keepalive_timeout is set to 1 (Disconnect user).
+# If [session_probe]allow_multiple_handshake is disabled, restarting the Session Probe will cause the session to disconnect.
 # (min = 0, max = 1000)
 #_advanced
 # (acl config: proxy ⇐ session_probe:handle_usage_limit)
@@ -952,8 +952,8 @@ R"gen_config_ini(## Config file for RDP proxy.
 # Use only if you see unusually high consumption of memory by the Session Probe.
 # The Session Probe will sabotage and then restart it-self if it consumes more memory than what is defined by this parameter.
 # A value of 0 disables this feature.
-# This feature can cause the session to be disconnected if the value of the 'On KeepAlive timeout' parameter is set to 1 (Disconnect user).
-# If 'Allow multiple handshakes' parameter ('session_probe' section of 'Configuration options') is disabled, restarting the Session Probe will cause the session to disconnect.
+# This feature can cause the session to be disconnected if the value of the [session_probe]on_keepalive_timeout is set to 1 (Disconnect user).
+# If [session_probe]allow_multiple_handshake is disabled, restarting the Session Probe will cause the session to disconnect.
 # (min = 0, max = 200000000)
 #_advanced
 # (acl config: proxy ⇐ session_probe:memory_usage_limit)
@@ -961,14 +961,14 @@ R"gen_config_ini(## Config file for RDP proxy.
 
 # This debugging feature was created to determine the cause of high CPU consumption by Session Probe in certain environments.
 # As a percentage, the effective alarm threshold is calculated in relation to the reference consumption determined at the start of the program execution. The alarm is deactivated if this value of parameter is less than 200 (200%% of reference consumption).
-# When CPU consumption exceeds the allowed limit, debugging information can be collected (if the Windows-side logging is enabled), then Session Probe will sabotage. Additional behavior is defined by 'Cpu usage alarm action' parameter.
+# When CPU consumption exceeds the allowed limit, debugging information can be collected (if the Windows-side logging is enabled), then Session Probe will sabotage. Additional behavior is defined by [session_probe]cpu_usage_alarm_action.
 # (min = 0, max = 10000)
 #_advanced
 #_display_name=CPU usage alarm threshold
 # (acl config: proxy ⇐ session_probe:cpu_usage_alarm_threshold)
 #cpu_usage_alarm_threshold = 0
 
-# Additional behavior when CPU consumption exceeds what is allowed. Please refer to the 'Cpu usage alarm threshold' parameter.
+# Additional behavior when CPU consumption exceeds what is allowed. Please refer to the [session_probe]cpu_usage_alarm_threshold.
 #   0: Restart the Session Probe. May result in session disconnection due to loss of KeepAlive messages! Please refer to 'On keepalive timeout' parameter of current section and 'Allow multiple handshakes' parameter of 'Configuration options'.
 #   1: Stop the Session Probe. May result in session disconnection due to loss of KeepAlive messages! Please refer to 'On keepalive timeout' parameter of current section.
 #_advanced
@@ -1002,7 +1002,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # This parameter concerns the functionality of the Password field detection performed by the Session Probe. This detection is necessary to avoid logging the text entered in the password fields as metadata of session (also known as Session log).
 # Unfortunately, the detection does not work with applications developed in Java, Flash, etc. In order to work around the problem, we will treat the windows of these applications as input fields of unknown type. Therefore, the text entered in these will not be included in the session’s metadata.
 # One of the specifics of these applications is that their main windows do not have any child window from point of view of WIN32 API. Activating this parameter allows this property to be used to detect applications developed in Java or Flash.
-# Please refer to the 'Keyboard input masking level' parameter of 'session_log' section.
+# Please refer to the [session_log]keyboard_input_masking_level.
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
 # (acl config: proxy ⇐ session_probe:childless_window_as_unidentified_input_field)
@@ -1012,12 +1012,12 @@ R"gen_config_ini(## Config file for RDP proxy.
 # This parameter concerns the functionality of the Password field detection performed by the Session Probe. This detection is necessary to avoid logging the text entered in the password fields as metadata of session (also known as Session log).
 # Unfortunately, the detection is not infallible. In order to work around the problem, we will treat the windows of these applications as input fields of unknown type. Therefore, the text entered in these will not be included in the session’s metadata.
 # This parameter is used to provide the list of processes whose windows are considered as input fields of unknown type.
-# Please refer to the 'Keyboard input masking level' parameter of 'session_log' section.
+# Please refer to the [session_log]keyboard_input_masking_level.
 # (acl config: proxy ⇐ session_probe:windows_of_these_applications_as_unidentified_input_field)
 #windows_of_these_applications_as_unidentified_input_field = 
 
 # This parameter is used when resuming a session hosting a existing Session Probe.
-# If enabled, the Session Probe will activate or deactivate features according to the value of 'Disabled features' parameter received when resuming its host session. Otherwise, the Session Probe will keep the same set of features that were used during the previous connection.
+# If enabled, the Session Probe will activate or deactivate features according to the value of [session_probe]disabled_features received when resuming its host session. Otherwise, the Session Probe will keep the same set of features that were used during the previous connection.
 # It is recommended to keep the default value of this parameter.
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
@@ -1025,7 +1025,9 @@ R"gen_config_ini(## Config file for RDP proxy.
 #update_disabled_features = 1
 
 # This parameter was created to work around some compatibility issues and to limit the CPU load that the Session Probe process causes.
-# If 'Java Acccess Bridge' feature is disabled, data entered in the password field of Java applications may be visible in the metadata. For more information please refer to 'Keyboard input masking level' parameter of 'session_log' section. For more information please also refer to 'Childless window as unidentified input field and Windows of these applications as unidentified input field oIt is not recommended to deactivate 'MS Active Accessibility' and 'MS UI Automation' at the same time. This configuration will lead to the loss of detection of password input fields. Entries in these fields will be visible as plain text in the session metadata. For more information please refer to 'Keyboard input masking level' parameter of 'session_log' section of 'Connection Policy'.
+# If 'Java Acccess Bridge' feature is disabled, data entered in the password field of Java applications may be visible in the metadata.
+# For more information please refer to [session_log]keyboard_input_masking_level.
+# For more information please also refer to [session_probe]childless_window_as_unidentified_input_field and [session_probe]windows_of_these_applications_as_unidentified_input_field.It is not recommended to deactivate 'MS Active Accessibility' and 'MS UI Automation' at the same time. This configuration will lead to the loss of detection of password input fields. Entries in these fields will be visible as plain text in the session metadata.
 #   0x000: none
 #   0x001: disable Java Access Bridge. General user activity monitoring in the Java applications (including detection of password fields).
 #   0x002: disable MS Active Accessbility. General user activity monitoring (including detection of password fields). (legacy API)
@@ -1044,14 +1046,14 @@ R"gen_config_ini(## Config file for RDP proxy.
 # This parameter has no effect on the device without BestSafe.
 # Is enabled, Session Probe relies on BestSafe to perform the detection of application launches and the detection of outgoing connections.
 # BestSafe has more efficient mechanisms in these tasks than Session Probe.
-# For more information please refer to 'Outbound connection monitoring rules' parameter and 'Process monitoring rules' parameter.
+# For more information please refer to [session_probe]outbound_connection_monitoring_rules and [session_probe]process_monitoring_rules.
 # (type: boolean (0/no/false or 1/yes/true))
 #_display_name=Enable BestSafe interaction
 # (acl config: proxy ⇐ session_probe:enable_bestsafe_interaction)
 #enable_bestsafe_interaction = 0
 
 # This parameter has no effect on the device without BestSafe.
-# BestSafe interaction must be enabled. Please refer to 'Enable bestsafe interaction' parameter.
+# BestSafe interaction must be enabled. Please refer to [session_probe]enable_bestsafe_interaction.
 # This parameter allows you to choose the behavior of the RDP Proxy in case of detection of Windows account manipulation.
 # Detectable account manipulations are the creation, deletion of a Windows account, and the addition and deletion of an account from a Windows user group.
 #   0: allow: User action will be accepted
@@ -1081,14 +1083,14 @@ R"gen_config_ini(## Config file for RDP proxy.
 # (Ex. IPv6 addresses: $deny:2001:0db8:85a3:0000:0000:8a2e:0370:7334:3389,$allow:[20D1:0:3238:DFE1:63::FEFB]:21)
 # (Ex. hostname can be used to resolve to both IPv4 and IPv6 addresses: $allow:host.domain.net:3389)
 # (Ex. for backwards compatibility only: 10.1.0.0/16:22)
-# BestSafe can be used to perform detection of outgoing connections created in the session. Please refer to 'Enable bestsafe interaction' parameter.
+# BestSafe can be used to perform detection of outgoing connections created in the session. Please refer to [session_probe]enable_bestsafe_interaction.
 # (acl config: proxy ⇐ session_probe:outbound_connection_monitoring_rules)
 #outbound_connection_monitoring_rules = 
 
 # This parameter is used to provide the list of (comma-separated) rules used to monitor the execution of processes in the session.
 # (Ex.: $deny:taskmgr.exe)
 # @ = All child processes of (Bastion) application (Ex.: $deny:@)
-# BestSafe can be used to perform detection of process launched in the session. Please refer to 'Enable bestsafe interaction' parameter.
+# BestSafe can be used to perform detection of process launched in the session. Please refer to [session_probe]enable_bestsafe_interaction.
 # (acl config: proxy ⇐ session_probe:process_monitoring_rules)
 #process_monitoring_rules = 
 
@@ -1341,7 +1343,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 #capture_flags = 11
 
 # Disable keyboard log:
-# (Please see also "Keyboard input masking level" in "session_log" section of "Connection Policy".)
+# (Please see also [session_log]keyboard_input_masking_level)
 #   0x0: none
 #   0x1: disable keyboard log in session log
 #   0x2: disable keyboard log in recorded sessions
@@ -1395,7 +1397,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 [audit]
 
 # Show keyboard input event in meta file
-# (Please see also "Keyboard input masking level" in "session_log".)
+# (Please see also [session_log]keyboard_input_masking_level)
 # (type: boolean (0/no/false or 1/yes/true))
 #_advanced
 #enable_keyboard_log = 1
@@ -1565,7 +1567,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 #keyboard_layout_proposals = en-US, fr-FR, de-DE, ru-RU
 
 # Show close screen.
-# This displays errors related to the secondary connection then closes automatically after a timeout specified by "Close Timeout" or on user request.
+# This displays errors related to the secondary connection then closes automatically after a timeout specified by [internal_mod]close_box_timeout or on user request.
 # (type: boolean (0/no/false or 1/yes/true))
 #enable_close_box = 1
 
