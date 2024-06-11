@@ -28,10 +28,11 @@
 #include <krb5.h>
 
 
-char const* get_krb_err_message(krb5_error_code ret)
-{
 #define CASE(constant) case constant: return #constant
 #define CASE_MSG(constant, msg) case constant: return "[" #constant "]: " msg
+
+char const* get_krb_err_message(krb5_error_code ret)
+{
     switch (ret)
     {
     CASE_MSG(KRB5KDC_ERR_NONE, "No error");
@@ -244,11 +245,62 @@ char const* get_krb_err_message(krb5_error_code ret)
     CASE(KRB5_SAM_NO_CHECKSUM);
     CASE(KRB5_TRACE_NOSUPP);
     }
-#undef CASE
-#undef CASE_MSG
-
     return "<unknown>";
 }
+
+char const* get_gssapi_routine_err(OM_uint32 status_code)
+{
+    switch (GSS_ROUTINE_ERROR(status_code))
+    {
+    CASE_MSG(GSS_S_BAD_MECH, "An unsupported mechanism was requested.");
+    CASE_MSG(GSS_S_BAD_NAME, "An invalid name was supplied.");
+    CASE_MSG(GSS_S_BAD_NAMETYPE, "A supplied name was of an unsupported type.");
+    CASE_MSG(GSS_S_BAD_BINDINGS, "Incorrect channel bindings were supplied.");
+    CASE_MSG(GSS_S_BAD_STATUS, "An invalid status code was supplied.");
+    CASE_MSG(GSS_S_BAD_SIG, "A token had an invalid MIC.");
+    CASE_MSG(GSS_S_NO_CRED, "No credentials were supplied, or the credentials were unavailable or inaccessible.");
+    CASE_MSG(GSS_S_NO_CONTEXT, "No context has been established.");
+    CASE_MSG(GSS_S_DEFECTIVE_TOKEN, "A token was invalid.");
+    CASE_MSG(GSS_S_DEFECTIVE_CREDENTIAL, "A credential was invalid.");
+    CASE_MSG(GSS_S_CREDENTIALS_EXPIRED, "The referenced credentials have expired.");
+    CASE_MSG(GSS_S_CONTEXT_EXPIRED, "The context has expired.");
+    CASE_MSG(GSS_S_FAILURE, "Miscellaneous failure.");
+    CASE_MSG(GSS_S_BAD_QOP, "The quality-of-protection requested could not be provided.");
+    CASE_MSG(GSS_S_UNAUTHORIZED, "The operation is forbidden by local security policy.");
+    CASE_MSG(GSS_S_UNAVAILABLE, "The operation or option is unavailable.");
+    CASE_MSG(GSS_S_DUPLICATE_ELEMENT, "The requested credential element already exists.");
+    CASE_MSG(GSS_S_NAME_NOT_MN, "The provided name was not a Mechanism Name (MN).");
+    CASE(GSS_S_BAD_MECH_ATTR);
+    }
+    return "<unknown>";
+}
+
+char const* get_gssapi_calling_err(OM_uint32 status_code)
+{
+    switch (GSS_CALLING_ERROR(status_code))
+    {
+    CASE_MSG(GSS_S_CALL_INACCESSIBLE_READ, "A required input parameter could not be read.");
+    CASE_MSG(GSS_S_CALL_INACCESSIBLE_WRITE, "A required output parameter could not be written.");
+    CASE_MSG(GSS_S_CALL_BAD_STRUCTURE, "A parameter was malformed.");
+    }
+    return "<unknown>";
+}
+
+char const* get_gssapi_supp_info(OM_uint32 status_code)
+{
+    switch (GSS_SUPPLEMENTARY_INFO(status_code))
+    {
+    CASE_MSG(GSS_S_CONTINUE_NEEDED, "Returned only by gss_init_sec_context() or gss_accept_sec_context(). The routine must be called again to complete its function.");
+    CASE_MSG(GSS_S_DUPLICATE_TOKEN, "The token was a duplicate of an earlier token.");
+    CASE_MSG(GSS_S_OLD_TOKEN, "The token's validity period has expired.");
+    CASE_MSG(GSS_S_UNSEQ_TOKEN, "A later token has already been processed.");
+    CASE_MSG(GSS_S_GAP_TOKEN, "An expected per-message token was not received.");
+    }
+    return "<unknown>";
+}
+
+#undef CASE
+#undef CASE_MSG
 
 void Krb5Creds::KrbErrLogger::log_if_error() const
 {

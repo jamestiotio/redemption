@@ -389,8 +389,8 @@ private:
         major_status = gss_wrap(&minor_status, this->sspi_krb_ctx->gss_ctx, true,
                 GSS_C_QOP_DEFAULT, &inbuf, &conf_state, &outbuf);
         if (GSS_ERROR(major_status)) {
-            this->sspi_report_error(GSS_C_GSS_CODE, "CredSSP: GSS WRAP failed.",
-                               major_status, minor_status);
+            this->sspi_report_error("CredSSP: GSS WRAP failed.",
+                                    major_status, minor_status);
             return SEC_E_ENCRYPT_FAILURE;
         }
         // LOG(LOG_INFO, "GSS_WRAP outbuf length : %d", outbuf.length);
@@ -428,8 +428,8 @@ private:
         OM_uint32 major_status = gss_unwrap(&minor_status, this->sspi_krb_ctx->gss_ctx, &inbuf, &outbuf,
                                   &conf_state, &qop_state);
         if (GSS_ERROR(major_status)) {
-            this->sspi_report_error(GSS_C_GSS_CODE, "CredSSP: GSS UNWRAP failed.",
-                               major_status, minor_status);
+            this->sspi_report_error("CredSSP: GSS UNWRAP failed.",
+                                    major_status, minor_status);
             return SEC_E_DECRYPT_FAILURE;
         }
         // LOG(LOG_INFO, "GSS_UNWRAP outbuf length : %d", outbuf.length);
@@ -438,8 +438,8 @@ private:
         return SEC_E_OK;
     }
 
-    void sspi_report_error(OM_uint32 code, const char *str,
-                      OM_uint32 major_status, OM_uint32 minor_status)
+    void sspi_report_error(const char *str,
+                           OM_uint32 major_status, OM_uint32 minor_status)
     {
         OM_uint32 msgctx = 0;
         OM_uint32 ms;
@@ -451,10 +451,22 @@ private:
             major_status & 0xffff,    // Supplementary info bits
             str);
 
-        LOG(LOG_ERR, "GSS Minor status error [%u:%u:%u]:%d %s",
-            (minor_status & 0xff000000) >> 24,    // Calling error
-            (minor_status & 0xff0000) >> 16,    // Routine error
-            minor_status & 0xffff,    // Supplementary info bits
+        if (GSS_CALLING_ERROR(major_status)) {
+            LOG(LOG_ERR, "GSS Calling error: %s",
+                get_gssapi_calling_err(major_status));
+        }
+
+        if (GSS_ROUTINE_ERROR(major_status)) {
+            LOG(LOG_ERR, "GSS Routine error: %s",
+                get_gssapi_routine_err(major_status));
+        }
+
+        if (GSS_SUPPLEMENTARY_INFO(major_status)) {
+            LOG(LOG_ERR, "GSS Supplementary info: %s",
+                get_gssapi_supp_info(major_status));
+        }
+
+        LOG(LOG_ERR, "GSS Minor status error %d %s",
             static_cast<int>(minor_status),
             get_krb_err_message(minor_status));
 
@@ -462,12 +474,13 @@ private:
         do {
             ms = gss_display_status(
                 &minor_status, major_status,
-                code, GSS_C_NULL_OID, &msgctx, &status_string);
+                GSS_C_GSS_CODE, GSS_C_NULL_OID,
+                &msgctx, &status_string);
+            LOG(LOG_ERR," - %s", static_cast<char const*>(status_string.value));
+            gss_release_buffer(&minor_status, &status_string);
             if (ms != GSS_S_COMPLETE) {
                 continue;
             }
-
-            LOG(LOG_ERR," - %s", static_cast<char const*>(status_string.value));
         }
         while (ms == GSS_S_COMPLETE && msgctx);
 
@@ -490,8 +503,8 @@ private:
             return false;
         }
         if (GSS_ERROR(major_status)) {
-            this->sspi_report_error(GSS_C_GSS_CODE, "Failed to get available mechs on system",
-                               major_status, minor_status);
+            this->sspi_report_error("Failed to get available mechs on system",
+                                    major_status, minor_status);
             gss_release_oid_set(&minor_status, &mech_set);
             return false;
         }
@@ -500,8 +513,8 @@ private:
 
         gss_release_oid_set(&minor_status, &mech_set);
         if (GSS_ERROR(major_status)) {
-            this->sspi_report_error(GSS_C_GSS_CODE, "Failed to match mechanism in set",
-                                  major_status, minor_status);
+            this->sspi_report_error("Failed to match mechanism in set",
+                                    major_status, minor_status);
             return false;
         }
 
@@ -720,8 +733,8 @@ private:
                                             &this->sspi_krb_ctx->actual_time);
 
         if (GSS_ERROR(major_status)) {
-            this->sspi_report_error(GSS_C_GSS_CODE, "CredSSP: SPNEGO negotiation failed.",
-                               major_status, minor_status);
+            this->sspi_report_error("CredSSP: SPNEGO negotiation failed.",
+                                    major_status, minor_status);
             // SEC_E_OUT_OF_SEQUENCE;
             LOG(LOG_ERR, "Initialize Security Context Error !");
             return Res::Err;
@@ -968,8 +981,8 @@ public:
                                             &this->sspi_krb_ctx->actual_time);
 
         if (GSS_ERROR(major_status)) {
-            this->sspi_report_error(GSS_C_GSS_CODE, "CredSSP: SPNEGO negotiation failed.",
-                               major_status, minor_status);
+            this->sspi_report_error("CredSSP: SPNEGO negotiation failed.",
+                                    major_status, minor_status);
             // SEC_E_OUT_OF_SEQUENCE;
             throw Error(ERR_CREDSSP_KERBEROS_INIT_FAILED);
         }

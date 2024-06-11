@@ -30,6 +30,11 @@
 
 char const* get_krb_err_message(krb5_error_code ret);
 
+char const* get_gssapi_routine_err(OM_uint32 status_code);
+char const* get_gssapi_calling_err(OM_uint32 status_code);
+char const* get_gssapi_supp_info(OM_uint32 status_code);
+
+
 class Krb5Creds final
 {
     krb5_context ctx;
