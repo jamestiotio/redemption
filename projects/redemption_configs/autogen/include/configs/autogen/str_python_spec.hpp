@@ -73,7 +73,7 @@ ignore_logon_password = boolean(default=False)
 allow_using_multiple_monitors = boolean(default=True)
 
 # Sends Scale &amp; Layout configuration to the server.
-# On Windows 11, this corresponds to options Scale, Display Resolution and Display Orientation of Settings > System > Display.
+# On Windows 11, this corresponds to options "Scale", "Display Resolution" and "Display Orientation" of Settings > System > Display.
 # ⚠ Title bar detection via OCR will no longer work.
 allow_scale_factor = boolean(default=False)
 
@@ -357,7 +357,7 @@ encodings = string(default="")
 #_advanced
 server_clipboard_encoding_type = option('utf-8', 'latin1', default="latin1")
 
-# The RDP clipboard is based on a token that indicates who owns data between server and client. However, some RDP clients, such as Freerpd, always appropriate this token. This conflicts with VNC, which also appropriates this token, causing clipboard data to be sent in loops.
+# The RDP clipboard is based on a token that indicates who owns data between server and client. However, some RDP clients, such as FreeRDP, always appropriate this token. This conflicts with VNC, which also appropriates this token, causing clipboard data to be sent in loops.
 # This option indicates the strategy to adopt in such situations.
 # &nbsp; &nbsp;   0: delayed: Clipboard processing is deferred and, if necessary, the token is left with the client.
 # &nbsp; &nbsp;   1: duplicated: When 2 identical requests are received, the second is ignored. This can block clipboard data reception until a clipboard event is triggered on the server when the client clipboard is blocked, and vice versa.
@@ -484,7 +484,7 @@ allow_rt_without_recording = boolean(default=False)
 
 [icap_server_down]
 
-# Ip or fqdn of ICAP server
+# IP or FQDN of ICAP server
 host = string(default="")
 
 # Port of ICAP server
@@ -506,7 +506,7 @@ filename_percent_encoding = boolean(default=False)
 
 [icap_server_up]
 
-# Ip or fqdn of ICAP server
+# IP or FQDN of ICAP server
 host = string(default="")
 
 # Port of ICAP server

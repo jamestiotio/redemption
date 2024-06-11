@@ -413,7 +413,7 @@ handle_usage_limit = integer(min=0, max=1000, default=0)
 memory_usage_limit = integer(min=0, max=200000000, default=0)
 
 # This debugging feature was created to determine the cause of high CPU consumption by Session Probe in certain environments.
-# As a percentage, the effective alarm threshold is calculated in relation to the reference consumption determined at the start of the program execution. The alarm is deactivated if this value of parameter is less than 200 (200%% of reference consumption).
+# As a percentage, the effective alarm threshold is calculated in relation to the reference consumption determined at the start of the program execution. The alarm is deactivated if this value of parameter is less than 200 (200% of reference consumption).
 # When CPU consumption exceeds the allowed limit, debugging information can be collected (if the Windows-side logging is enabled), then Session Probe will sabotage. Additional behavior is defined by "CPU usage alarm action" option.
 #_advanced
 #_display_name=CPU usage alarm threshold

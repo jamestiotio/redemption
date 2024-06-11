@@ -573,7 +573,7 @@ _.section("client", [&]
         .tags = Tag::Compatibility,
         .desc =
             "Sends Scale & Layout configuration to the server.\n"
-            "On Windows 11, this corresponds to options Scale, Display Resolution and Display Orientation of Settings > System > Display.\n"
+            "On Windows 11, this corresponds to options \"Scale\", \"Display Resolution\" and \"Display Orientation\" of Settings > System > Display.\n"
             "⚠ Title bar detection via OCR will no longer work.\n"
     });
 
@@ -1729,7 +1729,7 @@ _.section("session_probe", [&]
         .spec = connpolicy(rdp, L, spec::advanced),
         .desc =
             "This debugging feature was created to determine the cause of high CPU consumption by Session Probe in certain environments.\n"
-            "As a percentage, the effective alarm threshold is calculated in relation to the reference consumption determined at the start of the program execution. The alarm is deactivated if this value of parameter is less than 200 (200%% of reference consumption).\n"
+            "As a percentage, the effective alarm threshold is calculated in relation to the reference consumption determined at the start of the program execution. The alarm is deactivated if this value of parameter is less than 200 (200% of reference consumption).\n"
             "When CPU consumption exceeds the allowed limit, debugging information can be collected (if the Windows-side logging is enabled), then Session Probe will sabotage. Additional behavior is defined by :REF::cpu_usage_alarm_action."
     });
 
@@ -2081,7 +2081,7 @@ _.section(names{.all="mod_vnc", .connpolicy="vnc"}, [&]
         .value = from_enum(VncBogusClipboardInfiniteLoop::delayed),
         .spec = global_spec(acl_to_proxy(no_reset_back_to_selector, L), spec::advanced),
         .desc =
-            "The RDP clipboard is based on a token that indicates who owns data between server and client. However, some RDP clients, such as Freerpd, always appropriate this token. This conflicts with VNC, which also appropriates this token, causing clipboard data to be sent in loops.\n"
+            "The RDP clipboard is based on a token that indicates who owns data between server and client. However, some RDP clients, such as FreeRDP, always appropriate this token. This conflicts with VNC, which also appropriates this token, causing clipboard data to be sent in loops.\n"
             "This option indicates the strategy to adopt in such situations."
     });
 
@@ -2288,7 +2288,7 @@ for (char const* section_name : {"icap_server_down", "icap_server_up"}) {
             .name = "host",
             .value = value<std::string>(),
             .spec = spec::external(),
-            .desc = "Ip or fqdn of ICAP server",
+            .desc = "IP or FQDN of ICAP server",
         });
 
         _.member(MemberInfo{

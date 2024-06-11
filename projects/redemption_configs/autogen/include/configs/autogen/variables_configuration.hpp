@@ -471,7 +471,7 @@ namespace cfg
         type value { true };
     };
     /// Sends Scale & Layout configuration to the server. <br/>
-    /// On Windows 11, this corresponds to options Scale, Display Resolution and Display Orientation of Settings > System > Display. <br/>
+    /// On Windows 11, this corresponds to options "Scale", "Display Resolution" and "Display Orientation" of Settings > System > Display. <br/>
     /// ⚠ Title bar detection via OCR will no longer work. <br/>
     /// type: bool <br/>
     /// default: false <br/>
@@ -2170,7 +2170,7 @@ namespace cfg
         type value { 0 };
     };
     /// This debugging feature was created to determine the cause of high CPU consumption by Session Probe in certain environments. <br/>
-    /// As a percentage, the effective alarm threshold is calculated in relation to the reference consumption determined at the start of the program execution. The alarm is deactivated if this value of parameter is less than 200 (200%% of reference consumption). <br/>
+    /// As a percentage, the effective alarm threshold is calculated in relation to the reference consumption determined at the start of the program execution. The alarm is deactivated if this value of parameter is less than 200 (200% of reference consumption). <br/>
     /// When CPU consumption exceeds the allowed limit, debugging information can be collected (if the Windows-side logging is enabled), then Session Probe will sabotage. Additional behavior is defined by [session_probe]cpu_usage_alarm_action. <br/>
     /// type: uint32_t <br/>
     /// connpolicy -> proxy <br/>
@@ -2726,7 +2726,7 @@ namespace cfg
         using mapped_type = std::string;
         type value { ClipboardEncodingType::latin1 };
     };
-    /// The RDP clipboard is based on a token that indicates who owns data between server and client. However, some RDP clients, such as Freerpd, always appropriate this token. This conflicts with VNC, which also appropriates this token, causing clipboard data to be sent in loops. <br/>
+    /// The RDP clipboard is based on a token that indicates who owns data between server and client. However, some RDP clients, such as FreeRDP, always appropriate this token. This conflicts with VNC, which also appropriates this token, causing clipboard data to be sent in loops. <br/>
     /// This option indicates the strategy to adopt in such situations. <br/>
     /// type: VncBogusClipboardInfiniteLoop <br/>
     /// acl ⇒ proxy <br/>

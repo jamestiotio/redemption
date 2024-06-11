@@ -124,7 +124,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 #allow_using_multiple_monitors = 1
 
 # Sends Scale & Layout configuration to the server.
-# On Windows 11, this corresponds to options Scale, Display Resolution and Display Orientation of Settings > System > Display.
+# On Windows 11, this corresponds to options "Scale", "Display Resolution" and "Display Orientation" of Settings > System > Display.
 # ⚠ Title bar detection via OCR will no longer work.
 # (type: boolean (0/no/false or 1/yes/true))
 #allow_scale_factor = 0
@@ -960,7 +960,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 #memory_usage_limit = 0
 
 # This debugging feature was created to determine the cause of high CPU consumption by Session Probe in certain environments.
-# As a percentage, the effective alarm threshold is calculated in relation to the reference consumption determined at the start of the program execution. The alarm is deactivated if this value of parameter is less than 200 (200%% of reference consumption).
+# As a percentage, the effective alarm threshold is calculated in relation to the reference consumption determined at the start of the program execution. The alarm is deactivated if this value of parameter is less than 200 (200% of reference consumption).
 # When CPU consumption exceeds the allowed limit, debugging information can be collected (if the Windows-side logging is enabled), then Session Probe will sabotage. Additional behavior is defined by [session_probe]cpu_usage_alarm_action.
 # (min = 0, max = 10000)
 #_advanced
@@ -1237,7 +1237,7 @@ R"gen_config_ini(## Config file for RDP proxy.
 # (acl config: proxy ⇐ vnc_server_clipboard_encoding_type)
 #server_clipboard_encoding_type = latin1
 
-# The RDP clipboard is based on a token that indicates who owns data between server and client. However, some RDP clients, such as Freerpd, always appropriate this token. This conflicts with VNC, which also appropriates this token, causing clipboard data to be sent in loops.
+# The RDP clipboard is based on a token that indicates who owns data between server and client. However, some RDP clients, such as FreeRDP, always appropriate this token. This conflicts with VNC, which also appropriates this token, causing clipboard data to be sent in loops.
 # This option indicates the strategy to adopt in such situations.
 #   0: delayed: Clipboard processing is deferred and, if necessary, the token is left with the client.
 #   1: duplicated: When 2 identical requests are received, the second is ignored. This can block clipboard data reception until a clipboard event is triggered on the server when the client clipboard is blocked, and vice versa.
