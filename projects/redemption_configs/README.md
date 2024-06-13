@@ -132,6 +132,16 @@ Corresponds to the `.spec` file used by wallix bastion to display a GUI.
 
 
 
+## MemberInfo.desc
+
+Description of field. Special text are:
+
+- `:REF:[section]:member` reference to another field. `section` and `member` refer to `names.all` passed to `section()` and `member()`.
+- `:REF::member` reference to another field in a same section.
+- `:REF:SELF:`
+
+
+
 # Add/Modify enumeration type
 
 Edit `configs_specs/configs/specs/config_type.hpp`
