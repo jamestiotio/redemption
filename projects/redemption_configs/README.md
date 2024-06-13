@@ -1,9 +1,10 @@
 1. [Add/Modify variable](#addmodify-variable)
-    1. [MemberInfo.value](#memberinfovalue)
+    1. [MemberInfo.connpolicy_section](#memberinfoconnpolicy_section)
+    2. [MemberInfo.value](#memberinfovalue)
         1. [Special values](#special-values)
         2. [Special types](#special-types)
         3. [Connection Policy Value](#connection-policy-value)
-    2. [MemberInfo.spec](#memberinfospec)
+    3. [MemberInfo.spec](#memberinfospec)
         1. [SesmanInfo](#sesmaninfo)
             1. [ResetBackToSelector](#resetbacktoselector)
             2. [Loggable](#loggable)
@@ -12,6 +13,7 @@
             1. [Attributes](#attributes)
         4. [Connection Policy](#connection-policy)
             1. [Attributes](#attributes-1)
+    4. [MemberInfo.desc](#memberinfodesc)
 2. [Add/Modify enumeration type](#addmodify-enumeration-type)
 3. [Build](#build)
 
@@ -21,6 +23,12 @@
 Edit `configs_specs/configs/specs/config_spec.hpp`
 
 Edit `configs_specs/configs/specs/config_type.hpp` to add a new enumeration type.
+
+
+## MemberInfo.connpolicy_section
+
+When specified, use another section for connection policy.
+
 
 
 ## MemberInfo.value

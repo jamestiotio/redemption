@@ -441,6 +441,7 @@ struct Description : std::string
 struct MemberInfo
 {
     MemberNames name;
+    // when specified, use another section for connection policy
     std::string_view connpolicy_section {};
     ValueAsStrings value;
     SpecInfo spec;
