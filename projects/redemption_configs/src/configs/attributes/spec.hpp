@@ -109,12 +109,18 @@ enum class Loggable : uint8_t { No, Yes, OnlyWhenContainsPasswordString, };
 
 struct names
 {
+    // name for all field
     std::string_view all;
+    // field name in ini file
     std::string_view ini {};
+    // field name between proxy <-> acl (default is ${section}::${name})
     std::string_view acl {};
+    // field name in connection policy
     std::string_view connpolicy {};
+    // field name displayed in connection policy and ini (info in spec file)
     std::string_view display {};
 
+    // names with acl = all
     static names acl_shortname(std::string_view all_and_acl)
     {
         return {
